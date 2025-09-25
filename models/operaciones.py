@@ -20,7 +20,7 @@ def suma_matrices(A, B, log_func=print):
             R[i][j] = A[i][j] + B[i][j]
 
     log_func("\nResultado final de la suma:")
-    imprimir_matriz(R, "", log_func)
+    imprimir_matriz(R, log_func)
     return R
 
 
@@ -54,5 +54,5 @@ def multiplicar_matrices(A, B, log_func=print):
             R[i][j] = s
 
     log_func("\nResultado final de la multiplicación:")
-    imprimir_matriz(R, "", log_func)
+    imprimir_matriz(R, log_func)
     return R
