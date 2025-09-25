@@ -1,5 +1,5 @@
 # Operaciones con matrices
-
+# Función 'Main'
 from models.interfaz import Interfaz
 
 def main():

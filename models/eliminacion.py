@@ -12,6 +12,11 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
     columnas_pivote = []
     tieneSolucion = True
     
+    # Se imprime la matriz antes de que sea se vuelva en la forma escalonada reducida
+
+    log_func("Matriz inicial:\n")
+    imprimir_matriz(matriz_a_reducir, log_func=print)
+
     # Eliminación de filas hacia abajo
     for p in range(filas):
         
@@ -39,12 +44,12 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
 
                             log_func(f"\nSe intercambia la fila {p + 1} con la fila {i + 1}")
 
-                            imprimir_matriz(matriz_a_reducir, titulo="", log_func=print)
+                            imprimir_matriz(matriz_a_reducir, log_func=print)
                             
                             break
 
                 pivote = matriz_a_reducir[p][c]
-                log_func(f"\nPivote: {pivote}")
+                log_func(f"\nPivote: {pivote:.3f}")
                 log_func(f"Ubicado en la fila {p + 1}, columna {c + 1}")
 
                 pivote_fi = p
@@ -71,7 +76,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
                         matriz_a_reducir[m][j] = matriz_a_reducir[m][j] - (matriz_a_reducir[pivote_fi][j] * escalar)
 
                     log_func(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
-                    imprimir_matriz(matriz_a_reducir, titulo="", log_func=print)
+                    imprimir_matriz(matriz_a_reducir, log_func=print)
 
             # Se normaliza la fila. Es decir, que cada elemento se divide entre el pivote 
             for c in range(pivote_col, columnas):
@@ -79,7 +84,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
                 matriz_a_reducir[p][c] = matriz_a_reducir[p][c] / pivote
 
             log_func(f"\nSe normaliza la fila {p + 1}")
-            imprimir_matriz(matriz_a_reducir, titulo="", log_func=print)
+            imprimir_matriz(matriz_a_reducir, log_func=print)
 
     # Eliminación de filas hacia arriba
     for r in range(filas - 1, 0, -1):
@@ -91,7 +96,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
             if matriz_a_reducir[r][l] != 0:
 
                 pivote = matriz_a_reducir[r][l]
-                log_func(f"Pivote: {pivote}")
+                log_func(f"Pivote: {pivote:.3f}")
                 log_func(f"Ubicado en la fila {r + 1}, columna {l + 1}")
 
                 pivote_fi = r
@@ -116,7 +121,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
 
                     log_func(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
                     
-                    imprimir_matriz(matriz_a_reducir, titulo="", log_func=print)
+                    imprimir_matriz(matriz_a_reducir, log_func=print)
     
     for f in range(filas):
 
@@ -138,6 +143,8 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
             variables_libres.append(f"x{v}")
     
     log_func(f"Columnas pivote: {columnas_pivote}")
+    
+    # Se verifica si la variable 'tieneSolucion' es True o False
     if tieneSolucion:
 
         # Si no hay variables libres, entonces el sistema tiene solución única
@@ -148,7 +155,13 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
             
             for s in range(filas):
 
-                log_func(f"x{columnas_pivote[s]:.3f} = {matriz_a_reducir[s][columnas - 1]}")
+                try:
+
+                    log_func(f"x{columnas_pivote[s]} = {matriz_a_reducir[s][columnas - 1]:.3f}")
+                except IndexError:
+
+                    continue
+        # En cambio, si hay variables libres, entonces se muestran aquí
         else:
 
             log_func("\nEl sistema tiene infinitas soluciones")

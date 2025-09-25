@@ -1,12 +1,12 @@
 # Clase para imprimir matrices
 
-def imprimir_matriz(matriz, titulo="", log_func=print):
+def imprimir_matriz(matriz, log_func=print):
     """
     Imprime una matriz con formato legible.
     `log_func` permite enviar la salida a consola o a la UI (Text widget).
     """
-    if titulo:
-        log_func("\n" + titulo)
+
+    # Imprime cada fila de la matriz
     for fila in matriz:
         try:
             line = "  ".join(f"{x:8.3f}" for x in fila)
