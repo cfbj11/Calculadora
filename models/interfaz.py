@@ -5,7 +5,7 @@ from tkinter import ttk, messagebox, filedialog
 from contextlib import redirect_stdout
 import io
 
-from models.eliminacion import eliminacionGaussJordan
+from models.eliminacion import eliminacionGaussJordan, eliminacionGauss
 from models.operaciones import suma_matrices, multiplicar_matrices
 
 class _TextRedirector:
@@ -55,7 +55,7 @@ class Interfaz:
         top.pack(side=tk.TOP, fill=tk.X)
 
         ttk.Label(top, text="Operación:", font=(None, 11, "bold")).pack(side=tk.LEFT)
-        for val, label in [("gaussjordan", "Gauss-Jordan"),
+        for val, label in [("gaussjordan", "Gauss-Jordan"), ("gauss", "Gauss"),
                         ("suma", "Suma"), ("multiplicacion", "Multiplicación")]:
             ttk.Radiobutton(top, text=label, variable=self.metodo, value=val, command=self._on_method_change).pack(side=tk.LEFT, padx=6)
 
@@ -267,7 +267,8 @@ class Interfaz:
         try:
             # redirigir cualquier print al Text (para mostrar pasos)
             with redirect_stdout(text_redirector):
-                if metodo in ('gauss', 'gaussjordan'):
+                if metodo == 'gaussjordan':
+                    
                     if not self.entradas_aug:
                         raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
                     
@@ -275,6 +276,13 @@ class Interfaz:
 
                     eliminacionGaussJordan(matriz, log_func=print)
 
+                elif metodo == 'gauss':
+
+                    if not self.entradas_aug:
+                        raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
+                    
+                    matriz = self._leer_matriz(self.entradas_aug)
+                    eliminacionGauss(matriz, log_func=print)
                 elif metodo == 'suma':
                     if not self.entradas_A or not self.entradas_B:
                         raise ValueError('Genere las entradas de A y B primero.')
