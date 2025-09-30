@@ -5,7 +5,6 @@ from models.imprimir_matriz import imprimir_matriz
 # Eliminación de Gauss-Jordan
 def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
 
-
     filas = len(matriz_a_reducir)
     columnas = len(matriz_a_reducir[0])
 
@@ -270,11 +269,8 @@ def eliminacionGauss(matriz_a_reducir, log_func=print):
 
     for v in range(1, columnas):
 
-        try:
-
-            # Si en la columna, el pivote no está presente, entonces es una variable libre
-            columnas_pivote.index(v)
-        except ValueError:
+        # Si una columna no tiene pivote, entonces, se dice que la variable correspondiente a esa columna es libre
+        if not next((e for e in columnas_pivote if e == v), False):
 
             variables_libres.append(f"x{v}")
     
