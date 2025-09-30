@@ -126,7 +126,7 @@ class Interfaz:
         for w in self.entradas_contenedor.winfo_children():
             w.destroy()
         if metodo in ('gauss', 'gaussjordan'):
-            ttk.Label(self.entradas_contenedor, text="Matriz (n filas × (m) columnas)").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="Matriz [(n) filas × (m) columnas]").pack(anchor='w')
         elif metodo == 'suma':
             ttk.Label(self.entradas_contenedor, text="Suma de matrices: generará dos matrices A y B con mismas dimensiones").pack(anchor='w')
         else:
