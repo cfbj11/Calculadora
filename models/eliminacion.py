@@ -161,11 +161,18 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
             
             for i, var in enumerate(columnas_pivote):
 
-                log_func(f"x{var} = {matriz_a_reducir[i][columnas - 1]:.3f}", end="")
+                log_func(f"x{var} =", end="")
+                
+                # Si el término independiente es 0, entonces no se imprime, para que se vea más bonita la solución general
+                log_func(f" {matriz_a_reducir[i][columnas - 1]:.3f}" if matriz_a_reducir[i][columnas - 1] != 0 else "", end="")
 
                 for a in variables_libres:
 
-                    log_func(f" {-matriz_a_reducir[i][a - 1]:.3f}x{a} " if matriz_a_reducir[i][a - 1] >= 0 else f" + {-matriz_a_reducir[i][a - 1]:.3f}x{a} ", end="")
+                    if matriz_a_reducir[i][a - 1] != 0:
+
+                        # Si el coeficiente es 0, entonces no se imprime, para que se vea más bonita la solución general
+                        log_func(f" {-matriz_a_reducir[i][a - 1]:.3f}x{a}" if matriz_a_reducir[i][a - 1] >= 0 else f" + {-matriz_a_reducir[i][a - 1]:.3f}x{a}", end="")
+                
                 log_func("")
             for l in variables_libres:
 
