@@ -5,8 +5,11 @@ from tkinter import ttk, messagebox, filedialog
 from contextlib import redirect_stdout
 import io
 
+from fractions import Fraction
+
 from models.eliminacion import eliminacionGaussJordan, eliminacionGauss
 from models.operaciones import suma_matrices, multiplicar_matrices
+from models.transpuesta import transpuestamatriz
 
 class _TextRedirector:
     """Redirige cadenas a un Text widget (para capturar print/print_func)."""
@@ -56,7 +59,7 @@ class Interfaz:
 
         ttk.Label(top, text="Operación:", font=(None, 11, "bold")).pack(side=tk.LEFT)
         for val, label in [("gaussjordan", "Gauss-Jordan"), ("gauss", "Gauss"),
-                        ("suma", "Suma"), ("multiplicacion", "Multiplicación")]:
+                        ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta")]:
             ttk.Radiobutton(top, text=label, variable=self.metodo, value=val, command=self._on_method_change).pack(side=tk.LEFT, padx=6)
 
         params = ttk.Frame(top)
@@ -126,11 +129,13 @@ class Interfaz:
         for w in self.entradas_contenedor.winfo_children():
             w.destroy()
         if metodo in ('gauss', 'gaussjordan'):
-            ttk.Label(self.entradas_contenedor, text="Matriz [(n) filas × (m) columnas]").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="Matriz (n filas × (m) columnas)").pack(anchor='w')
         elif metodo == 'suma':
             ttk.Label(self.entradas_contenedor, text="Suma de matrices: generará dos matrices A y B con mismas dimensiones").pack(anchor='w')
-        else:
+        elif metodo == 'multiplicacion':
             ttk.Label(self.entradas_contenedor, text="Multiplicación de matrices: generará A (r×k) y B (k×c)").pack(anchor='w')
+        elif metodo == 'transpuesta':
+            ttk.Label(self.entradas_contenedor, text="Transpuesta de una matriz m x n (Devolverá una matriz n x m)").pack(anchor='w')
 
     def generar_entradas(self):
         metodo = self.metodo.get()
@@ -234,6 +239,29 @@ class Interfaz:
                     e.grid(row=i, column=j, padx=2, pady=2)
                     fila.append(e)
                 self.entradas_B.append(fila)
+        elif metodo == 'transpuesta':
+
+            try:
+                n = int(self.num_eq_var.get())
+                m = int(self.num_var_var.get())
+                if n <= 0 or m <= 0:
+                    raise ValueError
+            except Exception:
+                messagebox.showerror('Entrada inválida', 'Filas y columnas deben ser enteros positivos.')
+                return
+
+            ttk.Label(self.entradas_contenedor, text=f'Matriz: {m} filas × {n} columnas').pack(anchor='w')
+            grid = ttk.Frame(self.entradas_contenedor)
+            grid.pack(pady=6)
+
+            # entradas
+            for i in range(n):
+                filas_entrada = []
+                for j in range(m):
+                    e = ttk.Entry(grid, width=12)
+                    e.grid(row=i+1, column=j, padx=2, pady=2)
+                    filas_entrada.append(e)
+                self.entradas_aug.append(filas_entrada)
 
     def _leer_matriz(self, entradas):
         M = []
@@ -245,7 +273,7 @@ class Interfaz:
                 if val == '':
                     val = '0'
                 try:
-                    num = float(val)
+                    num = Fraction(val)
                 except Exception:
                     raise ValueError(f"Valor inválido en fila {i + 1}, columna {j + 1}: '{val}'")
                 fila.append(num)
@@ -298,6 +326,14 @@ class Interfaz:
                     B = self._leer_matriz(self.entradas_B)
                     resultado = multiplicar_matrices(A, B, log_func=print)
                     self.result_var.set("Multiplicación realizada — ver registro")
+                elif metodo == 'transpuesta':
+
+                    if not self.entradas_aug:
+                        raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
+                    
+                    matriz = self._leer_matriz(self.entradas_aug)
+                    transpuestamatriz(matriz, log_func=print)
+
 
         except Exception as exc:
             # Mostrar la traza de error en log y un messagebox
