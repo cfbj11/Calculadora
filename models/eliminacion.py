@@ -1,7 +1,6 @@
 # Clase para la eliminacion de filas (Gauss y Gauss-Jordan)
 
 from models.imprimir_matriz import imprimir_matriz
-from models.independenciaLineal import independenciaLineal
 
 # Eliminación de Gauss-Jordan
 def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
