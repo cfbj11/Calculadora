@@ -349,6 +349,7 @@ class Interfaz:
 
                     eliminacionGauss(matriz, log_func=print)
                     self.result_var.set("La matriz fue reducida a la forma escalonada")
+                    
                 elif metodo == 'suma':
                     if not self.entradas_A or not self.entradas_B:
                         raise ValueError('Genere las entradas de A y B primero.')
@@ -390,7 +391,7 @@ class Interfaz:
                         raise ValueError('Genere las entradas de A y B primero.')
                     A = self._leer_matriz(self.entradas_A)
                     B = self._leer_matriz(self.entradas_B)
-                    resultado = multiplicar_matrices(A, B, log_func=print)
+                    multiplicar_matrices(A, B, log_func=print)
                     self.result_var.set("Multiplicación realizada — ver registro")
                 elif metodo == 'transpuesta':
 
@@ -410,7 +411,7 @@ class Interfaz:
                     matriz = self._leer_matriz(self.entradas_aug)
                     independenciaLineal(matriz, log_func=print)
 
-                    self.result_var("La operación ya fue realizada")
+                    self.result_var.set("La operación ya fue realizada")
 
 
         except Exception as exc:
