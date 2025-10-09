@@ -2,7 +2,7 @@
 
 from models.imprimir_matriz import imprimir_matriz
 
-def suma_matrices(A, B, log_func=print):
+def suma_matrices(A, B, escalarA, escalarB, log_func=print):
     """
     Suma A + B mostrando procedimientos.
     """
@@ -10,6 +10,22 @@ def suma_matrices(A, B, log_func=print):
         raise ValueError("Error: las matrices deben tener las mismas dimensiones para sumarse.")
     
     filas, cols = len(A), len(A[0])
+
+    if escalarA != 1:
+
+        for i in range(filas):
+
+            for j in range(cols):
+
+                A[i][j] *= escalarA
+
+    if escalarB != 1:
+
+        for i in range(filas):
+
+            for j in range(cols):
+
+                B[i][j] *= escalarB
     R = [[0.0 for _ in range(cols)] for _ in range(filas)]
 
     for i in range(filas):

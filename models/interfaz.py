@@ -10,6 +10,7 @@ from fractions import Fraction
 from models.eliminacion import eliminacionGaussJordan, eliminacionGauss
 from models.operaciones import suma_matrices, multiplicar_matrices
 from models.transpuesta import transpuestamatriz
+from models.independencia import independenciaLineal
 
 class _TextRedirector:
     """Redirige cadenas a un Text widget (para capturar print/print_func)."""
@@ -34,7 +35,7 @@ class Interfaz:
     def __init__(self):
         self.ventanaPrincipal = tk.Tk()
         self.ventanaPrincipal.title("Calculadora de Matrices — Gauss-Jordan / Suma / Multiplicación")
-        self.ventanaPrincipal.geometry("1100x720")
+        self.ventanaPrincipal.geometry("1200x720")
 
         # Variables
         self.metodo = tk.StringVar(value="gaussjordan")
@@ -42,8 +43,10 @@ class Interfaz:
         self.num_var_var = tk.StringVar(value="")
         self.matA_filas = tk.StringVar(value="")
         self.matA_columnas = tk.StringVar(value="")
+        self.matA_escalar = tk.StringVar(value="")
         self.matB_filas = tk.StringVar(value="")
         self.matB_columnas = tk.StringVar(value="")
+        self.matB_escalar = tk.StringVar(value="")
 
         # Grids de entrada
         self.entradas_aug = []
@@ -59,7 +62,7 @@ class Interfaz:
 
         ttk.Label(top, text="Operación:", font=(None, 11, "bold")).pack(side=tk.LEFT)
         for val, label in [("gaussjordan", "Gauss-Jordan"), ("gauss", "Gauss"),
-                        ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta")]:
+                        ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal")]:
             ttk.Radiobutton(top, text=label, variable=self.metodo, value=val, command=self._on_method_change).pack(side=tk.LEFT, padx=6)
 
         params = ttk.Frame(top)
@@ -75,11 +78,15 @@ class Interfaz:
         ttk.Entry(mat_frame, textvariable=self.matA_filas, width=4).grid(row=0, column=1)
         ttk.Label(mat_frame, text="cols").grid(row=0, column=2)
         ttk.Entry(mat_frame, textvariable=self.matA_columnas, width=4).grid(row=0, column=3)
+        ttk.Label(mat_frame, text="Escalar para A").grid(row=0, column=4)
+        ttk.Entry(mat_frame, textvariable=self.matA_escalar, width=4).grid(row=0, column=5)
 
         ttk.Label(mat_frame, text="B: filas").grid(row=1, column=0)
         ttk.Entry(mat_frame, textvariable=self.matB_filas, width=4).grid(row=1, column=1)
         ttk.Label(mat_frame, text="cols").grid(row=1, column=2)
         ttk.Entry(mat_frame, textvariable=self.matB_columnas, width=4).grid(row=1, column=3)
+        ttk.Label(mat_frame, text="Escalar para B").grid(row=1, column=4)
+        ttk.Entry(mat_frame, textvariable=self.matB_escalar, width=4).grid(row=1, column=5)
 
         # Botones
         botones = ttk.Frame(self.ventanaPrincipal, padding=6)
@@ -132,10 +139,13 @@ class Interfaz:
             ttk.Label(self.entradas_contenedor, text="Matriz (n filas × (m) columnas)").pack(anchor='w')
         elif metodo == 'suma':
             ttk.Label(self.entradas_contenedor, text="Suma de matrices: generará dos matrices A y B con mismas dimensiones").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="(Si no se especifica la escalar para alguna de las matrices, entonces\nla escalar para dicha matriz será 1)").pack(anchor='w')
         elif metodo == 'multiplicacion':
             ttk.Label(self.entradas_contenedor, text="Multiplicación de matrices: generará A (r×k) y B (k×c)").pack(anchor='w')
         elif metodo == 'transpuesta':
             ttk.Label(self.entradas_contenedor, text="Transpuesta de una matriz m x n (Devolverá una matriz n x m)").pack(anchor='w')
+        elif metodo == 'independencia':
+            ttk.Label(self.entradas_contenedor, text="Conjunto de vectores, con m cantidad de entradas por vector").pack(anchor='w')
 
     def generar_entradas(self):
         metodo = self.metodo.get()
@@ -262,6 +272,31 @@ class Interfaz:
                     e.grid(row=i+1, column=j, padx=2, pady=2)
                     filas_entrada.append(e)
                 self.entradas_aug.append(filas_entrada)
+        
+        elif metodo == 'independencia':
+
+            try:
+                n = int(self.num_eq_var.get())
+                m = int(self.num_var_var.get())
+                if n <= 0 or m <= 0:
+                    raise ValueError
+            except Exception:
+                messagebox.showerror('Entrada inválida', 'Filas y columnas deben ser enteros positivos.')
+                return
+
+            grid = ttk.Frame(self.entradas_contenedor)
+            grid.pack(pady=6)
+            # encabezados
+            for j in range(m):
+                ttk.Label(grid, text=f'v{j+1}', anchor='center', width=10).grid(row=0, column=j)
+            # entradas
+            for i in range(n):
+                filas_entrada = []
+                for j in range(m):
+                    e = ttk.Entry(grid, width=12)
+                    e.grid(row=i+1, column=j, padx=2, pady=2)
+                    filas_entrada.append(e)
+                self.entradas_aug.append(filas_entrada)
 
     def _leer_matriz(self, entradas):
         M = []
@@ -303,6 +338,7 @@ class Interfaz:
                     matriz = self._leer_matriz(self.entradas_aug)
 
                     eliminacionGaussJordan(matriz, log_func=print)
+                    self.result_var.set("La matriz fue reducida a la forma escalonada reducida")
 
                 elif metodo == 'gauss':
 
@@ -310,13 +346,44 @@ class Interfaz:
                         raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
+
                     eliminacionGauss(matriz, log_func=print)
+                    self.result_var.set("La matriz fue reducida a la forma escalonada")
+                    
                 elif metodo == 'suma':
                     if not self.entradas_A or not self.entradas_B:
                         raise ValueError('Genere las entradas de A y B primero.')
                     A = self._leer_matriz(self.entradas_A)
+
+                    # Si no se define una escalar, entonces se dice que es '1'
+                    if self.matA_escalar.get().strip() == '' or self.matA_escalar.get().strip() == '1':
+
+                        escalarA = 1
+                    else:
+
+                        try:
+
+                            escalarA = Fraction(self.matA_escalar.get().strip())
+                        except:
+
+                            print("En la matriz A, ingresó una escalar no válida")
+                    
                     B = self._leer_matriz(self.entradas_B)
-                    resultado = suma_matrices(A, B, log_func=print)
+
+                    # Si no se define una escalar, entonces se dice que es '1'
+                    if self.matB_escalar.get().strip() == '' or self.matB_escalar.get().strip() == '1':
+
+                        escalarB = 1
+                    else:
+
+                        try:
+
+                            escalarB = Fraction(self.matB_escalar.get().strip())
+                        except:
+
+                            print("En la matriz B, ingresó una escalar no válida")
+
+                    suma_matrices(A, B, escalarA, escalarB, log_func=print)
                     self.result_var.set("Suma realizada — ver registro")
 
                 elif metodo == 'multiplicacion':
@@ -324,15 +391,27 @@ class Interfaz:
                         raise ValueError('Genere las entradas de A y B primero.')
                     A = self._leer_matriz(self.entradas_A)
                     B = self._leer_matriz(self.entradas_B)
-                    resultado = multiplicar_matrices(A, B, log_func=print)
+                    multiplicar_matrices(A, B, log_func=print)
                     self.result_var.set("Multiplicación realizada — ver registro")
                 elif metodo == 'transpuesta':
 
                     if not self.entradas_aug:
-                        raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
+                        raise ValueError('Primero genere la matriz (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
                     transpuestamatriz(matriz, log_func=print)
+
+                    self.result_var.set("Este es el resultado de la transpuesta")
+
+                elif metodo == 'independencia':
+
+                    if not self.entradas_aug:
+                        raise ValueError('Primero genere el conjunto de vectores (botón "Generar entradas").')
+                    
+                    matriz = self._leer_matriz(self.entradas_aug)
+                    independenciaLineal(matriz, log_func=print)
+
+                    self.result_var.set("La operación ya fue realizada")
 
 
         except Exception as exc:
