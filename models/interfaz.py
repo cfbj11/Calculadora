@@ -60,7 +60,7 @@ class Interfaz:
         top = ttk.Frame(self.ventanaPrincipal, padding=8)
         top.pack(side=tk.TOP, fill=tk.X)
 
-        ttk.Label(top, text="Operación:", font=(None, 11, "bold")).pack(side=tk.LEFT)
+        ttk.Label(top, text="Operacion", font=(None, 11, "bold")).pack(side=tk.LEFT)
         for val, label in [("gaussjordan", "Gauss-Jordan"), ("gauss", "Gauss"),
                         ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal")]:
             ttk.Radiobutton(top, text=label, variable=self.metodo, value=val, command=self._on_method_change).pack(side=tk.LEFT, padx=6)
@@ -389,9 +389,37 @@ class Interfaz:
                 elif metodo == 'multiplicacion':
                     if not self.entradas_A or not self.entradas_B:
                         raise ValueError('Genere las entradas de A y B primero.')
+                    
                     A = self._leer_matriz(self.entradas_A)
+
+                    if self.matA_escalar.get().strip() == '' or self.matA_escalar.get().strip() == '1':
+
+                        escalarA = 1
+                    else:
+
+                        try:
+
+                            escalarA = Fraction(self.matA_escalar.get().strip())
+                        except:
+
+                            print("En la matriz A, ingresó una escalar no válida")
+
+                    # Si no se define una escalar, entonces se dice que es '1'
+                    if self.matB_escalar.get().strip() == '' or self.matB_escalar.get().strip() == '1':
+
+                        escalarB = 1
+                    else:
+
+                        try:
+
+                            escalarB = Fraction(self.matB_escalar.get().strip())
+                        except:
+
+                            print("En la matriz B, ingresó una escalar no válida")
+
+                    
                     B = self._leer_matriz(self.entradas_B)
-                    multiplicar_matrices(A, B, log_func=print)
+                    multiplicar_matrices(A, B, escalarA, escalarB, log_func=print)
                     self.result_var.set("Multiplicación realizada — ver registro")
                 elif metodo == 'transpuesta':
 

@@ -40,7 +40,7 @@ def suma_matrices(A, B, escalarA, escalarB, log_func=print):
     return R
 
 
-def multiplicar_matrices(A, B, log_func=print):
+def multiplicar_matrices(A, B, escalarA, escalarB, log_func=print):
     """
     Multiplicación A x B mostrando procedimientos.
     """
@@ -49,6 +49,23 @@ def multiplicar_matrices(A, B, log_func=print):
 
     filas_A = len(A)
     cols_B = len(B[0])
+
+    if escalarA != 1:
+
+        for i in range(len(A)):
+
+            for j in range(len(A[0])):
+
+                A[i][j] *= escalarA
+
+    if escalarB != 1:
+
+        for i in range(len(B)):
+
+            for j in range(len(B[0])):
+
+                B[i][j] *= escalarB
+
     k = len(B)  # columnas de A / filas de B
     R = [[0.0 for _ in range(cols_B)] for _ in range(filas_A)]
 
