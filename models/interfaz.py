@@ -43,8 +43,10 @@ class Interfaz:
         self.num_var_var = tk.StringVar(value="")
         self.matA_filas = tk.StringVar(value="")
         self.matA_columnas = tk.StringVar(value="")
+        self.matA_escalar = tk.StringVar(value="")
         self.matB_filas = tk.StringVar(value="")
         self.matB_columnas = tk.StringVar(value="")
+        self.matB_escalar = tk.StringVar(value="")
 
         # Grids de entrada
         self.entradas_aug = []
@@ -76,11 +78,15 @@ class Interfaz:
         ttk.Entry(mat_frame, textvariable=self.matA_filas, width=4).grid(row=0, column=1)
         ttk.Label(mat_frame, text="cols").grid(row=0, column=2)
         ttk.Entry(mat_frame, textvariable=self.matA_columnas, width=4).grid(row=0, column=3)
+        ttk.Label(mat_frame, text="Escalar para A").grid(row=0, column=4)
+        ttk.Entry(mat_frame, textvariable=self.matA_escalar, width=4).grid(row=0, column=5)
 
         ttk.Label(mat_frame, text="B: filas").grid(row=1, column=0)
         ttk.Entry(mat_frame, textvariable=self.matB_filas, width=4).grid(row=1, column=1)
         ttk.Label(mat_frame, text="cols").grid(row=1, column=2)
         ttk.Entry(mat_frame, textvariable=self.matB_columnas, width=4).grid(row=1, column=3)
+        ttk.Label(mat_frame, text="Escalar para B").grid(row=1, column=4)
+        ttk.Entry(mat_frame, textvariable=self.matB_escalar, width=4).grid(row=1, column=5)
 
         # Botones
         botones = ttk.Frame(self.ventanaPrincipal, padding=6)
@@ -133,6 +139,7 @@ class Interfaz:
             ttk.Label(self.entradas_contenedor, text="Matriz (n filas × (m) columnas)").pack(anchor='w')
         elif metodo == 'suma':
             ttk.Label(self.entradas_contenedor, text="Suma de matrices: generará dos matrices A y B con mismas dimensiones").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="(Si no se especifica la escalar para alguna de las matrices, entonces\nla escalar para dicha matriz será 1)").pack(anchor='w')
         elif metodo == 'multiplicacion':
             ttk.Label(self.entradas_contenedor, text="Multiplicación de matrices: generará A (r×k) y B (k×c)").pack(anchor='w')
         elif metodo == 'transpuesta':
@@ -331,6 +338,7 @@ class Interfaz:
                     matriz = self._leer_matriz(self.entradas_aug)
 
                     eliminacionGaussJordan(matriz, log_func=print)
+                    self.result_var.set("La matriz fue reducida a la forma escalonada reducida")
 
                 elif metodo == 'gauss':
 
@@ -338,13 +346,43 @@ class Interfaz:
                         raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
+
                     eliminacionGauss(matriz, log_func=print)
+                    self.result_var.set("La matriz fue reducida a la forma escalonada")
                 elif metodo == 'suma':
                     if not self.entradas_A or not self.entradas_B:
                         raise ValueError('Genere las entradas de A y B primero.')
                     A = self._leer_matriz(self.entradas_A)
+
+                    # Si no se define una escalar, entonces se dice que es '1'
+                    if self.matA_escalar.get().strip() == '' or self.matA_escalar.get().strip() == '1':
+
+                        escalarA = 1
+                    else:
+
+                        try:
+
+                            escalarA = Fraction(self.matA_escalar.get().strip())
+                        except:
+
+                            print("En la matriz A, ingresó una escalar no válida")
+                    
                     B = self._leer_matriz(self.entradas_B)
-                    resultado = suma_matrices(A, B, log_func=print)
+
+                    # Si no se define una escalar, entonces se dice que es '1'
+                    if self.matB_escalar.get().strip() == '' or self.matB_escalar.get().strip() == '1':
+
+                        escalarB = 1
+                    else:
+
+                        try:
+
+                            escalarB = Fraction(self.matB_escalar.get().strip())
+                        except:
+
+                            print("En la matriz B, ingresó una escalar no válida")
+
+                    suma_matrices(A, B, escalarA, escalarB, log_func=print)
                     self.result_var.set("Suma realizada — ver registro")
 
                 elif metodo == 'multiplicacion':
@@ -362,6 +400,8 @@ class Interfaz:
                     matriz = self._leer_matriz(self.entradas_aug)
                     transpuestamatriz(matriz, log_func=print)
 
+                    self.result_var.set("Este es el resultado de la transpuesta")
+
                 elif metodo == 'independencia':
 
                     if not self.entradas_aug:
@@ -369,6 +409,8 @@ class Interfaz:
                     
                     matriz = self._leer_matriz(self.entradas_aug)
                     independenciaLineal(matriz, log_func=print)
+
+                    self.result_var("La operación ya fue realizada")
 
 
         except Exception as exc:
