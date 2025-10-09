@@ -8,9 +8,6 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
     filas = len(matriz_a_reducir)
     columnas = len(matriz_a_reducir[0])
 
-    # Utilizado para mostrar la ecuación como combinación lineal, y encontrar su independencia lineal
-    ecuacion_matricial = matriz_a_reducir.copy()
-
     columnas_pivote = []
     variables_libres = []
     
@@ -183,7 +180,8 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
     else:
 
         log_func("\nEl sistema no tiene solución (Inconsistente)")
-
+    
+    # Retorna la matriz en forma escalonada reducida (utilizado para determinar la independencia lineal)
     return matriz_a_reducir
 
 # Eliminación de Gauss
