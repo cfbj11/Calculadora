@@ -65,7 +65,7 @@ def independenciaLineal(conjunto_vectores, log_func=print):
 
                 # Si se encontra una columna cero, eso quiere decir que sea columna no tiene pivote
                 # Por ende, esa columna tendría una variable libre, lo que haría que los vectores sean linealmente dependientes
-                if all(conjunto_vectores[j][i] == 0 for j in range(entradasPorVector)):
+                if all(conjunto_vectores[j][i] == 0 for j in range(i, entradasPorVector)):
 
                     dependientes = True
 
