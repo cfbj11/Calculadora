@@ -300,6 +300,7 @@ class Interfaz:
                     e.grid(row=i+1, column=j, padx=2, pady=2)
                     filas_entrada.append(e)
                 self.entradas_aug.append(filas_entrada)
+
         elif metodo == 'inversa':
             try:
                 n = int(self.num_eq_var.get())
