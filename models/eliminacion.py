@@ -269,7 +269,6 @@ def eliminacionInversa(matriz_a_reducir, log_func=print):
 
     # Extraer matriz inversa resultante
     inversa = [fila[columnas:] for fila in matriz_a_reducir]
-    return inversa
     
     # Imprimir solamente la matriz inversa sin el resultados de las variables y las variables libres
     log_func("\nMatriz Inversa:\n")
