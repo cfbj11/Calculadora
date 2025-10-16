@@ -5,7 +5,7 @@ def inversaMatriz(matriz, log_func=print):
 
     """Dada una matriz de n filas, por n columnas, hallar su inversa"""
     
-    # Copia de la matriz, para ver si
+    # Copia de la matriz, para ver si la matriz tiene la misma cantidad de pivotes, que de columnas
     matriz_copia = deepcopy(matriz)
     
     filas = len(matriz_copia)
@@ -25,7 +25,7 @@ def inversaMatriz(matriz, log_func=print):
     # Si la matriz es cuadrada, entonces se procede a encontrar si es invertible o no
     else:
 
-        log_func("Matriz inicial:\n")
+        log_func("Primero, se verifica si la matriz tiene 'n' pivotes\n")
         imprimir_matriz(matriz_copia, log_func=print)
 
         # Eliminación de filas hacia abajo
@@ -90,4 +90,98 @@ def inversaMatriz(matriz, log_func=print):
                         log_func(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
                         imprimir_matriz(matriz_copia, log_func=print)
 
-        imprimir_matriz(matriz, log_func=print)
+        # Este bloque es ejecuta cuando hay 'n' pivotes
+        if not noHayPivote:
+            
+            log_func("\nPara encontrar la inversa de la matriz, se hace una matriz aumentada ", end="")
+            log_func("con la matriz original, más la matriz de identidad, y se procede a aplicar eliminación de Gauss-Jordan")
+
+            # Crear matriz identidad
+            identidad = [[1 if i == j else 0 for j in range(filas)] for i in range(filas)]
+
+            # Adjuntar matriz identidad a matriz original
+            for i in range(filas):
+                matriz[i] += identidad[i]
+
+            # Eliminación de Gauss Jordan
+            log_func("Matriz inicial:\n")
+            imprimir_matriz(matriz, log_func=print)
+
+            # Eliminación de filas hacia abajo
+            for p in range(filas):
+        
+                pivote = None
+
+                # Si el elemento de la diagonal es cero, entonces se hace un intercambio de filas
+                if matriz[p][p] == 0:
+
+                    for i in range(p + 1, filas):
+
+                        if matriz[i][c] != 0:
+                            
+                            copia = matriz[i]
+
+                            matriz[i] = matriz[p]
+                            matriz[p] = copia
+
+                            log_func(f"\nSe intercambia la fila {p + 1} con la fila {i + 1}")
+
+                            imprimir_matriz(matriz, log_func=print)
+                            
+                            break
+
+                pivote = matriz[p][p]
+                log_func(f"\nPivote: {pivote:.3f}")
+                log_func(f"Ubicado en la fila {p + 1}, columna {p + 1}")
+            
+                for m in range(p + 1, filas):
+
+                    if matriz[m][p] != 0:
+
+                        escalar = matriz[m][p] / pivote
+
+                        for j in range(p, columnas * 2):
+
+                            matriz[m][j] = matriz[m][j] - (matriz[p][j] * escalar)
+
+                        log_func(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
+                        imprimir_matriz(matriz, log_func=print)
+
+                # Se normaliza la fila. Es decir, que cada elemento se divide entre el pivote 
+                for c in range(p, columnas * 2):
+
+                    matriz[p][c] = matriz[p][c] / pivote
+
+                log_func(f"\nSe normaliza la fila {p + 1}")
+                imprimir_matriz(matriz, log_func=print)
+
+            # Eliminación de filas hacia arriba
+            for r in range(filas - 1, 0, -1):
+
+
+                pivote = matriz[r][r]
+                log_func(f"Pivote: {pivote:.3f}")
+                log_func(f"Ubicado en la fila {r + 1}, columna {r + 1}")
+
+                for m in range(r - 1, -1, -1):
+
+                    if matriz[m][r] != 0:
+
+                        escalar = matriz[m][r] / pivote
+
+                        for j in range(r, columnas * 2):
+
+                            matriz[m][j] = matriz[m][j] - (matriz[pivote_fi][j] * escalar)
+
+                        log_func(f"\nSe elimina la fila {m + 1}, con la fila {r + 1}")
+                    
+                        imprimir_matriz(matriz, log_func=print)
+
+            inversa = []
+
+            for fila in matriz:
+
+                inversa.append(fila[filas:])
+
+            log_func("\nPor lo tanto, la inversa es igual a:")
+            imprimir_matriz(inversa, log_func=print)
