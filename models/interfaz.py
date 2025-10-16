@@ -148,6 +148,8 @@ class Interfaz:
             ttk.Label(self.entradas_contenedor, text="Transpuesta de una matriz m x n (Devolverá una matriz n x m)").pack(anchor='w')
         elif metodo == 'independencia':
             ttk.Label(self.entradas_contenedor, text="Conjunto de vectores, con m cantidad de entradas por vector").pack(anchor='w')
+        elif metodo == 'inversa':
+            ttk.Label(self.entradas_contenedor, text="Matriz (n filas x n columnas)").pack(anchor='w')
 
     def generar_entradas(self):
         metodo = self.metodo.get()

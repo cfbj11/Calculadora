@@ -25,6 +25,7 @@ def inversaMatriz(matriz, log_func=print):
     # Si la matriz es cuadrada, entonces se procede a encontrar si es invertible o no
     else:
 
+        # Se aplica eliminación de Gauss (OJO: No es la de Gauss Jordan)
         log_func("Primero, se verifica si la matriz tiene 'n' pivotes\n")
         imprimir_matriz(matriz_copia, log_func=print)
 
@@ -94,13 +95,14 @@ def inversaMatriz(matriz, log_func=print):
         if not noHayPivote:
             
             log_func("\nPara encontrar la inversa de la matriz, se hace una matriz aumentada ", end="")
-            log_func("con la matriz original, más la matriz de identidad, y se procede a aplicar eliminación de Gauss-Jordan")
+            log_func("con la matriz original, más la matriz de identidad, y se procede a aplicar eliminación de Gauss-Jordan\n")
 
             # Crear matriz identidad
             identidad = [[1 if i == j else 0 for j in range(filas)] for i in range(filas)]
 
             # Adjuntar matriz identidad a matriz original
             for i in range(filas):
+                
                 matriz[i] += identidad[i]
 
             # Eliminación de Gauss Jordan
@@ -158,7 +160,6 @@ def inversaMatriz(matriz, log_func=print):
             # Eliminación de filas hacia arriba
             for r in range(filas - 1, 0, -1):
 
-
                 pivote = matriz[r][r]
                 log_func(f"Pivote: {pivote:.3f}")
                 log_func(f"Ubicado en la fila {r + 1}, columna {r + 1}")
@@ -171,12 +172,13 @@ def inversaMatriz(matriz, log_func=print):
 
                         for j in range(r, columnas * 2):
 
-                            matriz[m][j] = matriz[m][j] - (matriz[pivote_fi][j] * escalar)
+                            matriz[m][j] = matriz[m][j] - (matriz[r][j] * escalar)
 
                         log_func(f"\nSe elimina la fila {m + 1}, con la fila {r + 1}")
                     
                         imprimir_matriz(matriz, log_func=print)
 
+            # Aquí se imprime la inversa
             inversa = []
 
             for fila in matriz:
