@@ -119,7 +119,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
 
                         matriz_a_reducir[m][j] = matriz_a_reducir[m][j] - (matriz_a_reducir[pivote_fi][j] * escalar)
 
-                    log_func(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
+                    log_func(f"\nSe elimina la fila {m + 1}, con la fila {r + 1}")
                     
                     imprimir_matriz(matriz_a_reducir, log_func=print)
     
