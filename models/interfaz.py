@@ -11,6 +11,7 @@ from models.eliminacion import eliminacionGaussJordan, eliminacionGauss
 from models.operaciones import suma_matrices, multiplicar_matrices
 from models.transpuesta import transpuestamatriz
 from models.independencia import independenciaLineal
+from models.inversa import inversaMatriz
 
 class _TextRedirector:
     """Redirige cadenas a un Text widget (para capturar print/print_func)."""
@@ -35,7 +36,7 @@ class Interfaz:
     def __init__(self):
         self.ventanaPrincipal = tk.Tk()
         self.ventanaPrincipal.title("Calculadora de Matrices — Gauss-Jordan / Suma / Multiplicación")
-        self.ventanaPrincipal.geometry("1200x720")
+        self.ventanaPrincipal.geometry("1350x720")
 
         # Variables
         self.metodo = tk.StringVar(value="gaussjordan")
@@ -62,7 +63,8 @@ class Interfaz:
 
         ttk.Label(top, text="Operacion", font=(None, 11, "bold")).pack(side=tk.LEFT)
         for val, label in [("gaussjordan", "Gauss-Jordan"), ("gauss", "Gauss"),
-                        ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal")]:
+            ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal"),
+            ("inversa", "Inversa")]:
             ttk.Radiobutton(top, text=label, variable=self.metodo, value=val, command=self._on_method_change).pack(side=tk.LEFT, padx=6)
 
         params = ttk.Frame(top)
@@ -298,6 +300,29 @@ class Interfaz:
                     filas_entrada.append(e)
                 self.entradas_aug.append(filas_entrada)
 
+        elif metodo == 'inversa':
+
+            try:
+                n = int(self.num_eq_var.get())
+                m = int(self.num_var_var.get())
+                if n <= 0 or m <= 0:
+                    raise ValueError
+            except Exception:
+                messagebox.showerror('Entrada inválida', 'Filas y columnas deben ser enteros positivos.')
+                return
+
+            grid = ttk.Frame(self.entradas_contenedor)
+            grid.pack(pady=6)
+
+            # entradas
+            for i in range(n):
+                filas_entrada = []
+                for j in range(m):
+                    e = ttk.Entry(grid, width=12)
+                    e.grid(row=i+1, column=j, padx=2, pady=2)
+                    filas_entrada.append(e)
+                self.entradas_aug.append(filas_entrada)
+
     def _leer_matriz(self, entradas):
         M = []
 
@@ -440,6 +465,16 @@ class Interfaz:
                     independenciaLineal(matriz, log_func=print)
 
                     self.result_var.set("La operación ya fue realizada")
+
+                elif metodo == 'inversa':
+                    
+                    if not self.entradas_aug:
+                        raise ValueError('Primero genere la matriz (botón "Generar entradas").')
+                    
+                    matriz = self._leer_matriz(self.entradas_aug)
+
+                    inversaMatriz(matriz, log_func=print)
+                    self.result_var.set("La matriz fue reducida a la forma escalonada reducida")
 
 
         except Exception as exc:
