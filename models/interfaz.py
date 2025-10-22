@@ -476,7 +476,7 @@ class Interfaz:
                     matriz = self._leer_matriz(self.entradas_aug)
 
                     inversaMatriz(matriz, log_func=print)
-                    self.result_var.set("La matriz fue reducida a la forma escalonada reducida")
+                    self.result_var.set("Se encontró con éxito la inversa de la matriz")
 
 
         except Exception as exc:
