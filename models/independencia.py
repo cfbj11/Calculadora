@@ -57,7 +57,7 @@ def independenciaLineal(conjunto_vectores, log_func=print):
 
                 fila.append(0)
 
-            eliminacionGaussJordan(conjunto_vectores, log_func=print)
+            eliminacionGaussJordan(conjunto_vectores, print=print)
 
             dependientes = False
             

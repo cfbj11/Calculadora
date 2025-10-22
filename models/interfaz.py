@@ -368,7 +368,7 @@ class Interfaz:
                     
                     matriz = self._leer_matriz(self.entradas_aug)
 
-                    eliminacionGaussJordan(matriz, log_func=print)
+                    eliminacionGaussJordan(matriz)
                     self.result_var.set("La matriz fue reducida a la forma escalonada reducida")
 
                 elif metodo == 'gauss':
@@ -378,7 +378,7 @@ class Interfaz:
                     
                     matriz = self._leer_matriz(self.entradas_aug)
 
-                    eliminacionGauss(matriz, log_func=print)
+                    eliminacionGauss(matriz)
                     self.result_var.set("La matriz fue reducida a la forma escalonada")
                     
                 elif metodo == 'suma':
@@ -414,7 +414,7 @@ class Interfaz:
 
                             print("En la matriz B, ingresó una escalar no válida")
 
-                    suma_matrices(A, B, escalarA, escalarB, log_func=print)
+                    suma_matrices(A, B, escalarA, escalarB)
                     self.result_var.set("Suma realizada — ver registro")
 
                 elif metodo == 'multiplicacion':
@@ -450,7 +450,7 @@ class Interfaz:
 
                     
                     B = self._leer_matriz(self.entradas_B)
-                    multiplicar_matrices(A, B, escalarA, escalarB, log_func=print)
+                    multiplicar_matrices(A, B, escalarA, escalarB)
                     self.result_var.set("Multiplicación realizada — ver registro")
                 elif metodo == 'transpuesta':
 
@@ -458,7 +458,7 @@ class Interfaz:
                         raise ValueError('Primero genere la matriz (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
-                    transpuestamatriz(matriz, log_func=print)
+                    transpuestamatriz(matriz)
 
                     self.result_var.set("Este es el resultado de la transpuesta")
 
@@ -468,7 +468,7 @@ class Interfaz:
                         raise ValueError('Primero genere el conjunto de vectores (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
-                    independenciaLineal(matriz, log_func=print)
+                    independenciaLineal(matriz)
 
                     self.result_var.set("La operación ya fue realizada")
 
@@ -479,7 +479,7 @@ class Interfaz:
                     
                     matriz = self._leer_matriz(self.entradas_aug)
 
-                    inversaMatriz(matriz, log_func=print)
+                    inversaMatriz(matriz)
                     self.result_var.set("Se encontró con éxito la inversa de la matriz")
 
                 elif metodo == 'det':
@@ -489,7 +489,7 @@ class Interfaz:
                     
                     matriz = self._leer_matriz(self.entradas_aug)
 
-                    detMatriz(matriz, log_func=print)
+                    detMatriz(matriz)
                     self.result_var.set("Se encontró con éxito la determinante de la matriz")
 
 
