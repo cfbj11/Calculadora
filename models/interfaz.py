@@ -12,6 +12,7 @@ from models.operaciones import suma_matrices, multiplicar_matrices
 from models.transpuesta import transpuestamatriz
 from models.independencia import independenciaLineal
 from models.inversa import inversaMatriz
+from models.determinante import detMatriz
 
 class _TextRedirector:
     """Redirige cadenas a un Text widget (para capturar print/print_func)."""
@@ -64,7 +65,7 @@ class Interfaz:
         ttk.Label(top, text="Operacion", font=(None, 11, "bold")).pack(side=tk.LEFT)
         for val, label in [("gaussjordan", "Gauss-Jordan"), ("gauss", "Gauss"),
             ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal"),
-            ("inversa", "Inversa")]:
+            ("inversa", "Inversa"), ("det", "Determinante")]:
             ttk.Radiobutton(top, text=label, variable=self.metodo, value=val, command=self._on_method_change).pack(side=tk.LEFT, padx=6)
 
         params = ttk.Frame(top)
@@ -150,6 +151,8 @@ class Interfaz:
             ttk.Label(self.entradas_contenedor, text="Conjunto de vectores, con m cantidad de entradas por vector").pack(anchor='w')
         elif metodo == 'inversa':
             ttk.Label(self.entradas_contenedor, text="Matriz (n filas x n columnas)").pack(anchor='w')
+        elif metodo == 'det':
+            ttk.Label(self.entradas_contenedor, text="Determinante de una matriz de n filas x n columnas").pack(anchor='w')
 
     def generar_entradas(self):
         metodo = self.metodo.get()
@@ -302,7 +305,7 @@ class Interfaz:
                     filas_entrada.append(e)
                 self.entradas_aug.append(filas_entrada)
 
-        elif metodo == 'inversa':
+        elif metodo in ('inversa', 'det'):
 
             try:
                 n = int(self.num_eq_var.get())
@@ -313,6 +316,7 @@ class Interfaz:
                 messagebox.showerror('Entrada inválida', 'Filas y columnas deben ser enteros positivos.')
                 return
 
+            ttk.Label(self.entradas_contenedor, text=f'Matriz: {m} filas × {n} columnas').pack(anchor='w')
             grid = ttk.Frame(self.entradas_contenedor)
             grid.pack(pady=6)
 
@@ -476,7 +480,17 @@ class Interfaz:
                     matriz = self._leer_matriz(self.entradas_aug)
 
                     inversaMatriz(matriz, log_func=print)
-                    self.result_var.set("La matriz fue reducida a la forma escalonada reducida")
+                    self.result_var.set("Se encontró con éxito la inversa de la matriz")
+
+                elif metodo == 'det':
+                    
+                    if not self.entradas_aug:
+                        raise ValueError('Primero genere la matriz (botón "Generar entradas").')
+                    
+                    matriz = self._leer_matriz(self.entradas_aug)
+
+                    detMatriz(matriz, log_func=print)
+                    self.result_var.set("Se encontró con éxito la determinante de la matriz")
 
 
         except Exception as exc:
