@@ -1,7 +1,7 @@
 # models/interfaz.py
 
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, StringVar
 from contextlib import redirect_stdout
 import io
 
@@ -40,7 +40,7 @@ class Interfaz:
         self.ventanaPrincipal.geometry("1350x720")
 
         # Variables
-        self.metodo = tk.StringVar(value="gaussjordan")
+        self.metodo = tk.StringVar(value="sistemas")
         self.num_eq_var = tk.StringVar(value="")
         self.num_var_var = tk.StringVar(value="")
         self.matA_filas = tk.StringVar(value="")
@@ -63,13 +63,13 @@ class Interfaz:
         top.pack(side=tk.TOP, fill=tk.X)
 
         ttk.Label(top, text="Operacion", font=(None, 11, "bold")).pack(side=tk.LEFT)
-        for val, label in [("gaussjordan", "Gauss-Jordan"), ("gauss", "Gauss"),
-            ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal"),
+        for val, label in [("sistemas", "Resolver Sistemas"), ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal"),
             ("inversa", "Inversa"), ("det", "Determinante")]:
             ttk.Radiobutton(top, text=label, variable=self.metodo, value=val, command=self._on_method_change).pack(side=tk.LEFT, padx=6)
 
         params = ttk.Frame(top)
         params.pack(side=tk.LEFT, padx=12)
+
         ttk.Label(params, text="Filas (n):").grid(row=0, column=0, sticky='w')
         ttk.Entry(params, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
         ttk.Label(params, text="Columnas (m):").grid(row=0, column=2, sticky='w', padx=(8,0))
@@ -138,7 +138,7 @@ class Interfaz:
         # Limpiar la zona de entradas y generar instrucciones
         for w in self.entradas_contenedor.winfo_children():
             w.destroy()
-        if metodo in ('gauss', 'gaussjordan'):
+        if metodo == 'sistemas':
             ttk.Label(self.entradas_contenedor, text="Matriz (n filas × (m) columnas)").pack(anchor='w')
         elif metodo == 'suma':
             ttk.Label(self.entradas_contenedor, text="Suma de matrices: generará dos matrices A y B con mismas dimensiones").pack(anchor='w')
@@ -164,7 +164,7 @@ class Interfaz:
         self.entradas_A = []
         self.entradas_B = []
 
-        if metodo in ('gauss', 'gaussjordan'):
+        if metodo == 'sistemas':
             # generar matriz aumentada
             try:
                 n = int(self.num_eq_var.get())
@@ -176,6 +176,10 @@ class Interfaz:
                 return
 
             ttk.Label(self.entradas_contenedor, text=f'Matriz aumentada: {n} filas × {m} columnas').pack(anchor='w')
+            self.opciones = ttk.Combobox(self.entradas_contenedor, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
+            self.opciones.pack(anchor='w')
+            self.opciones.state(["readonly"]) # Restringe al usuario en poner otra cosa en el Combobox
+
             grid = ttk.Frame(self.entradas_contenedor)
             grid.pack(pady=6)
             # encabezados
@@ -361,25 +365,32 @@ class Interfaz:
         try:
             # redirigir cualquier print al Text (para mostrar pasos)
             with redirect_stdout(text_redirector):
-                if metodo == 'gaussjordan':
+                if metodo == 'sistemas':
                     
                     if not self.entradas_aug:
                         raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
 
-                    eliminacionGaussJordan(matriz)
-                    self.result_var.set("La matriz fue reducida a la forma escalonada reducida")
+                    opcion = self.opciones.get()
 
-                elif metodo == 'gauss':
+                    match (opcion):
 
-                    if not self.entradas_aug:
-                        raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
-                    
-                    matriz = self._leer_matriz(self.entradas_aug)
+                        case "Gauss-Jordan":
 
-                    eliminacionGauss(matriz)
-                    self.result_var.set("La matriz fue reducida a la forma escalonada")
+                            eliminacionGaussJordan(matriz)
+                            self.result_var.set("La matriz se redujo a la forma escalonada reducida")
+                        case "Gauss":
+
+                            eliminacionGauss(matriz)
+                            self.result_var.set("La matriz se redujo a la forma escalonada")
+                        case "Regla de Cramer":
+
+                            detMatriz(matriz)
+                            self.result_var.set("Se encontraron las soluciones del sistema")
+                        case _:
+
+                            raise ValueError('Primero, elija un método para resolver el')
                     
                 elif metodo == 'suma':
                     if not self.entradas_A or not self.entradas_B:
