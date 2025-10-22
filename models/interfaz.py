@@ -493,6 +493,7 @@ class Interfaz:
                     self.result_var.set("Se encontró con éxito la determinante de la matriz")
 
 
+
         except Exception as exc:
             # Mostrar la traza de error en log y un messagebox
             import traceback

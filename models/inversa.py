@@ -11,8 +11,6 @@ def inversaMatriz(matriz):
     filas = len(matriz_copia)
     columnas = len(matriz_copia[0])
 
-    columnas_pivote = []
-
     noHayPivote = False
 
     # La matriz, debe tener 'n' pivotes
@@ -67,7 +65,6 @@ def inversaMatriz(matriz):
 
                     pivote_fi = p
                     pivote_col = c
-                    columnas_pivote.append(c + 1)
 
                     break
             
@@ -119,7 +116,7 @@ def inversaMatriz(matriz):
 
                     for i in range(p + 1, filas):
 
-                        if matriz[i][c] != 0:
+                        if matriz[i][p] != 0:
                             
                             copia = matriz[i]
 
