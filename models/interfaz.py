@@ -260,7 +260,7 @@ class Interfaz:
                     e.grid(row=i, column=j, padx=2, pady=2)
                     fila.append(e)
                 self.entradas_B.append(fila)
-        elif metodo == 'transpuesta':
+        elif metodo in ('transpuesta', 'inversa', 'det'):
 
             try:
                 n = int(self.num_eq_var.get())
@@ -271,7 +271,7 @@ class Interfaz:
                 messagebox.showerror('Entrada inválida', 'Filas y columnas deben ser enteros positivos.')
                 return
 
-            ttk.Label(self.entradas_contenedor, text=f'Matriz: {m} filas × {n} columnas').pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text=f'Matriz: {n} filas × {m} columnas').pack(anchor='w')
             grid = ttk.Frame(self.entradas_contenedor)
             grid.pack(pady=6)
 
@@ -300,30 +300,6 @@ class Interfaz:
             # encabezados
             for j in range(m):
                 ttk.Label(grid, text=f'v{j+1}', anchor='center', width=10).grid(row=0, column=j)
-            # entradas
-            for i in range(n):
-                filas_entrada = []
-                for j in range(m):
-                    e = ttk.Entry(grid, width=12)
-                    e.grid(row=i+1, column=j, padx=2, pady=2)
-                    filas_entrada.append(e)
-                self.entradas_aug.append(filas_entrada)
-
-        elif metodo in ('inversa', 'det'):
-
-            try:
-                n = int(self.num_eq_var.get())
-                m = int(self.num_var_var.get())
-                if n <= 0 or m <= 0:
-                    raise ValueError
-            except Exception:
-                messagebox.showerror('Entrada inválida', 'Filas y columnas deben ser enteros positivos.')
-                return
-
-            ttk.Label(self.entradas_contenedor, text=f'Matriz: {m} filas × {n} columnas').pack(anchor='w')
-            grid = ttk.Frame(self.entradas_contenedor)
-            grid.pack(pady=6)
-
             # entradas
             for i in range(n):
                 filas_entrada = []
