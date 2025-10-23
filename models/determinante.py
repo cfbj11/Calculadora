@@ -1,6 +1,6 @@
 from models.imprimir_matriz import imprimir_matriz
 
-def detMatriz(matriz, log_func=print):
+def detMatriz(matriz):
 
     filas = len(matriz)
     columnas = len(matriz[0])
@@ -15,11 +15,8 @@ def detMatriz(matriz, log_func=print):
     else:
 
         det = 1 # Se inicializa con el valor de '1', para multiplicar por '-1', en caso de que hay intercambio de fila
-        log_func("Primero, se aplica eliminación de Gauss, para reducirla a la matriz triangular superior")
-        log_func("Para calcular la determinante, se multiplica cada elemento de la diagonal principal")
-        log_func("Si hay un cero, entonces la determinante es 0")
 
-        log_func("Matriz inicial:\n")
+        print("Matriz inicial:\n")
         imprimir_matriz(matriz, log_func=print)
 
         # Eliminación de filas hacia abajo
@@ -46,17 +43,17 @@ def detMatriz(matriz, log_func=print):
                             matriz[i] = matriz[p]
                             matriz[p] = copia
 
-                            log_func(f"\nSe intercambia la fila {p + 1} con la fila {i + 1}")
+                            print(f"\nSe intercambia la fila {p + 1} con la fila {i + 1}")
 
-                            log_func("Dado que ocurrió un intercambio de fila, la determinante va a tener el signo opuesto")
+                            print("Dado que ocurrió un intercambio de fila, la determinante va a tener el signo opuesto")
                             imprimir_matriz(matriz, log_func=print)
                             det *= -1
 
                             break
 
                 pivote = matriz[p][p]
-                log_func(f"\nPivote: {pivote:.3f}")
-                log_func(f"Ubicado en la fila {p + 1}, columna {p + 1}")
+                print(f"\nPivote: {pivote:.3f}")
+                print(f"Ubicado en la fila {p + 1}, columna {p + 1}")
 
             det *= pivote
                 
@@ -70,13 +67,15 @@ def detMatriz(matriz, log_func=print):
 
                         matriz[m][j] = matriz[m][j] - (matriz[p][j] * escalar)
 
-                    log_func(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
+                    print(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
                     imprimir_matriz(matriz, log_func=print)
 
         if columnaCero:
 
-            log_func("Se encontró un cero en la diagonal principal")
-            log_func("Por lo tanto, la determinante de la matriz es: 0")
+            print("Se encontró un cero en la diagonal principal")
+            print("Por lo tanto, la determinante de la matriz es 0")
+            return 0 # Usado para la regla de Cramer
         else:
 
-            log_func(f"La determinante de la matriz, es igual a: {det}")
+            print(f"La determinante de la matriz, es igual a: {det}")
+            return det # Usado para la regla de Cramer

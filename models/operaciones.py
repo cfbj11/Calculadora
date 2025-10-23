@@ -2,7 +2,7 @@
 
 from models.imprimir_matriz import imprimir_matriz
 
-def suma_matrices(A, B, escalarA, escalarB, log_func=print):
+def suma_matrices(A, B, escalarA, escalarB):
     """
     Suma A + B mostrando procedimientos.
     """
@@ -29,18 +29,18 @@ def suma_matrices(A, B, escalarA, escalarB, log_func=print):
     R = [[0.0 for _ in range(cols)] for _ in range(filas)]
 
     for i in range(filas):
-        log_func(f"\nFila {i+1}:")
+        print(f"\nFila {i+1}:")
         for j in range(cols):
             proc = f"A[{i+1},{j+1}] + B[{i+1},{j+1}] = {A[i][j]} + {B[i][j]} = {A[i][j] + B[i][j]}"
-            log_func(proc)
+            print(proc)
             R[i][j] = A[i][j] + B[i][j]
 
-    log_func("\nResultado final de la suma:")
-    imprimir_matriz(R, log_func)
+    print("\nResultado final de la suma:")
+    imprimir_matriz(R, print)
     return R
 
 
-def multiplicar_matrices(A, B, escalarA, escalarB, log_func=print):
+def multiplicar_matrices(A, B, escalarA, escalarB):
     """
     Multiplicación A x B mostrando procedimientos.
     """
@@ -70,7 +70,7 @@ def multiplicar_matrices(A, B, escalarA, escalarB, log_func=print):
     R = [[0.0 for _ in range(cols_B)] for _ in range(filas_A)]
 
     for i in range(filas_A):
-        log_func(f"\nFila {i+1}:")
+        print(f"\nFila {i+1}:")
         for j in range(cols_B):
             terms = []
             for t in range(k):
@@ -83,9 +83,9 @@ def multiplicar_matrices(A, B, escalarA, escalarB, log_func=print):
             val_expr = " + ".join(valores)
 
             s = sum(A[i][t] * B[t][j] for t in range(k))
-            log_func(f"{expr} = {val_expr} = {s}")
+            print(f"{expr} = {val_expr} = {s}")
             R[i][j] = s
 
-    log_func("\nResultado final de la multiplicación:")
-    imprimir_matriz(R, log_func)
+    print("\nResultado final de la multiplicación:")
+    imprimir_matriz(R, print)
     return R

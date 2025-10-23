@@ -1,7 +1,7 @@
 # models/interfaz.py
 
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, StringVar
 from contextlib import redirect_stdout
 import io
 
@@ -13,6 +13,7 @@ from models.transpuesta import transpuestamatriz
 from models.independencia import independenciaLineal
 from models.inversa import inversaMatriz
 from models.determinante import detMatriz
+from models.cramer import reglaCramer
 
 class _TextRedirector:
     """Redirige cadenas a un Text widget (para capturar print/print_func)."""
@@ -40,7 +41,7 @@ class Interfaz:
         self.ventanaPrincipal.geometry("1350x720")
 
         # Variables
-        self.metodo = tk.StringVar(value="gaussjordan")
+        self.metodo = tk.StringVar(value="sistemas")
         self.num_eq_var = tk.StringVar(value="")
         self.num_var_var = tk.StringVar(value="")
         self.matA_filas = tk.StringVar(value="")
@@ -63,13 +64,13 @@ class Interfaz:
         top.pack(side=tk.TOP, fill=tk.X)
 
         ttk.Label(top, text="Operacion", font=(None, 11, "bold")).pack(side=tk.LEFT)
-        for val, label in [("gaussjordan", "Gauss-Jordan"), ("gauss", "Gauss"),
-            ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal"),
+        for val, label in [("sistemas", "Resolver Sistemas"), ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal"),
             ("inversa", "Inversa"), ("det", "Determinante")]:
             ttk.Radiobutton(top, text=label, variable=self.metodo, value=val, command=self._on_method_change).pack(side=tk.LEFT, padx=6)
 
         params = ttk.Frame(top)
         params.pack(side=tk.LEFT, padx=12)
+
         ttk.Label(params, text="Filas (n):").grid(row=0, column=0, sticky='w')
         ttk.Entry(params, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
         ttk.Label(params, text="Columnas (m):").grid(row=0, column=2, sticky='w', padx=(8,0))
@@ -138,7 +139,7 @@ class Interfaz:
         # Limpiar la zona de entradas y generar instrucciones
         for w in self.entradas_contenedor.winfo_children():
             w.destroy()
-        if metodo in ('gauss', 'gaussjordan'):
+        if metodo == 'sistemas':
             ttk.Label(self.entradas_contenedor, text="Matriz (n filas × (m) columnas)").pack(anchor='w')
         elif metodo == 'suma':
             ttk.Label(self.entradas_contenedor, text="Suma de matrices: generará dos matrices A y B con mismas dimensiones").pack(anchor='w')
@@ -164,7 +165,7 @@ class Interfaz:
         self.entradas_A = []
         self.entradas_B = []
 
-        if metodo in ('gauss', 'gaussjordan'):
+        if metodo == 'sistemas':
             # generar matriz aumentada
             try:
                 n = int(self.num_eq_var.get())
@@ -176,6 +177,10 @@ class Interfaz:
                 return
 
             ttk.Label(self.entradas_contenedor, text=f'Matriz aumentada: {n} filas × {m} columnas').pack(anchor='w')
+            self.opciones = ttk.Combobox(self.entradas_contenedor, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
+            self.opciones.pack(anchor='w')
+            self.opciones.state(["readonly"]) # Restringe al usuario en poner otra cosa en el Combobox
+
             grid = ttk.Frame(self.entradas_contenedor)
             grid.pack(pady=6)
             # encabezados
@@ -256,7 +261,7 @@ class Interfaz:
                     e.grid(row=i, column=j, padx=2, pady=2)
                     fila.append(e)
                 self.entradas_B.append(fila)
-        elif metodo == 'transpuesta':
+        elif metodo in ('transpuesta', 'inversa', 'det'):
 
             try:
                 n = int(self.num_eq_var.get())
@@ -267,7 +272,7 @@ class Interfaz:
                 messagebox.showerror('Entrada inválida', 'Filas y columnas deben ser enteros positivos.')
                 return
 
-            ttk.Label(self.entradas_contenedor, text=f'Matriz: {m} filas × {n} columnas').pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text=f'Matriz: {n} filas × {m} columnas').pack(anchor='w')
             grid = ttk.Frame(self.entradas_contenedor)
             grid.pack(pady=6)
 
@@ -296,30 +301,6 @@ class Interfaz:
             # encabezados
             for j in range(m):
                 ttk.Label(grid, text=f'v{j+1}', anchor='center', width=10).grid(row=0, column=j)
-            # entradas
-            for i in range(n):
-                filas_entrada = []
-                for j in range(m):
-                    e = ttk.Entry(grid, width=12)
-                    e.grid(row=i+1, column=j, padx=2, pady=2)
-                    filas_entrada.append(e)
-                self.entradas_aug.append(filas_entrada)
-
-        elif metodo in ('inversa', 'det'):
-
-            try:
-                n = int(self.num_eq_var.get())
-                m = int(self.num_var_var.get())
-                if n <= 0 or m <= 0:
-                    raise ValueError
-            except Exception:
-                messagebox.showerror('Entrada inválida', 'Filas y columnas deben ser enteros positivos.')
-                return
-
-            ttk.Label(self.entradas_contenedor, text=f'Matriz: {m} filas × {n} columnas').pack(anchor='w')
-            grid = ttk.Frame(self.entradas_contenedor)
-            grid.pack(pady=6)
-
             # entradas
             for i in range(n):
                 filas_entrada = []
@@ -361,25 +342,32 @@ class Interfaz:
         try:
             # redirigir cualquier print al Text (para mostrar pasos)
             with redirect_stdout(text_redirector):
-                if metodo == 'gaussjordan':
+                if metodo == 'sistemas':
                     
                     if not self.entradas_aug:
                         raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
 
-                    eliminacionGaussJordan(matriz, log_func=print)
-                    self.result_var.set("La matriz fue reducida a la forma escalonada reducida")
+                    opcion = self.opciones.get()
 
-                elif metodo == 'gauss':
+                    match (opcion):
 
-                    if not self.entradas_aug:
-                        raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
-                    
-                    matriz = self._leer_matriz(self.entradas_aug)
+                        case "Gauss-Jordan":
 
-                    eliminacionGauss(matriz, log_func=print)
-                    self.result_var.set("La matriz fue reducida a la forma escalonada")
+                            eliminacionGaussJordan(matriz)
+                            self.result_var.set("La matriz se redujo a la forma escalonada reducida")
+                        case "Gauss":
+
+                            eliminacionGauss(matriz)
+                            self.result_var.set("La matriz se redujo a la forma escalonada")
+                        case "Regla de Cramer":
+
+                            reglaCramer(matriz)
+                            self.result_var.set("Se encontraron las soluciones del sistema")
+                        case _:
+
+                            raise ValueError('Primero, elija un método para resolver el sistema')
                     
                 elif metodo == 'suma':
                     if not self.entradas_A or not self.entradas_B:
@@ -414,7 +402,7 @@ class Interfaz:
 
                             print("En la matriz B, ingresó una escalar no válida")
 
-                    suma_matrices(A, B, escalarA, escalarB, log_func=print)
+                    suma_matrices(A, B, escalarA, escalarB)
                     self.result_var.set("Suma realizada — ver registro")
 
                 elif metodo == 'multiplicacion':
@@ -450,7 +438,7 @@ class Interfaz:
 
                     
                     B = self._leer_matriz(self.entradas_B)
-                    multiplicar_matrices(A, B, escalarA, escalarB, log_func=print)
+                    multiplicar_matrices(A, B, escalarA, escalarB)
                     self.result_var.set("Multiplicación realizada — ver registro")
                 elif metodo == 'transpuesta':
 
@@ -458,7 +446,7 @@ class Interfaz:
                         raise ValueError('Primero genere la matriz (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
-                    transpuestamatriz(matriz, log_func=print)
+                    transpuestamatriz(matriz)
 
                     self.result_var.set("Este es el resultado de la transpuesta")
 
@@ -468,7 +456,7 @@ class Interfaz:
                         raise ValueError('Primero genere el conjunto de vectores (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
-                    independenciaLineal(matriz, log_func=print)
+                    independenciaLineal(matriz)
 
                     self.result_var.set("La operación ya fue realizada")
 
@@ -479,7 +467,7 @@ class Interfaz:
                     
                     matriz = self._leer_matriz(self.entradas_aug)
 
-                    inversaMatriz(matriz, log_func=print)
+                    inversaMatriz(matriz)
                     self.result_var.set("Se encontró con éxito la inversa de la matriz")
 
                 elif metodo == 'det':
@@ -488,8 +476,12 @@ class Interfaz:
                         raise ValueError('Primero genere la matriz (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
+                    
+                    print("Primero, se aplica eliminación de Gauss, para reducirla a la matriz triangular superior")
+                    print("Para calcular la determinante, se multiplica cada elemento de la diagonal principal")
+                    print("Si hay un cero, entonces la determinante es 0")
 
-                    detMatriz(matriz, log_func=print)
+                    detMatriz(matriz)
                     self.result_var.set("Se encontró con éxito la determinante de la matriz")
 
 

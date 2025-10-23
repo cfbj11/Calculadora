@@ -3,7 +3,7 @@
 from models.imprimir_matriz import imprimir_matriz
 
 # Eliminación de Gauss-Jordan
-def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
+def eliminacionGaussJordan(matriz_a_reducir):
 
     filas = len(matriz_a_reducir)
     columnas = len(matriz_a_reducir[0])
@@ -14,7 +14,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
     tieneSolucion = True
     
     # Se imprime la matriz antes de que sea se vuelva en la forma escalonada reducida
-    log_func("Matriz inicial:\n")
+    print("Matriz inicial:\n")
     imprimir_matriz(matriz_a_reducir, log_func=print)
 
     # Eliminación de filas hacia abajo
@@ -42,15 +42,15 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
                             matriz_a_reducir[i] = matriz_a_reducir[p]
                             matriz_a_reducir[p] = copia
 
-                            log_func(f"\nSe intercambia la fila {p + 1} con la fila {i + 1}")
+                            print(f"\nSe intercambia la fila {p + 1} con la fila {i + 1}")
 
                             imprimir_matriz(matriz_a_reducir, log_func=print)
                             
                             break
 
                 pivote = matriz_a_reducir[p][c]
-                log_func(f"\nPivote: {pivote:.3f}")
-                log_func(f"Ubicado en la fila {p + 1}, columna {c + 1}")
+                print(f"\nPivote: {pivote:.3f}")
+                print(f"Ubicado en la fila {p + 1}, columna {c + 1}")
 
                 pivote_fi = p
                 pivote_col = c
@@ -75,7 +75,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
 
                         matriz_a_reducir[m][j] = matriz_a_reducir[m][j] - (matriz_a_reducir[pivote_fi][j] * escalar)
 
-                    log_func(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
+                    print(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
                     imprimir_matriz(matriz_a_reducir, log_func=print)
 
             # Se normaliza la fila. Es decir, que cada elemento se divide entre el pivote 
@@ -83,7 +83,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
 
                 matriz_a_reducir[p][c] = matriz_a_reducir[p][c] / pivote
 
-            log_func(f"\nSe normaliza la fila {p + 1}")
+            print(f"\nSe normaliza la fila {p + 1}")
             imprimir_matriz(matriz_a_reducir, log_func=print)
 
     # Eliminación de filas hacia arriba
@@ -96,8 +96,8 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
             if matriz_a_reducir[r][l] != 0:
 
                 pivote = matriz_a_reducir[r][l]
-                log_func(f"Pivote: {pivote:.3f}")
-                log_func(f"Ubicado en la fila {r + 1}, columna {l + 1}")
+                print(f"Pivote: {pivote:.3f}")
+                print(f"Ubicado en la fila {r + 1}, columna {l + 1}")
 
                 pivote_fi = r
                 pivote_col = l
@@ -105,7 +105,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
 
         if pivote == None:
 
-            log_func(f"No se encontró pivote en la fila {r + 1}")
+            print(f"No se encontró pivote en la fila {r + 1}")
             continue
         else:
             
@@ -119,7 +119,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
 
                         matriz_a_reducir[m][j] = matriz_a_reducir[m][j] - (matriz_a_reducir[pivote_fi][j] * escalar)
 
-                    log_func(f"\nSe elimina la fila {m + 1}, con la fila {r + 1}")
+                    print(f"\nSe elimina la fila {m + 1}, con la fila {r + 1}")
                     
                     imprimir_matriz(matriz_a_reducir, log_func=print)
     
@@ -139,7 +139,7 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
 
             variables_libres.append(v)
     
-    log_func(f"Columnas pivote: {columnas_pivote}")
+    print(f"Columnas pivote: {columnas_pivote}")
     
     # Se verifica si la variable 'tieneSolucion' es True o False
     if tieneSolucion:
@@ -147,45 +147,45 @@ def eliminacionGaussJordan(matriz_a_reducir, log_func=print):
         # Si no hay variables libres, entonces el sistema tiene solución única
         if variables_libres == []:
 
-            log_func("\nEl sistema tiene una solución única (Consistente)")
-            log_func("SOLUCIONES AL SISTEMA:\n")
+            print("\nEl sistema tiene una solución única (Consistente)")
+            print("SOLUCIONES AL SISTEMA:\n")
             
             for m, n in enumerate(columnas_pivote):
 
-                log_func(f"x{n} = {matriz_a_reducir[m][columnas - 1]:.3f}")
+                print(f"x{n} = {matriz_a_reducir[m][columnas - 1]:.3f}")
         # En cambio, si hay variables libres, entonces se muestra la solución general del sistema
         else:
 
-            log_func("\nEl sistema tiene infinitas soluciones")
-            log_func("Entonces, la solución general para el sistema sería de la siguiente manera:\n")
+            print("\nEl sistema tiene infinitas soluciones")
+            print("Entonces, la solución general para el sistema sería de la siguiente manera:\n")
             
             for i, var in enumerate(columnas_pivote):
 
-                log_func(f"x{var} =", end="")
+                print(f"x{var} =", end="")
                 
                 # Si el término independiente es 0, entonces no se imprime, para que se vea más bonita la solución general
-                log_func(f" {matriz_a_reducir[i][columnas - 1]:.3f}" if matriz_a_reducir[i][columnas - 1] != 0 else "", end="")
+                print(f" {matriz_a_reducir[i][columnas - 1]:.3f}" if matriz_a_reducir[i][columnas - 1] != 0 else "", end="")
 
                 for a in variables_libres:
 
                     if matriz_a_reducir[i][a - 1] != 0:
 
                         # Si el coeficiente es 0, entonces no se imprime, para que se vea más bonita la solución general
-                        log_func(f" {-matriz_a_reducir[i][a - 1]:.3f}x{a}" if matriz_a_reducir[i][a - 1] >= 0 else f" + {-matriz_a_reducir[i][a - 1]:.3f}x{a}", end="")
+                        print(f" {-matriz_a_reducir[i][a - 1]:.3f}x{a}" if matriz_a_reducir[i][a - 1] >= 0 else f" + {-matriz_a_reducir[i][a - 1]:.3f}x{a}", end="")
                 
-                log_func("")
+                print("")
             for l in variables_libres:
 
-                log_func(f"x{l} es libre")
+                print(f"x{l} es libre")
     else:
 
-        log_func("\nEl sistema no tiene solución (Inconsistente)")
+        print("\nEl sistema no tiene solución (Inconsistente)")
     
     # Retorna la matriz en forma escalonada reducida (utilizado para determinar la independencia lineal)
     return matriz_a_reducir
 
 # Eliminación de Gauss
-def eliminacionGauss(matriz_a_reducir, log_func=print):
+def eliminacionGauss(matriz_a_reducir):
 
     filas = len(matriz_a_reducir)
     columnas = len(matriz_a_reducir[0])
@@ -196,7 +196,7 @@ def eliminacionGauss(matriz_a_reducir, log_func=print):
     
     # Se imprime la matriz antes de que sea se vuelva en la forma escalonada reducida
 
-    log_func("Matriz inicial:\n")
+    print("Matriz inicial:\n")
     imprimir_matriz(matriz_a_reducir, log_func=print)
 
     # Eliminación de filas hacia abajo
@@ -224,15 +224,15 @@ def eliminacionGauss(matriz_a_reducir, log_func=print):
                             matriz_a_reducir[i] = matriz_a_reducir[p]
                             matriz_a_reducir[p] = copia
 
-                            log_func(f"\nSe intercambia la fila {p + 1} con la fila {i + 1}")
+                            print(f"\nSe intercambia la fila {p + 1} con la fila {i + 1}")
 
                             imprimir_matriz(matriz_a_reducir, log_func=print)
                             
                             break
 
                 pivote = matriz_a_reducir[p][c]
-                log_func(f"\nPivote: {pivote:.3f}")
-                log_func(f"Ubicado en la fila {p + 1}, columna {c + 1}")
+                print(f"\nPivote: {pivote:.3f}")
+                print(f"Ubicado en la fila {p + 1}, columna {c + 1}")
 
                 pivote_fi = p
                 pivote_col = c
@@ -257,7 +257,7 @@ def eliminacionGauss(matriz_a_reducir, log_func=print):
 
                         matriz_a_reducir[m][j] = matriz_a_reducir[m][j] - (matriz_a_reducir[pivote_fi][j] * escalar)
 
-                    log_func(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
+                    print(f"\nSe elimina la fila {m + 1}, con la fila {p + 1}")
                     imprimir_matriz(matriz_a_reducir, log_func=print)
 
             # Se normaliza la fila. Es decir, que cada elemento se divide entre el pivote 
@@ -265,7 +265,7 @@ def eliminacionGauss(matriz_a_reducir, log_func=print):
 
                 matriz_a_reducir[p][c] = matriz_a_reducir[p][c] / pivote
 
-            log_func(f"\nSe normaliza la fila {p + 1}")
+            print(f"\nSe normaliza la fila {p + 1}")
             imprimir_matriz(matriz_a_reducir, log_func=print)
 
     for f in range(filas):
@@ -284,7 +284,7 @@ def eliminacionGauss(matriz_a_reducir, log_func=print):
 
             variables_libres.append(f"x{v}")
     
-    log_func(f"Columnas pivote: {columnas_pivote}")
+    print(f"Columnas pivote: {columnas_pivote}")
     
     # Se verifica si la variable 'tieneSolucion' es True o False
     if tieneSolucion:
@@ -292,8 +292,8 @@ def eliminacionGauss(matriz_a_reducir, log_func=print):
         # Si no hay variables libres, entonces el sistema tiene solución única
         if variables_libres == []:
 
-            log_func("\nEl sistema tiene una solución única (Consistente)")
-            log_func("Al hacer sustitución hacia atrás, se obtiene las siguientes soluciones\n")
+            print("\nEl sistema tiene una solución única (Consistente)")
+            print("Al hacer sustitución hacia atrás, se obtiene las siguientes soluciones\n")
 
             for s in range(filas - 1, -1, -1):
 
@@ -306,14 +306,14 @@ def eliminacionGauss(matriz_a_reducir, log_func=print):
 
             for m, n in enumerate(columnas_pivote):
 
-                log_func(f"x{n} = {matriz_a_reducir[m][columnas - 1]:.3f}")
+                print(f"x{n} = {matriz_a_reducir[m][columnas - 1]:.3f}")
             
         # En cambio, si hay variables libres, entonces se muestran aquí
         else:
 
-            log_func("\nEl sistema tiene infinitas soluciones")
-            log_func("Variables libres:")
-            log_func(variables_libres)
+            print("\nEl sistema tiene infinitas soluciones")
+            print("Variables libres:")
+            print(variables_libres)
     else:
 
-        log_func("\nEl sistema no tiene solución (Inconsistente)")
+        print("\nEl sistema no tiene solución (Inconsistente)")
