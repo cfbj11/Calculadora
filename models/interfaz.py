@@ -13,6 +13,7 @@ from models.transpuesta import transpuestamatriz
 from models.independencia import independenciaLineal
 from models.inversa import inversaMatriz
 from models.determinante import detMatriz
+from models.cramer import reglaCramer
 
 class _TextRedirector:
     """Redirige cadenas a un Text widget (para capturar print/print_func)."""
@@ -362,7 +363,7 @@ class Interfaz:
                             self.result_var.set("La matriz se redujo a la forma escalonada")
                         case "Regla de Cramer":
 
-                            detMatriz(matriz)
+                            reglaCramer(matriz)
                             self.result_var.set("Se encontraron las soluciones del sistema")
                         case _:
 

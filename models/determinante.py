@@ -77,6 +77,8 @@ def detMatriz(matriz):
 
             print("Se encontró un cero en la diagonal principal")
             print("Por lo tanto, la determinante de la matriz es: 0")
+            return 0 # Usado para la regla de Cramer
         else:
 
             print(f"La determinante de la matriz, es igual a: {det}")
+            return det # Usado para la regla de Cramer
