@@ -15,9 +15,6 @@ def detMatriz(matriz):
     else:
 
         det = 1 # Se inicializa con el valor de '1', para multiplicar por '-1', en caso de que hay intercambio de fila
-        print("Primero, se aplica eliminación de Gauss, para reducirla a la matriz triangular superior")
-        print("Para calcular la determinante, se multiplica cada elemento de la diagonal principal")
-        print("Si hay un cero, entonces la determinante es 0")
 
         print("Matriz inicial:\n")
         imprimir_matriz(matriz, log_func=print)
@@ -76,7 +73,7 @@ def detMatriz(matriz):
         if columnaCero:
 
             print("Se encontró un cero en la diagonal principal")
-            print("Por lo tanto, la determinante de la matriz es: 0")
+            print("Por lo tanto, la determinante de la matriz es 0")
             return 0 # Usado para la regla de Cramer
         else:
 

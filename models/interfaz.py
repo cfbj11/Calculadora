@@ -367,7 +367,7 @@ class Interfaz:
                             self.result_var.set("Se encontraron las soluciones del sistema")
                         case _:
 
-                            raise ValueError('Primero, elija un método para resolver el')
+                            raise ValueError('Primero, elija un método para resolver el sistema')
                     
                 elif metodo == 'suma':
                     if not self.entradas_A or not self.entradas_B:
@@ -476,6 +476,10 @@ class Interfaz:
                         raise ValueError('Primero genere la matriz (botón "Generar entradas").')
                     
                     matriz = self._leer_matriz(self.entradas_aug)
+                    
+                    print("Primero, se aplica eliminación de Gauss, para reducirla a la matriz triangular superior")
+                    print("Para calcular la determinante, se multiplica cada elemento de la diagonal principal")
+                    print("Si hay un cero, entonces la determinante es 0")
 
                     detMatriz(matriz)
                     self.result_var.set("Se encontró con éxito la determinante de la matriz")
