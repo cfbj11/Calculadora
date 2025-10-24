@@ -50,6 +50,34 @@ class Interfaz:
                 # No se pudo maximizar automáticamente; se mantiene la geometría por defecto
                 pass
 
+        # Configuración de estilos (tema y apariencia)
+        # Usamos ttk.Style para aplicar una apariencia más moderna y coherente
+        self.style = ttk.Style(self.ventanaPrincipal)
+        try:
+            # 'clam' suele permitir más personalización en Windows y Linux
+            self.style.theme_use('clam')
+        except Exception:
+            pass
+        # Tipografías y colores base
+        default_font = ('Segoe UI', 10)
+        heading_font = ('Segoe UI', 11, 'bold')
+        # Configuraciones generales
+        self.style.configure('TLabel', font=default_font)
+        self.style.configure('TFrame', background='#f7f9fb')
+        self.style.configure('TButton', font=default_font, padding=6)
+        self.style.configure('TEntry', font=default_font)
+        self.style.configure('TCombobox', font=default_font)
+        # Botón destacado
+        self.style.configure('Accent.TButton', font=default_font, padding=8, foreground='white', background='#2b7bd3')
+        self.style.map('Accent.TButton', background=[('active', '#1f5fa8'), ('!disabled', '#2b7bd3')])
+        # Resultado
+        self.style.configure('Result.TLabel', background='white', padding=6, font=default_font)
+        # Fondo de la ventana
+        try:
+            self.ventanaPrincipal.configure(bg='#e9eef6')
+        except Exception:
+            pass
+
         # Variables
         self.metodo = tk.StringVar(value="sistemas")
         self.num_eq_var = tk.StringVar(value="")
@@ -105,9 +133,9 @@ class Interfaz:
         # Botones
         botones = ttk.Frame(self.ventanaPrincipal, padding=6)
         botones.pack(fill=tk.X)
-        ttk.Button(botones, text="Generar entradas", command=self.generar_entradas).pack(side=tk.LEFT, padx=6)
-        ttk.Button(botones, text="Resolver / Ejecutar", command=self.resolver).pack(side=tk.LEFT, padx=6)
-        ttk.Button(botones, text="Limpiar", command=self.limpiar).pack(side=tk.LEFT, padx=6)
+        ttk.Button(botones, text="Generar entradas", command=self.generar_entradas, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
+        ttk.Button(botones, text="Resolver / Ejecutar", command=self.resolver, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
+        ttk.Button(botones, text="Limpiar", command=self.limpiar, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
         ttk.Button(botones, text="Guardar registro", command=self._guardar_log).pack(side=tk.RIGHT, padx=6)
 
         paned = ttk.Panedwindow(self.ventanaPrincipal, orient=tk.HORIZONTAL)
@@ -130,7 +158,8 @@ class Interfaz:
         derecha = ttk.Frame(paned, width=420)
         paned.add(derecha, weight=0)
         ttk.Label(derecha, text="Registro (paso a paso):", font=(None,10,'bold')).pack(anchor='w')
-        self.log_texto = tk.Text(derecha, height=24, state='disabled')
+        # Log con fuente monoespaciada y fondo blanco para legibilidad
+        self.log_texto = tk.Text(derecha, height=24, state='disabled', bg='#ffffff', font=('Consolas', 10), padx=6, pady=6)
         self.log_texto.pack(fill=tk.BOTH, expand=True)
         log_scroll = ttk.Scrollbar(derecha, orient=tk.VERTICAL, command=self.log_texto.yview)
         log_scroll.place(relx=1.0, rely=0, relheight=1.0, anchor='ne')
@@ -138,7 +167,8 @@ class Interfaz:
 
         ttk.Label(derecha, text="Resultado / Soluciones:", font=(None,10,'bold')).pack(anchor='w', pady=(6,0))
         self.result_var = tk.StringVar(value='-')
-        result_box = ttk.Label(derecha, textvariable=self.result_var, background='white', relief='sunken', padding=6)
+        # Caja de resultado con fondo blanco y relieve para destacarla
+        result_box = tk.Label(derecha, textvariable=self.result_var, bg='white', relief='sunken', padx=8, pady=6, font=('Segoe UI', 10))
         result_box.pack(fill=tk.X)
 
         # inicial
