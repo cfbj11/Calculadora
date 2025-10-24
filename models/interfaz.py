@@ -39,6 +39,16 @@ class Interfaz:
         self.ventanaPrincipal = tk.Tk()
         self.ventanaPrincipal.title("Calculadora de Matrices — Gauss-Jordan / Suma / Multiplicación")
         self.ventanaPrincipal.geometry("1350x720")
+        # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
+        # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
+        try:
+            self.ventanaPrincipal.state('zoomed')
+        except Exception:
+            try:
+                self.ventanaPrincipal.attributes('-zoomed', True)
+            except Exception:
+                # No se pudo maximizar automáticamente; se mantiene la geometría por defecto
+                pass
 
         # Variables
         self.metodo = tk.StringVar(value="sistemas")
