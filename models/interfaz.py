@@ -1,9 +1,8 @@
 # models/interfaz.py
 
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog, StringVar
+from tkinter import ttk, messagebox, filedialog
 from contextlib import redirect_stdout
-import io
 
 from fractions import Fraction
 
