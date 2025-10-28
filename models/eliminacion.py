@@ -282,7 +282,7 @@ def eliminacionGauss(matriz_a_reducir):
         # Si una columna no tiene pivote, entonces, se dice que la variable correspondiente a esa columna es libre
         if not next((e for e in columnas_pivote if e == v), False):
 
-            variables_libres.append(f"x{v}")
+            variables_libres.append(v)
     
     print(f"Columnas pivote: {columnas_pivote}")
     
@@ -293,17 +293,28 @@ def eliminacionGauss(matriz_a_reducir):
         if variables_libres == []:
 
             print("\nEl sistema tiene una solución única (Consistente)")
-            print("Al hacer sustitución hacia atrás, se obtiene las siguientes soluciones\n")
+            print("Para encontrar las soluciones del sistema, se realiza sustitución hacia atrás")
+            print("Como ya se tiene el valor en la última ecuación, se reemplaza el valor en la penúltima ecuación,", end="")
+            print(" para encontrar el valor de esa ecuación, eso se repite hasta encontrar el valor de la primera ecuación")
 
-            for s in range(filas - 1, -1, -1):
+            # Aquí se realiza la sustitución hacia atrás
+            for s in range(filas - 1, 0, -1):
 
-                valor = matriz_a_reducir[s][columnas - 1]
-                
-                for r in range(s):
+                # Verifica si la fila donde se va a hacer la sustitución hacia atrás, no es una fila cero
+                if not all(matriz_a_reducir[s][c] == 0 for c in range(columnas)):
 
-                    # Se hace la transpoción de términos
-                    matriz_a_reducir[r][columnas - 1] -= (matriz_a_reducir[r][s] * valor)
+                    valor = matriz_a_reducir[s][columnas - 1]
 
+                    for a in range(s):
+
+                        matriz_a_reducir[a][s] *= valor
+                    
+                    for r in range(s):
+
+                        matriz_a_reducir[r][columnas - 1] -= matriz_a_reducir[r][s]
+
+            print("\nSOLUCIONES DEL SISTEMA:\n")
+            
             for m, n in enumerate(columnas_pivote):
 
                 print(f"x{n} = {matriz_a_reducir[m][columnas - 1]:.3f}")
@@ -312,8 +323,31 @@ def eliminacionGauss(matriz_a_reducir):
         else:
 
             print("\nEl sistema tiene infinitas soluciones")
-            print("Variables libres:")
-            print(variables_libres)
+            print("Al hacer transposición de términos, la solución general sería:")
+            
+            for a, val in enumerate(columnas_pivote):
+
+                print(f"x{val} = ", end="")
+                print(f"{matriz_a_reducir[a][columnas - 1]:.3f}" if {matriz_a_reducir[a][columnas - 1]} != 0 else "", end="")
+
+                # Este ciclo 'for' identifica la entrada principal de la fila correspondiente
+                for b in range(a, columnas - 1):
+
+                    if matriz_a_reducir[a][b] != 0:
+
+                        for p in range(b + 1, columnas - 1):
+
+                            # Si el coeficiente es 0, entonces no se imprime, para que se vea más bonita la solución general
+                            print(f" {-matriz_a_reducir[a][p]:.3f}x{p + 1}" if matriz_a_reducir[a][p] >= 0 else f" + {-matriz_a_reducir[a][p]:.3f}x{p + 1}", end="")
+                        
+                        break
+
+                print("")
+            for l in variables_libres:
+
+                print(f"x{l} es libre")
+
+            print("\nDespués de haber definido el valor para cada variable libre, realice sustitución hacia atrás")
     else:
 
         print("\nEl sistema no tiene solución (Inconsistente)")
