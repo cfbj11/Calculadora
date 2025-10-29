@@ -31,7 +31,12 @@ def suma_matrices(A, B, escalarA, escalarB):
     for i in range(filas):
         print(f"\nFila {i+1}:")
         for j in range(cols):
-            proc = f"A[{i+1},{j+1}] + B[{i+1},{j+1}] = {A[i][j]} + {B[i][j]} = {A[i][j] + B[i][j]}"
+            
+            if escalarB >= 0:
+
+                proc = f"{escalarA if escalarA != 1 else ""}A[{i+1},{j+1}] + {escalarB if escalarB != 1 else ""}B[{i+1},{j+1}] = {A[i][j]} + {B[i][j]} = {A[i][j] + B[i][j]}"
+            else:
+                proc = f"{escalarA if escalarA != 1 else ""}A[{i+1},{j+1}] {escalarB if escalarB != -1 else "-"}B[{i+1},{j+1}] = {A[i][j]} + {B[i][j]} = {A[i][j] + B[i][j]}"
             print(proc)
             R[i][j] = A[i][j] + B[i][j]
 
