@@ -1,7 +1,7 @@
 # models/interfaz.py
 
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, StringVar
 from contextlib import redirect_stdout
 
 from fractions import Fraction
@@ -36,7 +36,7 @@ class _TextRedirector:
 class Interfaz:
     def __init__(self):
         self.ventanaPrincipal = tk.Tk()
-        self.ventanaPrincipal.title("Calculadora de Matrices — Gauss-Jordan / Suma / Multiplicación")
+        self.ventanaPrincipal.title("NumExpert")
         self.ventanaPrincipal.geometry("1350x720")
         # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
         # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
@@ -78,7 +78,7 @@ class Interfaz:
             pass
 
         # Variables
-        self.metodo = tk.StringVar(value="sistemas")
+        self.metodo = tk.StringVar(value="")
         self.num_eq_var = tk.StringVar(value="")
         self.num_var_var = tk.StringVar(value="")
         self.matA_filas = tk.StringVar(value="")
@@ -104,7 +104,7 @@ class Interfaz:
         for val, label in [("sistemas", "Resolver Sistemas"), ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal"),
             ("inversa", "Inversa"), ("det", "Determinante")]:
             ttk.Radiobutton(top, text=label, variable=self.metodo, value=val, command=self._on_method_change).pack(side=tk.LEFT, padx=6)
-
+        
         params = ttk.Frame(top)
         params.pack(side=tk.LEFT, padx=12)
 
@@ -112,6 +112,10 @@ class Interfaz:
         ttk.Entry(params, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
         ttk.Label(params, text="Columnas (m):").grid(row=0, column=2, sticky='w', padx=(8,0))
         ttk.Entry(params, textvariable=self.num_var_var, width=6).grid(row=0, column=3, padx=4)
+
+        self.opciones = ttk.Combobox(params, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
+        self.opciones.grid(row=0, column=4, padx=4)
+        self.opciones.state(["readonly"]) # Restringe al usuario en poner otra cosa en el Combobox
 
         mat_frame = ttk.Frame(top)
         mat_frame.pack(side=tk.LEFT)
@@ -174,30 +178,45 @@ class Interfaz:
         self._on_method_change()
 
     def _on_method_change(self):
+        
         metodo = self.metodo.get()
         # Limpiar la zona de entradas y generar instrucciones
         for w in self.entradas_contenedor.winfo_children():
             w.destroy()
         if metodo == 'sistemas':
-            ttk.Label(self.entradas_contenedor, text="Matriz (n filas × (m) columnas)").pack(anchor='w')
+            
+            ttk.Label(self.entradas_contenedor, text="Primero, defina el método a utilizar para resolver el sistema").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="Posteriormente, defina las dimensiones de la matriz").pack(anchor="w")
+
         elif metodo == 'suma':
+            
             ttk.Label(self.entradas_contenedor, text="Suma de matrices: generará dos matrices A y B con mismas dimensiones").pack(anchor='w')
-            ttk.Label(self.entradas_contenedor, text="(Si no se especifica la escalar para alguna de las matrices, entonces\nla escalar para dicha matriz será 1)").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="(Si no se especifica el escalar para alguna de las matrices, entonces\nel escalar para dicha matriz será 1)").pack(anchor='w')
         elif metodo == 'multiplicacion':
+            
             ttk.Label(self.entradas_contenedor, text="Multiplicación de matrices: generará A (r×k) y B (k×c)").pack(anchor='w')
         elif metodo == 'transpuesta':
+            
             ttk.Label(self.entradas_contenedor, text="Transpuesta de una matriz m x n (Devolverá una matriz n x m)").pack(anchor='w')
         elif metodo == 'independencia':
+            
             ttk.Label(self.entradas_contenedor, text="Conjunto de vectores, con m cantidad de entradas por vector").pack(anchor='w')
         elif metodo == 'inversa':
+            
             ttk.Label(self.entradas_contenedor, text="Matriz (n filas x n columnas)").pack(anchor='w')
         elif metodo == 'det':
+            
             ttk.Label(self.entradas_contenedor, text="Determinante de una matriz de n filas x n columnas").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="La determinante se calcula mediante eliminación Gauss").pack(anchor='w')
+        else:
+
+            ttk.Label(self.entradas_contenedor, text="Elija un método para la calculadora").pack(anchor='w')
 
     def generar_entradas(self):
         metodo = self.metodo.get()
         # limpiar
         for w in self.entradas_contenedor.winfo_children():
+            
             w.destroy()
 
         self.entradas_aug = []
@@ -216,10 +235,6 @@ class Interfaz:
                 return
 
             ttk.Label(self.entradas_contenedor, text=f'Matriz aumentada: {n} filas × {m} columnas').pack(anchor='w')
-            self.opciones = ttk.Combobox(self.entradas_contenedor, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
-            self.opciones.pack(anchor='w')
-            self.opciones.state(["readonly"]) # Restringe al usuario en poner otra cosa en el Combobox
-
             grid = ttk.Frame(self.entradas_contenedor)
             grid.pack(pady=6)
             # encabezados
