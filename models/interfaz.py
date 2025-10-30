@@ -6,13 +6,13 @@ from contextlib import redirect_stdout
 
 from fractions import Fraction
 
-from models.eliminacion import eliminacionGaussJordan, eliminacionGauss
-from models.operaciones import suma_matrices, multiplicar_matrices
-from models.transpuesta import transpuestamatriz
-from models.independencia import independenciaLineal
-from models.inversa import inversaMatriz
-from models.determinante import detMatriz
-from models.cramer import reglaCramer
+from models.vectoresMatrices.eliminacion import eliminacionGaussJordan, eliminacionGauss
+from models.vectoresMatrices.operaciones import suma_matrices, multiplicar_matrices
+from models.vectoresMatrices.transpuesta import transpuestamatriz
+from models.vectoresMatrices.independencia import independenciaLineal
+from models.vectoresMatrices.inversa import inversaMatriz
+from models.determinantes.determinante import detMatriz
+from models.determinantes.cramer import reglaCramer
 
 class _TextRedirector:
     """Redirige cadenas a un Text widget (para capturar print/print_func)."""

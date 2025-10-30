@@ -1,7 +1,7 @@
 from copy import deepcopy
 from fractions import Fraction
 
-from models.determinante import detMatriz
+from models.determinantes.determinante import detMatriz
 
 def reglaCramer(matriz):
 
