@@ -1,7 +1,7 @@
 # models/interfaz.py
 
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog, StringVar
+from tkinter import ttk, messagebox, filedialog, Toplevel
 from contextlib import redirect_stdout
 
 from fractions import Fraction
@@ -34,10 +34,39 @@ class _TextRedirector:
         return
 
 class Interfaz:
+    
+    # MENÚ PRINCIPAL
     def __init__(self):
+
+        self.menu = tk.Tk()
+        self.menu.title("NumExpert")
+        self.menu.geometry("600x400")
+        self.menu.resizable(width=False, height=False)
+
+        font_titulos = ('Cambria Math', 24, 'bold')
+        font_texto = ('Times New Roman', 12)
+
+        menuFrame = ttk.Frame(self.menu)
+        menuFrame.pack(side=tk.TOP, fill=tk.X)
+
+        ttk.Label(menuFrame, text="Bienvenido a NumExpert", font=font_titulos).grid(row=0, column=0, padx=105)
+        ttk.Label(menuFrame, text="Seleccione una opción", font=font_texto).grid(row=1,column=0)
+
+        ttk.Button(menuFrame, text="Álgebra Lineal", padding=7, command=self.calculadora).grid(row=2, column=0, pady=8)
+        ttk.Button(menuFrame, text="Análisis Númerico", padding=7).grid(row=3, column=0, pady=8)
+        ttk.Button(menuFrame, text="Acerca de NumExpert", padding=7).grid(row=4, column=0, pady=8)
+
+        copyright = ttk.Label(menuFrame, text="© Copyright 2025 - 2025", font=font_texto).grid(row=5, column=0, pady=7)
+    
+    def calculadora(self):
+        
+        self.menu.wm_withdraw()
+        
         self.ventanaPrincipal = tk.Tk()
         self.ventanaPrincipal.title("NumExpert")
         self.ventanaPrincipal.geometry("1350x720")
+        self.ventanaPrincipal.resizable(width=False, height=False)
+        
         # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
         # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
         try:
@@ -139,7 +168,7 @@ class Interfaz:
         ttk.Button(botones, text="Generar entradas", command=self.generar_entradas, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
         ttk.Button(botones, text="Resolver / Ejecutar", command=self.resolver, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
         ttk.Button(botones, text="Limpiar", command=self.limpiar, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
-        ttk.Button(botones, text="Guardar registro", command=self._guardar_log).pack(side=tk.RIGHT, padx=6)
+        ttk.Button(botones, text="Guardar registro", command=self.menu.wm_deiconify).pack(side=tk.RIGHT, padx=6)
 
         paned = ttk.Panedwindow(self.ventanaPrincipal, orient=tk.HORIZONTAL)
         paned.pack(fill=tk.BOTH, expand=True, padx=8, pady=8)
@@ -581,4 +610,4 @@ class Interfaz:
 
     def run(self):
         
-        self.ventanaPrincipal.mainloop()
+        self.menu.mainloop()
