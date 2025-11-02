@@ -36,7 +36,7 @@ class _TextRedirector:
 class Interfaz:
     def __init__(self):
         self.ventanaPrincipal = tk.Tk()
-        self.ventanaPrincipal.title("Calculadora de Matrices — Gauss-Jordan / Suma / Multiplicación")
+        self.ventanaPrincipal.title("Calculadora de Matrices")
         self.ventanaPrincipal.geometry("1350x720")
         # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
         # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
@@ -61,19 +61,19 @@ class Interfaz:
         default_font = ('Segoe UI', 10)
         heading_font = ('Segoe UI', 11, 'bold')
         # Configuraciones generales
-        self.style.configure('TLabel', font=default_font)
-        self.style.configure('TFrame', background='#f7f9fb')
+        self.style.configure('TLabel', font=default_font, background='#0b5c71', foreground='#e6e6e6')
+        self.style.configure('TFrame', background='#0b5c71')
         self.style.configure('TButton', font=default_font, padding=6)
         self.style.configure('TEntry', font=default_font)
         self.style.configure('TCombobox', font=default_font)
         # Botón destacado
-        self.style.configure('Accent.TButton', font=default_font, padding=8, foreground='white', background='#2b7bd3')
-        self.style.map('Accent.TButton', background=[('active', '#1f5fa8'), ('!disabled', '#2b7bd3')])
+        self.style.configure('Accent.TButton', font=default_font, padding=8, foreground='white', background='#3b8b87')
+        self.style.map('Accent.TButton', background=[('active', '#e6e6e6'), ('!disabled', '#3b8b87')])
         # Resultado
         self.style.configure('Result.TLabel', background='white', padding=6, font=default_font)
         # Fondo de la ventana
         try:
-            self.ventanaPrincipal.configure(bg='#e9eef6')
+            self.ventanaPrincipal.configure(background='#0b5c71')
         except Exception:
             pass
 
@@ -100,53 +100,34 @@ class Interfaz:
         top = ttk.Frame(self.ventanaPrincipal, padding=8)
         top.pack(side=tk.TOP, fill=tk.X)
 
-        ttk.Label(top, text="Operacion", font=(None, 11, "bold")).pack(side=tk.LEFT)
-        for val, label in [("sistemas", "Resolver Sistemas"), ("suma", "Suma"), ("multiplicacion", "Multiplicación"), ("transpuesta", "Transpuesta"), ("independencia", "Independencia\nLineal"),
-            ("inversa", "Inversa"), ("det", "Determinante")]:
-            ttk.Radiobutton(top, text=label, variable=self.metodo, value=val, command=self._on_method_change).pack(side=tk.LEFT, padx=6)
-
-        params = ttk.Frame(top)
-        params.pack(side=tk.LEFT, padx=12)
-
-        ttk.Label(params, text="Filas (n):").grid(row=0, column=0, sticky='w')
-        ttk.Entry(params, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
-        ttk.Label(params, text="Columnas (m):").grid(row=0, column=2, sticky='w', padx=(8,0))
-        ttk.Entry(params, textvariable=self.num_var_var, width=6).grid(row=0, column=3, padx=4)
-
-        mat_frame = ttk.Frame(top)
-        mat_frame.pack(side=tk.LEFT)
-        ttk.Label(mat_frame, text="*A: filas").grid(row=0, column=0)
-        ttk.Entry(mat_frame, textvariable=self.matA_filas, width=4).grid(row=0, column=1)
-        ttk.Label(mat_frame, text="cols").grid(row=0, column=2)
-        ttk.Entry(mat_frame, textvariable=self.matA_columnas, width=4).grid(row=0, column=3)
-        ttk.Label(mat_frame, text="Escalar para A").grid(row=0, column=4)
-        ttk.Entry(mat_frame, textvariable=self.matA_escalar, width=4).grid(row=0, column=5)
-
-        ttk.Label(mat_frame, text="B: filas").grid(row=1, column=0)
-        ttk.Entry(mat_frame, textvariable=self.matB_filas, width=4).grid(row=1, column=1)
-        ttk.Label(mat_frame, text="cols").grid(row=1, column=2)
-        ttk.Entry(mat_frame, textvariable=self.matB_columnas, width=4).grid(row=1, column=3)
-        ttk.Label(mat_frame, text="Escalar para B").grid(row=1, column=4)
-        ttk.Entry(mat_frame, textvariable=self.matB_escalar, width=4).grid(row=1, column=5)
-
         # Botones
-        botones = ttk.Frame(self.ventanaPrincipal, padding=6)
-        botones.pack(fill=tk.X)
-        ttk.Button(botones, text="Generar entradas", command=self.generar_entradas, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
-        ttk.Button(botones, text="Resolver / Ejecutar", command=self.resolver, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
-        ttk.Button(botones, text="Limpiar", command=self.limpiar, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
-        ttk.Button(botones, text="Guardar registro", command=self._guardar_log).pack(side=tk.RIGHT, padx=6)
+        ttk.Button(top, text="Generar entradas", command=self.generar_entradas, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
+        ttk.Button(top, text="Resolver / Ejecutar", command=self.resolver, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
+        ttk.Button(top, text="Limpiar", command=self.limpiar, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
+        ttk.Button(top, text="Guardar registro", command=self._guardar_log, style='Accent.TButton').pack(side=tk.RIGHT, padx=6)
+
 
         paned = ttk.Panedwindow(self.ventanaPrincipal, orient=tk.HORIZONTAL)
         paned.pack(fill=tk.BOTH, expand=True, padx=8, pady=8)
 
-        izquierda = ttk.Frame(paned)
-        paned.add(izquierda, weight=1)
+        # Izquierda: Crear siete botones de manera vertical que reemplacen las acciones del raddiobutton
+        izquierda = ttk.Frame(paned, width=420)
+        paned.add(izquierda, weight=0)
+        ttk.Button(izquierda, text="Sistemas", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('sistemas'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
+        ttk.Button(izquierda, text="Suma", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('suma'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
+        ttk.Button(izquierda, text="Multiplicación", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('multiplicacion'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
+        ttk.Button(izquierda, text="Transpuesta", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('transpuesta'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
+        ttk.Button(izquierda, text="Independencia Lineal", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('independencia'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
+        ttk.Button(izquierda, text="Inversa", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('inversa'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
+        ttk.Button(izquierda, text="Determinante", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('det'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
 
         # Barras de desplazamiento para las entradas
-        self.canvas = tk.Canvas(izquierda)
-        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        vbar = ttk.Scrollbar(izquierda, orient=tk.VERTICAL, command=self.canvas.yview)
+        centro = ttk.Frame(paned, width=420)
+        paned.add(centro, weight=0)
+
+        self.canvas = tk.Canvas(centro)
+        self.canvas.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        vbar = ttk.Scrollbar(centro, orient=tk.VERTICAL, command=self.canvas.yview)
         vbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.canvas.configure(yscrollcommand=vbar.set)
         self.entradas_contenedor = ttk.Frame(self.canvas)
@@ -156,7 +137,7 @@ class Interfaz:
         # Derecha: El log y la pantalla de resultados
         derecha = ttk.Frame(paned, width=420)
         paned.add(derecha, weight=0)
-        ttk.Label(derecha, text="Registro (paso a paso):", font=(None,10,'bold')).pack(anchor='w')
+        ttk.Label(derecha, text="Registro (paso a paso):", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
         # Log con fuente monoespaciada y fondo blanco para legibilidad
         self.log_texto = tk.Text(derecha, height=24, state='disabled', bg='#ffffff', font=('Consolas', 10), padx=6, pady=6)
         self.log_texto.pack(fill=tk.BOTH, expand=True)
@@ -164,7 +145,7 @@ class Interfaz:
         log_scroll.place(relx=1.0, rely=0, relheight=1.0, anchor='ne')
         self.log_texto.configure(yscrollcommand=log_scroll.set)
 
-        ttk.Label(derecha, text="Resultado / Soluciones:", font=(None,10,'bold')).pack(anchor='w', pady=(6,0))
+        ttk.Label(derecha, text="Resultado / Soluciones:", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w', pady=(6,0))
         self.result_var = tk.StringVar(value='-')
         # Caja de resultado con fondo blanco y relieve para destacarla
         result_box = tk.Label(derecha, textvariable=self.result_var, bg='white', relief='sunken', padx=8, pady=6, font=('Segoe UI', 10))
@@ -173,32 +154,101 @@ class Interfaz:
         # inicial
         self._on_method_change()
 
+
     def _on_method_change(self):
         metodo = self.metodo.get()
         # Limpiar la zona de entradas y generar instrucciones
         for w in self.entradas_contenedor.winfo_children():
             w.destroy()
+
+        ttk.Label(self.entradas_contenedor, text="Instrucciones de Entrada:\n", font=(None,10,'bold')).pack(anchor='w', pady=(0,6))
+
+        cuadro_marco = ttk.Frame(self.entradas_contenedor)
+        cuadro_marco.pack(anchor='w')
+
         if metodo == 'sistemas':
-            ttk.Label(self.entradas_contenedor, text="Matriz (n filas × (m) columnas)").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="1. Seleccione el método para resolver el sistema de ecuaciones.").pack(anchor='w')
+            self.opciones = ttk.Combobox(self.entradas_contenedor, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
+            self.opciones.pack(anchor='w')
+            self.opciones.state(["readonly"])
+
+            ttk.Label(self.entradas_contenedor, text="2. Ingrese el número de filas y columnas del sistema de ecuaciones.").pack(anchor='w')
+            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
+            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
+
+            ttk.Label(self.entradas_contenedor, text="3. Genere las entradas.\n4. Digite los valores de cada ecuación.").pack(anchor='w')
+
         elif metodo == 'suma':
-            ttk.Label(self.entradas_contenedor, text="Suma de matrices: generará dos matrices A y B con mismas dimensiones").pack(anchor='w')
-            ttk.Label(self.entradas_contenedor, text="(Si no se especifica la escalar para alguna de las matrices, entonces\nla escalar para dicha matriz será 1)").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas en 'A'.").pack(anchor='w')
+            ttk.Label(cuadro_marco, text="A => Filas:").grid(row=0, column=0)
+            ttk.Entry(cuadro_marco, textvariable=self.matA_filas, width=4).grid(row=0, column=1)
+            ttk.Label(cuadro_marco, text=", Columnas:").grid(row=0, column=2)
+            ttk.Entry(cuadro_marco, textvariable=self.matA_columnas, width=4).grid(row=0, column=3)
+            ttk.Label(cuadro_marco, text="Escalar para A: ").grid(row=1, column=0)
+            ttk.Entry(cuadro_marco, textvariable=self.matA_escalar, width=4).grid(row=1, column=1)
+            ttk.Label(cuadro_marco, text=", Escalar para B: ").grid(row=1, column=2)
+            ttk.Entry(cuadro_marco, textvariable=self.matB_escalar, width=4).grid(row=1, column=3)
+
+            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de las matrices.\n3. Digite los valores de cada matriz.").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="(Si no se especifica la escalar para alguna de las matrices,\n entonces la escalar para dicha matriz será 1)").pack(anchor='w')
+
         elif metodo == 'multiplicacion':
-            ttk.Label(self.entradas_contenedor, text="Multiplicación de matrices: generará A (r×k) y B (k×c)").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas para las matrices A y B.").pack(anchor='w')
+            ttk.Label(cuadro_marco, text="A => Filas:").grid(row=0, column=0)
+            ttk.Entry(cuadro_marco, textvariable=self.matA_filas, width=4).grid(row=0, column=1)
+            ttk.Label(cuadro_marco, text=", Columnas:").grid(row=0, column=2)
+            ttk.Entry(cuadro_marco, textvariable=self.matA_columnas, width=4).grid(row=0, column=3)
+            ttk.Label(cuadro_marco, text=", Escalar para A: ").grid(row=0, column=4)
+            ttk.Entry(cuadro_marco, textvariable=self.matA_escalar, width=4).grid(row=0, column=5)
+            ttk.Label(cuadro_marco, text="B => Filas: ").grid(row=1, column=0)
+            ttk.Entry(cuadro_marco, textvariable=self.matB_filas, width=4).grid(row=1, column=1)
+            ttk.Label(cuadro_marco, text=", Columnas: ").grid(row=1, column=2)
+            ttk.Entry(cuadro_marco, textvariable=self.matB_columnas, width=4).grid(row=1, column=3)
+            ttk.Label(cuadro_marco, text=", Escalar para B: ").grid(row=1, column=4)
+            ttk.Entry(cuadro_marco, textvariable=self.matB_escalar, width=4).grid(row=1, column=5)
+
+            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas para ambas matrices\n3. Digite los valores para cada matriz").pack(anchor='w')
+
         elif metodo == 'transpuesta':
-            ttk.Label(self.entradas_contenedor, text="Transpuesta de una matriz m x n (Devolverá una matriz n x m)").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de la matriz inicial.").pack(anchor='w')
+            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
+            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
+
+            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de la matriz.\n3. Digite los valores de la matriz.").pack(anchor='w')
+
         elif metodo == 'independencia':
-            ttk.Label(self.entradas_contenedor, text="Conjunto de vectores, con m cantidad de entradas por vector").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de vectores(columnas) y entradas(filas).").pack(anchor='w')
+            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
+            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
+
+            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de cada vector.\n3. Digite los valores de cada vector.").pack(anchor='w')
+
         elif metodo == 'inversa':
-            ttk.Label(self.entradas_contenedor, text="Matriz (n filas x n columnas)").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de la matriz inicial.").pack(anchor='w')
+            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
+            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
+
+            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de la matriz.\n3. Digite los valores de la matriz.").pack(anchor='w')
+
         elif metodo == 'det':
-            ttk.Label(self.entradas_contenedor, text="Determinante de una matriz de n filas x n columnas").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de la matriz inicial.").pack(anchor='w')
+            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
+            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
+
+            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de la matriz.\n3. Digite los valores de la matriz.").pack(anchor='w')
 
     def generar_entradas(self):
         metodo = self.metodo.get()
-        # limpiar
-        for w in self.entradas_contenedor.winfo_children():
-            w.destroy()
 
         self.entradas_aug = []
         self.entradas_A = []
@@ -216,9 +266,6 @@ class Interfaz:
                 return
 
             ttk.Label(self.entradas_contenedor, text=f'Matriz aumentada: {n} filas × {m} columnas').pack(anchor='w')
-            self.opciones = ttk.Combobox(self.entradas_contenedor, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
-            self.opciones.pack(anchor='w')
-            self.opciones.state(["readonly"]) # Restringe al usuario en poner otra cosa en el Combobox
 
             grid = ttk.Frame(self.entradas_contenedor)
             grid.pack(pady=6)
@@ -230,7 +277,7 @@ class Interfaz:
             for i in range(n):
                 filas_entrada = []
                 for j in range(m):
-                    e = ttk.Entry(grid, width=12)
+                    e = ttk.Entry(grid, width=6)
                     e.grid(row=i+1, column=j, padx=2, pady=2)
                     filas_entrada.append(e)
                 self.entradas_aug.append(filas_entrada)
