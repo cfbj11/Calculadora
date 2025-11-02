@@ -36,7 +36,7 @@ class _TextRedirector:
 class Interfaz:
     def __init__(self):
         self.ventanaPrincipal = tk.Tk()
-        self.ventanaPrincipal.title("Calculadora de Matrices")
+        self.ventanaPrincipal.title("NumExpert")
         self.ventanaPrincipal.geometry("1350x720")
         # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
         # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
@@ -49,6 +49,8 @@ class Interfaz:
                 # No se pudo maximizar automáticamente; se mantiene la geometría por defecto
                 pass
 
+        self.ventanaPrincipal.configure(background='#0b5c71')
+
         # Configuración de estilos (tema y apariencia)
         # Usamos ttk.Style para aplicar una apariencia más moderna y coherente
         self.style = ttk.Style(self.ventanaPrincipal)
@@ -59,16 +61,16 @@ class Interfaz:
             pass
         # Tipografías y colores base
         default_font = ('Segoe UI', 10)
-        heading_font = ('Segoe UI', 11, 'bold')
+        label_font = ('Helvetica', 10)
         # Configuraciones generales
-        self.style.configure('TLabel', font=default_font, background='#0b5c71', foreground='#e6e6e6')
+        self.style.configure('TLabel', font=label_font, background='#0b5c71', foreground='#e6e6e6')
         self.style.configure('TFrame', background='#0b5c71')
         self.style.configure('TButton', font=default_font, padding=6)
         self.style.configure('TEntry', font=default_font)
         self.style.configure('TCombobox', font=default_font)
         # Botón destacado
-        self.style.configure('Accent.TButton', font=default_font, padding=8, foreground='white', background='#3b8b87')
-        self.style.map('Accent.TButton', background=[('active', '#e6e6e6'), ('!disabled', '#3b8b87')])
+        self.style.configure('Accent.TButton', font=default_font, padding=8, foreground='#e6e6e6', background='#3b8b87')
+        self.style.map('Accent.TButton', background=[('active', '#0d6462'), ('!disabled', '#3b8b87')])
         # Resultado
         self.style.configure('Result.TLabel', background='white', padding=6, font=default_font)
         # Fondo de la ventana
@@ -78,7 +80,7 @@ class Interfaz:
             pass
 
         # Variables
-        self.metodo = tk.StringVar(value="sistemas")
+        self.metodo = tk.StringVar(value="")
         self.num_eq_var = tk.StringVar(value="")
         self.num_var_var = tk.StringVar(value="")
         self.matA_filas = tk.StringVar(value="")
@@ -113,7 +115,7 @@ class Interfaz:
         # Izquierda: Crear siete botones de manera vertical que reemplacen las acciones del raddiobutton
         izquierda = ttk.Frame(paned, width=420)
         paned.add(izquierda, weight=0)
-        ttk.Button(izquierda, text="Sistemas", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('sistemas'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
+        ttk.Button(izquierda, text="Sistemas", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('sistemas'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=(0,30))
         ttk.Button(izquierda, text="Suma", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('suma'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
         ttk.Button(izquierda, text="Multiplicación", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('multiplicacion'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
         ttk.Button(izquierda, text="Transpuesta", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('transpuesta'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
@@ -126,6 +128,7 @@ class Interfaz:
         paned.add(centro, weight=0)
 
         self.canvas = tk.Canvas(centro)
+        self.canvas.configure(background='#0b5c71')
         self.canvas.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         vbar = ttk.Scrollbar(centro, orient=tk.VERTICAL, command=self.canvas.yview)
         vbar.pack(side=tk.RIGHT, fill=tk.Y)
@@ -154,17 +157,54 @@ class Interfaz:
         # inicial
         self._on_method_change()
 
-
     def _on_method_change(self):
         metodo = self.metodo.get()
         # Limpiar la zona de entradas y generar instrucciones
         for w in self.entradas_contenedor.winfo_children():
             w.destroy()
 
-        ttk.Label(self.entradas_contenedor, text="Instrucciones de Entrada:\n", font=(None,10,'bold')).pack(anchor='w', pady=(0,6))
+        ttk.Label(self.entradas_contenedor, text="Instrucciones de Entrada:\n", font=('Helvetica',12,'bold')).pack(anchor='w', pady=(0,6))
 
         cuadro_marco = ttk.Frame(self.entradas_contenedor)
         cuadro_marco.pack(anchor='w')
+
+        # Si la operación solo necesita una matriz
+        def fils_col():
+            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
+            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
+
+        # Si la operación utiliza dos matrices
+        def a_b():
+            # Cambio de mensaje si es suma
+            if metodo == 'suma':
+                ttk.Label(cuadro_marco, text="Filas: ").grid(row=0, column=0)
+            else:
+                ttk.Label(cuadro_marco, text="A => Filas: ").grid(row=0, column=0)
+            ttk.Entry(cuadro_marco, textvariable=self.matA_filas, width=4).grid(row=0, column=1)
+            ttk.Label(cuadro_marco, text=" , Columnas: ").grid(row=0, column=2)
+            ttk.Entry(cuadro_marco, textvariable=self.matA_columnas, width=4).grid(row=0, column=3)
+            # Cambio de ubicación de escalar si es suma
+            if metodo == 'suma':
+                ttk.Label(cuadro_marco, text=" Escalar para A: ").grid(row=1, column=0)
+                ttk.Entry(cuadro_marco, textvariable=self.matA_escalar, width=4).grid(row=1, column=1)
+            else:
+                ttk.Label(cuadro_marco, text=" Escalar para A: ").grid(row=0, column=4)
+                ttk.Entry(cuadro_marco, textvariable=self.matA_escalar, width=4).grid(row=0, column=5)
+            # Ingreso de valores para B si es multiplicación
+            if metodo == 'multiplicacion':                
+                ttk.Label(cuadro_marco, text="B => Filas: ").grid(row=1, column=0)
+                ttk.Entry(cuadro_marco, textvariable=self.matB_filas, width=4).grid(row=1, column=1)
+                ttk.Label(cuadro_marco, text=" , Columnas: ").grid(row=1, column=2)
+                ttk.Entry(cuadro_marco, textvariable=self.matB_columnas, width=4).grid(row=1, column=3)
+            # Cambio de ubicación de escalar si es suma
+            if metodo == 'suma':
+                ttk.Label(cuadro_marco, text=" , Escalar para B: ").grid(row=1, column=2)
+                ttk.Entry(cuadro_marco, textvariable=self.matB_escalar, width=4).grid(row=1, column=3)
+            else:
+                ttk.Label(cuadro_marco, text=" Escalar para B: ").grid(row=1, column=4)
+                ttk.Entry(cuadro_marco, textvariable=self.matB_escalar, width=4).grid(row=1, column=5)
 
         if metodo == 'sistemas':
             ttk.Label(self.entradas_contenedor, text="1. Seleccione el método para resolver el sistema de ecuaciones.").pack(anchor='w')
@@ -173,79 +213,32 @@ class Interfaz:
             self.opciones.state(["readonly"])
 
             ttk.Label(self.entradas_contenedor, text="2. Ingrese el número de filas y columnas del sistema de ecuaciones.").pack(anchor='w')
-            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
-            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
-
+            fils_col()
             ttk.Label(self.entradas_contenedor, text="3. Genere las entradas.\n4. Digite los valores de cada ecuación.").pack(anchor='w')
 
         elif metodo == 'suma':
-            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas en 'A'.").pack(anchor='w')
-            ttk.Label(cuadro_marco, text="A => Filas:").grid(row=0, column=0)
-            ttk.Entry(cuadro_marco, textvariable=self.matA_filas, width=4).grid(row=0, column=1)
-            ttk.Label(cuadro_marco, text=", Columnas:").grid(row=0, column=2)
-            ttk.Entry(cuadro_marco, textvariable=self.matA_columnas, width=4).grid(row=0, column=3)
-            ttk.Label(cuadro_marco, text="Escalar para A: ").grid(row=1, column=0)
-            ttk.Entry(cuadro_marco, textvariable=self.matA_escalar, width=4).grid(row=1, column=1)
-            ttk.Label(cuadro_marco, text=", Escalar para B: ").grid(row=1, column=2)
-            ttk.Entry(cuadro_marco, textvariable=self.matB_escalar, width=4).grid(row=1, column=3)
-
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de las dos matrices.").pack(anchor='w')
+            a_b()
             ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de las matrices.\n3. Digite los valores de cada matriz.").pack(anchor='w')
             ttk.Label(self.entradas_contenedor, text="(Si no se especifica la escalar para alguna de las matrices,\n entonces la escalar para dicha matriz será 1)").pack(anchor='w')
 
         elif metodo == 'multiplicacion':
             ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas para las matrices A y B.").pack(anchor='w')
-            ttk.Label(cuadro_marco, text="A => Filas:").grid(row=0, column=0)
-            ttk.Entry(cuadro_marco, textvariable=self.matA_filas, width=4).grid(row=0, column=1)
-            ttk.Label(cuadro_marco, text=", Columnas:").grid(row=0, column=2)
-            ttk.Entry(cuadro_marco, textvariable=self.matA_columnas, width=4).grid(row=0, column=3)
-            ttk.Label(cuadro_marco, text=", Escalar para A: ").grid(row=0, column=4)
-            ttk.Entry(cuadro_marco, textvariable=self.matA_escalar, width=4).grid(row=0, column=5)
-            ttk.Label(cuadro_marco, text="B => Filas: ").grid(row=1, column=0)
-            ttk.Entry(cuadro_marco, textvariable=self.matB_filas, width=4).grid(row=1, column=1)
-            ttk.Label(cuadro_marco, text=", Columnas: ").grid(row=1, column=2)
-            ttk.Entry(cuadro_marco, textvariable=self.matB_columnas, width=4).grid(row=1, column=3)
-            ttk.Label(cuadro_marco, text=", Escalar para B: ").grid(row=1, column=4)
-            ttk.Entry(cuadro_marco, textvariable=self.matB_escalar, width=4).grid(row=1, column=5)
-
+            a_b()
             ttk.Label(self.entradas_contenedor, text="2. Genere las entradas para ambas matrices\n3. Digite los valores para cada matriz").pack(anchor='w')
 
-        elif metodo == 'transpuesta':
+        elif metodo in ('transpuesta', 'inversa', 'det'):
             ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de la matriz inicial.").pack(anchor='w')
-            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
-            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
-
+            fils_col()
             ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de la matriz.\n3. Digite los valores de la matriz.").pack(anchor='w')
 
         elif metodo == 'independencia':
-            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de vectores(columnas) y entradas(filas).").pack(anchor='w')
-            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
-            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
-
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de vectores (columnas) y entradas (filas).").pack(anchor='w')
+            fils_col()
             ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de cada vector.\n3. Digite los valores de cada vector.").pack(anchor='w')
 
-        elif metodo == 'inversa':
-            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de la matriz inicial.").pack(anchor='w')
-            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
-            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
-
-            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de la matriz.\n3. Digite los valores de la matriz.").pack(anchor='w')
-
-        elif metodo == 'det':
-            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de la matriz inicial.").pack(anchor='w')
-            ttk.Label(cuadro_marco, text="Filas (n):").grid(row=0, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
-            ttk.Label(cuadro_marco, text="Columnas (m):").grid(row=1, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
-
-            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de la matriz.\n3. Digite los valores de la matriz.").pack(anchor='w')
+        else:
+            ttk.Label(self.entradas_contenedor, text="Seleccione un método de operación.").pack(anchor='w')
 
     def generar_entradas(self):
         metodo = self.metodo.get()
@@ -264,22 +257,39 @@ class Interfaz:
             except Exception:
                 messagebox.showerror('Entrada inválida', 'Ecuaciones e incógnitas deben ser enteros positivos.')
                 return
+            
+            v = m - 1
 
             ttk.Label(self.entradas_contenedor, text=f'Matriz aumentada: {n} filas × {m} columnas').pack(anchor='w')
 
             grid = ttk.Frame(self.entradas_contenedor)
             grid.pack(pady=6)
-            # encabezados
-            for j in range(m - 1):
-                ttk.Label(grid, text=f'x{j+1}', anchor='center', width=10).grid(row=0, column=j)
-            ttk.Label(grid, text='b', width=10).grid(row=0, column=m - 1)
+
             # entradas
             for i in range(n):
+                columna_actual = 0
                 filas_entrada = []
-                for j in range(m):
-                    e = ttk.Entry(grid, width=6)
-                    e.grid(row=i+1, column=j, padx=2, pady=2)
+
+                for j in range(v):
+                    e = ttk.Entry(grid, width=5)
+                    e.grid(row=i, column=columna_actual, padx=2, pady=2, sticky='e')
                     filas_entrada.append(e)
+                    columna_actual += 1
+
+                    ttk.Label(grid, text=f"x{j+1}", anchor='w').grid(row=i, column=columna_actual, sticky='w')
+                    columna_actual += 1
+
+                    if j < v - 1:
+                        ttk.Label(grid, text="+", anchor='center').grid(row=i, column=columna_actual, padx=4)
+                        columna_actual += 1
+                    else:
+                        ttk.Label(grid, text="=", anchor='center').grid(row=i, column=columna_actual, padx=(6,4))
+                        columna_actual += 1
+                    
+                e_b = ttk.Entry(grid, width=5)
+                e_b.grid(row=i, column=columna_actual, padx=2, pady=2)
+                filas_entrada.append(e_b)
+
                 self.entradas_aug.append(filas_entrada)
 
         elif metodo == 'suma':
