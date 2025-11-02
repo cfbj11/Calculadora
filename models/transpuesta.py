@@ -1,6 +1,6 @@
 from models.imprimir_matriz import imprimir_matriz
 
-def transpuestamatriz(matriz, log_func=print):
+def transpuestamatriz(matriz):
 
     transpuesta = []
     
@@ -15,10 +15,10 @@ def transpuestamatriz(matriz, log_func=print):
 
             transpuesta[n].append(matriz[m][n])
 
-    log_func("\nLa transpuesta de la matriz sería")
+    print("\nLa transpuesta de la matriz sería")
     imprimir_matriz(transpuesta, log_func=print)
 
     if transpuesta == matriz:
 
-        log_func("\nAdemás, la matriz es simétrica")
-        log_func("O sea, su transpuesta es igual a ella misma")
+        print("\nAdemás, la matriz es simétrica")
+        print("O sea, su transpuesta es igual a ella misma")
