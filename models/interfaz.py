@@ -292,7 +292,6 @@ class Interfaz:
             # Botón para mostrar la equivalencia del sistema en forma matricial
             ttk.Button(grid_e, text='Forma Matricial', command=self.transformarSistema).grid(row= n + 1, column=1, pady=8)
 
-
         elif metodo == 'suma':
 
             try:
@@ -439,73 +438,88 @@ class Interfaz:
 
         with redirect_stdout(text_redirector):
             
-            print("De la manera matricial, el sistema sería equivalente a:\n")
+            print("De forma matricial, el sistema sería equivalente a:\n")
 
-            for i, ec in enumerate(self.entradas_aug):
+            try:
+
+                for i, ec in enumerate(self.entradas_aug):
                 
-                matrizEqv.append(list())
-                sistema.append(list())
+                    matrizEqv.append(list())
+                    sistema.append(list())
                 
-                for r in ec:
+                    for r in ec:
             
-                    u = r.get().strip()
+                        u = r.get().strip()
 
-                    # Insertar '*' entre número y variable (por ejemplo, 2x → 2*x)
-                    u = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', u)
+                        # Insertar '*' entre número y variable (por ejemplo, 2x → 2*x)
+                        u = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', u)
                     
-                    # También entre variable y paréntesis (por ejemplo, x(y+1) → x*(y+1))
-                    u = re.sub(r'([a-zA-Z])\(', r'\1*(', u)
+                        # También entre variable y paréntesis (por ejemplo, x(y+1) → x*(y+1))
+                        u = re.sub(r'([a-zA-Z])\(', r'\1*(', u)
                     
-                    # Y entre paréntesis y variable ((x+1)y → (x+1)*y)
-                    u = re.sub(r'\)([a-zA-Z])', r')*\1', u)
+                        # Y entre paréntesis y variable ((x+1)y → (x+1)*y)
+                        u = re.sub(r'\)([a-zA-Z])', r')*\1', u)
 
-                    if not '=' in u: # Si no hay signo igual, tira un error
+                        if not '=' in u: # Si no hay signo igual, tira un error
 
-                        messagebox.showerror(title=f"Error en la ecuación {i + 1}", message="Falta el signo '='")
-                    elif len(u.split('=')) > 2: # Si en la ecuación, hay un '=' de más, se lanza un error
+                            messagebox.showerror(title=f"Error en la ecuación {i + 1}", message="Falta el signo '='")
+                        elif len(u.split('=')) > 2: # Si en la ecuación, hay un '=' de más, se lanza un error
 
-                        messagebox.showerror(title=f"Error en la ecuación {i + 1}", message="Ingresó de manera érronea la ecuación")
-                    else:
+                            messagebox.showerror(title=f"Error en la ecuación {i + 1}", message="Ingresó de manera érronea la ecuación")
+                        else:
 
-                        ladoIzquierdo, ladoDerecho = u.split('=')
+                            # A partir del signo '=', se divide la ecuación en dos partes
+                            ladoIzquierdo, ladoDerecho = u.split('=')
                         
-                        ladoIzquierdo = sympify(ladoIzquierdo)
-                        ladoDerecho = sympify(ladoDerecho)
+                            ladoIzquierdo = sympify(ladoIzquierdo)
+                            ladoDerecho = sympify(ladoDerecho)
 
-                        vars_ladoDerecho = list(ladoDerecho.free_symbols)
+                            vars_ladoDerecho = list(ladoDerecho.free_symbols)
 
-                        if vars_ladoDerecho != []:
+                            # Si en el lado derecho, hay términos, esos términos se transponen al lado izquierdo
+                            if vars_ladoDerecho != []:
 
-                            for var in vars_ladoDerecho:
+                                for var in vars_ladoDerecho:
 
-                                ladoIzquierdo -= ladoDerecho.coeff(var)*var
-                                ladoDerecho -= ladoDerecho.coeff(var)*var # Se quitan los términos del lado derecho
+                                    ladoIzquierdo -= ladoDerecho.coeff(var)*var
+                                    ladoDerecho -= ladoDerecho.coeff(var)*var # Se quitan los términos del lado derecho
 
-                        coeficientes = sorted(list(ladoIzquierdo.free_symbols), key=lambda x: str(x), reverse=True)
-                        numVars.append(coeficientes[0])
+                            # Se obtiene los términos usados en la fila
+                            terminos = sorted(list(ladoIzquierdo.free_symbols), key=lambda x: str(x), reverse=True)
+                            numVars.append(terminos[0])
 
-                        sistema[i].append(ladoIzquierdo)
-                        sistema[i].append(ladoDerecho)
+                            sistema[i].append(ladoIzquierdo)
+                            sistema[i].append(ladoDerecho)
 
-            numVars = sorted(list(numVars), key=lambda x: str(x), reverse=True)
-            numVars[0] = str(numVars[0])
+                numVars = sorted(list(numVars), key=lambda x: str(x), reverse=True)
+                numVars[0] = str(numVars[0])
 
-            numCol = int(numVars[0].replace('x',''))
+                # Se calcula el número de columnas que tiene el sistema
+                numCol = int(numVars[0].replace('x',''))
 
-            incognitas = list(symbols(f'x1:{numCol + 1}'))
-            print(incognitas)
+                # Lista que genera variables del tipo 'x1', 'x2', 'x3', etc
+                # Se utiliza para verificar si el usuario escribió las incógnitas de esa manera
+                incognitas = list(symbols(f'x1:{numCol + 1}'))
+                print(f"Variables en el sistema: {incognitas}\n")
                 
-            for p in range(len(self.entradas_aug)):
+                for p in range(len(self.entradas_aug)):
 
-                for var in incognitas:
+                    for q in range(numCol):
 
-                    matrizEqv[p].append(sistema[p][0].coeff(var))
+                        # Agrega los coeficientes de las incógnitas
+                        matrizEqv[p].append(sistema[p][0].coeff(incognitas[q]))
 
-                matrizEqv[p].append(sistema[p][1])
-                    
-            imprimir_matriz(matrizEqv)
+                    # Se agrega el término independiente de la respectiva fila
+                    matrizEqv[p].append(sistema[p][1])
+        
+                imprimir_matriz(matrizEqv)
 
-        return matrizEqv
+                # Retorna el resultado, el cual es usado para su resolución
+                return matrizEqv
+            except: # Lanza una excepción por si algo sale mal a la hora de transformar el sistema en forma matricial
+
+                messagebox.showerror(title="Error fatal", message="Algo salió mal a la hora de leer el sistema. " \
+                "Revise si escribió de forma correcta el sistema", icon="warning")
 
     def resolver(self):
         metodo = self.metodo.get()
@@ -526,7 +540,7 @@ class Interfaz:
                     if not self.entradas_aug:
                         raise ValueError('Primero genere la matriz aumentada (botón "Generar entradas").')
                     
-                    matriz = self._leer_matriz(self.entradas_aug)
+                    matriz = self.transformarSistema()
 
                     opcion = self.opciones.get()
 
@@ -662,8 +676,6 @@ class Interfaz:
 
                     detMatriz(matriz)
                     self.result_var.set("Se encontró con éxito la determinante de la matriz")
-
-
 
         except Exception as exc:
             # Mostrar la traza de error en log y un messagebox
