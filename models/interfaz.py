@@ -3,7 +3,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from contextlib import redirect_stdout
-from sympy import sympify, symbols
+from sympy import sympify, symbols, pretty
 
 # Acrónimo de 'Regular Expressions'. Utilizada para que sea más fácil ingresar ecuaciones
 import re
@@ -438,7 +438,7 @@ class Interfaz:
 
         with redirect_stdout(text_redirector):
             
-            print("De forma matricial, el sistema sería equivalente a:\n")
+            print("A partir del sistema dado:\n")
 
             try:
 
@@ -488,6 +488,9 @@ class Interfaz:
                             terminos = sorted(list(ladoIzquierdo.free_symbols), key=lambda x: str(x), reverse=True)
                             numVars.append(terminos[0])
 
+                            # Se imprimen las ecuaciones respectivamente
+                            print(f"{pretty(ladoIzquierdo)} = {ladoDerecho}")
+
                             sistema[i].append(ladoIzquierdo)
                             sistema[i].append(ladoDerecho)
 
@@ -500,7 +503,6 @@ class Interfaz:
                 # Lista que genera variables del tipo 'x1', 'x2', 'x3', etc
                 # Se utiliza para verificar si el usuario escribió las incógnitas de esa manera
                 incognitas = list(symbols(f'x1:{numCol + 1}'))
-                print(f"Variables en el sistema: {incognitas}\n")
                 
                 for p in range(len(self.entradas_aug)):
 
@@ -512,6 +514,7 @@ class Interfaz:
                     # Se agrega el término independiente de la respectiva fila
                     matrizEqv[p].append(sistema[p][1])
         
+                print("\nEl sistema, en forma matricial, sería de la siguiente manera:\n")
                 imprimir_matriz(matrizEqv)
 
                 # Retorna el resultado, el cual es usado para su resolución
