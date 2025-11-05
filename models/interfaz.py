@@ -3,6 +3,10 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from contextlib import redirect_stdout
+from sympy import sympify, symbols
+
+# Acrónimo de 'Regular Expressions'. Utilizada para que sea más fácil ingresar ecuaciones
+import re
 
 from fractions import Fraction
 
@@ -13,6 +17,8 @@ from models.vectoresMatrices.independencia import independenciaLineal
 from models.vectoresMatrices.inversa import inversaMatriz
 from models.determinantes.determinante import detMatriz
 from models.determinantes.cramer import reglaCramer
+
+from models.imprimir_matriz import imprimir_matriz
 
 class _TextRedirector:
     """Redirige cadenas a un Text widget (para capturar print/print_func)."""
@@ -89,6 +95,7 @@ class Interfaz:
         self.matB_filas = tk.StringVar(value="")
         self.matB_columnas = tk.StringVar(value="")
         self.matB_escalar = tk.StringVar(value="")
+        self.metodoEscoger = tk.StringVar(value="Elija un método")
 
         # Grids de entrada
         self.entradas_aug = []
@@ -159,6 +166,7 @@ class Interfaz:
 
     def _on_method_change(self):
         metodo = self.metodo.get()
+
         # Limpiar la zona de entradas y generar instrucciones
         for w in self.entradas_contenedor.winfo_children():
             w.destroy()
@@ -208,13 +216,19 @@ class Interfaz:
 
         if metodo == 'sistemas':
             ttk.Label(self.entradas_contenedor, text="1. Seleccione el método para resolver el sistema de ecuaciones.").pack(anchor='w')
-            self.opciones = ttk.Combobox(self.entradas_contenedor, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
+            self.opciones = ttk.Combobox(self.entradas_contenedor, textvariable=self.metodoEscoger, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
             self.opciones.pack(anchor='w')
             self.opciones.state(["readonly"])
 
-            ttk.Label(self.entradas_contenedor, text="2. Ingrese el número de filas y columnas del sistema de ecuaciones.").pack(anchor='w')
-            fils_col()
-            ttk.Label(self.entradas_contenedor, text="3. Genere las entradas.\n4. Digite los valores de cada ecuación.").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="2. Ingrese el número de ecuaciones del sistema").pack(anchor='w')
+            ttk.Label(cuadro_marco, text="N° de ecuaciones:").grid(row=0, column=0, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
+            ttk.Label(self.entradas_contenedor, text="3. Genere los cuadros de entradas, y en cada uno,\ningrese la ecuación").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="4. Una vez ingresadas las ecuaciones, si desea, haga clic en \n'Ecuación Matricial'. Si no, haga clic en 'Resolver'").pack(anchor='w')
+
+            # Una pequeña nota al usuario, sobre cómo debe ingresar cada ecuación
+            ttk.Label(self.entradas_contenedor, text="Nota: Para las incógnitas, escribalas como x1, x2, x3 y así\nsucesivamente.").pack(anchor='w')
+
 
         elif metodo == 'suma':
             ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de las dos matrices.").pack(anchor='w')
@@ -251,46 +265,33 @@ class Interfaz:
             # generar matriz aumentada
             try:
                 n = int(self.num_eq_var.get())
-                m = int(self.num_var_var.get())
-                if n <= 0 or m <= 0:
+                if n <= 0:
                     raise ValueError
             except Exception:
-                messagebox.showerror('Entrada inválida', 'Ecuaciones e incógnitas deben ser enteros positivos.')
+                messagebox.showerror('Entrada inválida', 'N° de ecuaciones debe ser un número no negativo')
                 return
+
+            ttk.Label(self.entradas_contenedor,text="Sistema lineal:").pack(anchor='w')
             
-            v = m - 1
-
-            ttk.Label(self.entradas_contenedor, text=f'Matriz aumentada: {n} filas × {m} columnas').pack(anchor='w')
-
-            grid = ttk.Frame(self.entradas_contenedor)
-            grid.pack(pady=6)
+            grid_e = ttk.Frame(self.entradas_contenedor)
+            grid_e.pack(anchor='w')
 
             # entradas
             for i in range(n):
-                columna_actual = 0
                 filas_entrada = []
 
-                for j in range(v):
-                    e = ttk.Entry(grid, width=5)
-                    e.grid(row=i, column=columna_actual, padx=2, pady=2, sticky='e')
-                    filas_entrada.append(e)
-                    columna_actual += 1
-
-                    ttk.Label(grid, text=f"x{j+1}", anchor='w').grid(row=i, column=columna_actual, sticky='w')
-                    columna_actual += 1
-
-                    if j < v - 1:
-                        ttk.Label(grid, text="+", anchor='center').grid(row=i, column=columna_actual, padx=4)
-                        columna_actual += 1
-                    else:
-                        ttk.Label(grid, text="=", anchor='center').grid(row=i, column=columna_actual, padx=(6,4))
-                        columna_actual += 1
-                    
-                e_b = ttk.Entry(grid, width=5)
-                e_b.grid(row=i, column=columna_actual, padx=2, pady=2)
+                ttk.Label(grid_e, text=f"Ec {i + 1}:", padding=5).grid(row=i, column=0, pady=2)
+                
+                e_b = ttk.Entry(grid_e, width=35)
+                e_b.grid(row=i, column=1, padx=2)
+                
                 filas_entrada.append(e_b)
 
                 self.entradas_aug.append(filas_entrada)
+
+            # Botón para mostrar la equivalencia del sistema en forma matricial
+            ttk.Button(grid_e, text='Forma Matricial', command=self.transformarSistema).grid(row= n + 1, column=1, pady=8)
+
 
         elif metodo == 'suma':
 
@@ -423,6 +424,88 @@ class Interfaz:
             M.append(fila)
 
         return M
+    
+    def transformarSistema(self):
+
+        numVars = []
+        matrizEqv= []
+        sistema = []
+        
+        self.log_texto.configure(state='normal')
+        self.log_texto.delete('1.0', tk.END)
+        self.log_texto.configure(state='disabled')
+        
+        text_redirector = _TextRedirector(self.log_texto)
+
+        with redirect_stdout(text_redirector):
+            
+            print("De la manera matricial, el sistema sería equivalente a:\n")
+
+            for i, ec in enumerate(self.entradas_aug):
+                
+                matrizEqv.append(list())
+                sistema.append(list())
+                
+                for r in ec:
+            
+                    u = r.get().strip()
+
+                    # Insertar '*' entre número y variable (por ejemplo, 2x → 2*x)
+                    u = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', u)
+                    
+                    # También entre variable y paréntesis (por ejemplo, x(y+1) → x*(y+1))
+                    u = re.sub(r'([a-zA-Z])\(', r'\1*(', u)
+                    
+                    # Y entre paréntesis y variable ((x+1)y → (x+1)*y)
+                    u = re.sub(r'\)([a-zA-Z])', r')*\1', u)
+
+                    if not '=' in u: # Si no hay signo igual, tira un error
+
+                        messagebox.showerror(title=f"Error en la ecuación {i + 1}", message="Falta el signo '='")
+                    elif len(u.split('=')) > 2: # Si en la ecuación, hay un '=' de más, se lanza un error
+
+                        messagebox.showerror(title=f"Error en la ecuación {i + 1}", message="Ingresó de manera érronea la ecuación")
+                    else:
+
+                        ladoIzquierdo, ladoDerecho = u.split('=')
+                        
+                        ladoIzquierdo = sympify(ladoIzquierdo)
+                        ladoDerecho = sympify(ladoDerecho)
+
+                        vars_ladoDerecho = list(ladoDerecho.free_symbols)
+
+                        if vars_ladoDerecho != []:
+
+                            for var in vars_ladoDerecho:
+
+                                ladoIzquierdo -= ladoDerecho.coeff(var)*var
+                                ladoDerecho -= ladoDerecho.coeff(var)*var # Se quitan los términos del lado derecho
+
+                        coeficientes = sorted(list(ladoIzquierdo.free_symbols), key=lambda x: str(x), reverse=True)
+                        numVars.append(coeficientes[0])
+
+                        sistema[i].append(ladoIzquierdo)
+                        sistema[i].append(ladoDerecho)
+
+            numVars = sorted(list(numVars), key=lambda x: str(x), reverse=True)
+            numVars[0] = str(numVars[0])
+
+            numCol = int(numVars[0].replace('x',''))
+
+            incognitas = list(symbols(f'x1:{numCol + 1}'))
+            print(incognitas)
+                
+            for p in range(len(self.entradas_aug)):
+
+                for var in incognitas:
+
+                    matrizEqv[p].append(sistema[p][0].coeff(var))
+
+                matrizEqv[p].append(sistema[p][1])
+                    
+            imprimir_matriz(matrizEqv)
+
+        return matrizEqv
 
     def resolver(self):
         metodo = self.metodo.get()
