@@ -6,6 +6,7 @@ from contextlib import redirect_stdout
 from sympy import sympify, symbols, pretty
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy
 
 # Acrónimo de 'Regular Expressions'. Utilizada para que sea más fácil ingresar ecuaciones
 import re
@@ -203,6 +204,9 @@ class Interfaz:
         # Variables
 
         self.metodoNum = tk.StringVar(value="")
+        self.ecuacionEntrada = tk.StringVar(value="")
+        self.limInf = tk.StringVar(value="")
+        self.limSup = tk.StringVar(value="")
 
         metodos = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
         metodos.pack(side=tk.TOP, fill=tk.X)
@@ -210,8 +214,88 @@ class Interfaz:
         ttk.Button(metodos, text="Método Bisección", width=25).pack(side=tk.LEFT, padx=5)
         ttk.Button(metodos, text="Volver al menú", width=25, command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify()]).pack(side=tk.RIGHT, padx=5)
 
-        izquierda = ttk.Frame(self.ventanaPrincipal_AN)
-        izquierda.pack(side=tk.LEFT, fill=tk.X)
+        izquierda = ttk.Frame(self.ventanaPrincipal_AN, style='TFrame')
+        izquierda.pack(side=tk.LEFT, fill=tk.BOTH)
+
+        ttk.Label(izquierda, text="Ingrese la ecuación:").grid(row=0,column=0,pady=10, padx=5)
+        self.ecuacion = ttk.Entry(izquierda, width=40)
+        self.ecuacion.grid(row=1,column=0,pady=10)
+
+        ttk.Button(izquierda, text="Graficar función", command=self.graficarFuncion, width=30).grid(row=2,column=0,pady=10)
+
+        # Botones para mejorar la escritura de la ecuación
+
+        botonesEcuacion = ttk.Frame(izquierda, padding=10)
+        botonesEcuacion.grid(row=3,column=0)
+
+        # 1er fila de botones
+        ttk.Button(botonesEcuacion, text="^", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'^')).grid(row=0,column=0,pady=5, padx=6)
+        ttk.Button(botonesEcuacion, text="sin(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'sin(x)')).grid(row=0,column=1,pady=5, padx=6)
+        ttk.Button(botonesEcuacion, text="cos(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'cos(x)')).grid(row=0,column=2,pady=5, padx=6)
+        ttk.Button(botonesEcuacion, text="tan(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'tan(x)')).grid(row=0,column=3,pady=5, padx=6)
+
+        # 1er fila de botones
+        ttk.Button(botonesEcuacion, text="e", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'e')).grid(row=1,column=1,pady=5, padx=6)
+        ttk.Button(botonesEcuacion, text="π", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'pi')).grid(row=1,column=2,pady=5, padx=6)
+
+        # Entradas del intervalo
+
+        intervaloRaiz = ttk.Frame(izquierda, padding=10)
+        intervaloRaiz.grid(row=4,column=0)
+
+        ttk.Label(intervaloRaiz, text="Intervalo para encontrar la raíz (a partir de la gráfica)").pack(anchor='center')
+        ttk.Label(intervaloRaiz, text="Límite inferior (a)").pack(anchor='w', pady=4)
+        ttk.Entry(intervaloRaiz, width=30).pack(anchor='center', pady=2)
+        ttk.Label(intervaloRaiz, text="Límite superior (b)").pack(anchor='w', pady=4)
+        ttk.Entry(intervaloRaiz, width=30).pack(anchor='center', pady=2)
+        ttk.Button(intervaloRaiz, text="Encontrar respuesta").pack(anchor='center', pady=7)
+
+        self.grafica = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
+        self.grafica.pack(side=tk.TOP, fill=tk.BOTH)
+
+    def graficarFuncion(self):
+
+        for e in self.grafica.winfo_children():
+
+            e.destroy()
+        
+        ecua = self.ecuacion.get().strip()
+        ecua = ecua.replace("^", "**")
+
+        ecua = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', ecua)
+        
+        try:
+
+            ejeX = numpy.linspace(-10, 10, 400)
+        
+            # Crear un entorno seguro para evaluar la función
+            # Permitimos las funciones matemáticas comunes
+            entorno = {name: getattr(numpy, name) for name in dir(numpy) if not name.startswith("_")}
+            entorno.update({"x": ejeX, "pi": numpy.pi, "e": numpy.e})
+
+            ejeY = eval(ecua, {"__builtins__": None}, entorno)
+            # Crear figura
+            fig = Figure(figsize=(6, 4), dpi=100)
+            ax = fig.add_subplot(111)
+            ax.plot(ejeX, ejeY, color="blue")
+            # --- CONFIGURAR COMO PLANO CARTESIANO ---
+            ax.spines["top"].set_color("none")      # Quita borde superior
+            ax.spines["right"].set_color("none")    # Quita borde derecho
+            ax.spines["left"].set_position("zero")  # Eje Y pasa por x=0
+            ax.spines["bottom"].set_position("zero")# Eje X pasa por y=0
+
+            ax.set_aspect("auto")                   # Mantiene proporción libre
+            ax.grid(True, linestyle="--", linewidth=0.5)
+            ax.legend(loc="upper left")
+            ax.set_title(f"Gráfica de y = {pretty(ecua)}", fontsize=12)
+
+            # Mostrar en Tkinter
+            canvas = FigureCanvasTkAgg(fig, master=self.grafica)
+            canvas.draw()
+            canvas.get_tk_widget().pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        except:
+
+            messagebox.showerror(title="Error a la hora de graficar", message="Algo salió mal a la hora de grafica la función")
 
     def _build_ui(self):
         # Selección de tipo de operación
@@ -362,10 +446,6 @@ class Interfaz:
 
         else:
             ttk.Label(self.entradas_contenedor, text="Seleccione un método de operación.").pack(anchor='w')
-
-    def metodoNumerico():
-
-        eleccion = "bruh"
 
     def generar_entradas(self):
         metodo = self.metodo.get()
