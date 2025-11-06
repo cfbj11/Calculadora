@@ -20,6 +20,7 @@ from models.vectoresMatrices.independencia import independenciaLineal
 from models.vectoresMatrices.inversa import inversaMatriz
 from models.determinantes.determinante import detMatriz
 from models.determinantes.cramer import reglaCramer
+from models.biseccion import metodoBiseccion
 
 from models.imprimir_matriz import imprimir_matriz
 
@@ -245,10 +246,12 @@ class Interfaz:
 
         ttk.Label(intervaloRaiz, text="Intervalo para encontrar la raíz (a partir de la gráfica)").pack(anchor='center')
         ttk.Label(intervaloRaiz, text="Límite inferior (a)").pack(anchor='w', pady=4)
-        ttk.Entry(intervaloRaiz, width=30).pack(anchor='center', pady=2)
+        self.limI = ttk.Entry(intervaloRaiz, width=30)
+        self.limI.pack(anchor='center', pady=2)
         ttk.Label(intervaloRaiz, text="Límite superior (b)").pack(anchor='w', pady=4)
-        ttk.Entry(intervaloRaiz, width=30).pack(anchor='center', pady=2)
-        ttk.Button(intervaloRaiz, text="Encontrar respuesta").pack(anchor='center', pady=7)
+        self.limS = ttk.Entry(intervaloRaiz, width=30)
+        self.limS.pack(anchor='center', pady=2)
+        ttk.Button(intervaloRaiz, text="Encontrar respuesta", command=lambda: metodoBiseccion(limInf=float(self.limI.get().strip()),limSup=float(self.limS.get().strip()),funcion=self.ecuacion.get().strip())).pack(anchor='center', pady=7)
 
         self.grafica = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
         self.grafica.pack(side=tk.TOP, fill=tk.BOTH)
@@ -286,7 +289,6 @@ class Interfaz:
 
             ax.set_aspect("auto")                   # Mantiene proporción libre
             ax.grid(True, linestyle="--", linewidth=0.5)
-            ax.legend(loc="upper left")
             ax.set_title(f"Gráfica de y = {pretty(ecua)}", fontsize=12)
 
             # Mostrar en Tkinter
