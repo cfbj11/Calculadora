@@ -1,9 +1,11 @@
 # models/interfaz.py
 
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, Toplevel
 from contextlib import redirect_stdout
 from sympy import sympify, symbols, pretty
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # Acrónimo de 'Regular Expressions'. Utilizada para que sea más fácil ingresar ecuaciones
 import re
@@ -40,10 +42,59 @@ class _TextRedirector:
         return
 
 class Interfaz:
+    
+    # VENTANA PRINCIPAL
     def __init__(self):
-        self.ventanaPrincipal = tk.Tk()
-        self.ventanaPrincipal.title("NumExpert")
+
+        self.menuPrincipal = tk.Tk()
+        self.menuPrincipal.title("Calculadora NumExpert")
+        self.menuPrincipal.geometry("600x450")
+        self.menuPrincipal.resizable(width=False, height=False)
+
+        # Configuración de estilos (tema y apariencia)
+        # Usamos ttk.Style para aplicar una apariencia más moderna y coherente
+        style = ttk.Style(self.menuPrincipal)
+        try:
+            # 'clam' suele permitir más personalización en Windows y Linux
+            style.theme_use('clam')
+        except Exception:
+            pass
+        
+        # Tipografías y colores base
+        default_font = ('Segoe UI', 10)
+        label_font = ('Helvetica', 10)
+        
+        # Configuraciones generales
+        style.configure('TLabel', font=label_font, background='#0b5c71', foreground='#e6e6e6')
+        style.configure('TFrame', background='#0b5c71')
+        style.configure('TButton', font=default_font, padding=6)
+        style.configure('TEntry', font=default_font)
+        style.configure('TCombobox', font=default_font)
+        
+        # Botón destacado
+        style.configure('Accent.TButton', font=default_font, padding=8, foreground='#e6e6e6', background='#3b8b87')
+        style.map('Accent.TButton', background=[('active', '#0d6462'), ('!disabled', '#3b8b87')])
+        
+        # Fondo de la ventana
+        try:
+            self.menuPrincipal.configure(background='#0b5c71')
+        except Exception:
+            pass
+
+        ttk.Label(self.menuPrincipal, text="Bienvenido a NumExpert", font=('Cambria Math', 24, 'bold')).grid(row=0, column=0, padx=105)
+        ttk.Label(self.menuPrincipal, text="Seleccione una opción", font=('Times New Roman', 12)).grid(row=1,column=0)
+
+        ttk.Button(self.menuPrincipal, text="Álgebra Lineal", padding=7, command=lambda: [self.menuPrincipal.wm_withdraw(), self.algebraLineal()]).grid(row=2, column=0, pady=8)
+        ttk.Button(self.menuPrincipal, text="Análisis Númerico", padding=7, command=lambda: [self.menuPrincipal.wm_withdraw(), self.analisisNumerico()]).grid(row=3, column=0, pady=8)
+
+        ttk.Label(self.menuPrincipal, text="© Copyright 2025 - 2025", font=('Times New Roman', 12)).grid(row=5, column=0, pady=7)
+    
+    def algebraLineal(self):
+        
+        self.ventanaPrincipal = Toplevel(self.menuPrincipal)
+        self.ventanaPrincipal.title("NumExpert (Álgebra Lineal)")
         self.ventanaPrincipal.geometry("1350x720")
+        self.ventanaPrincipal.resizable(width=False, height=False)
         # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
         # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
         try:
@@ -59,26 +110,26 @@ class Interfaz:
 
         # Configuración de estilos (tema y apariencia)
         # Usamos ttk.Style para aplicar una apariencia más moderna y coherente
-        self.style = ttk.Style(self.ventanaPrincipal)
+        style = ttk.Style(self.ventanaPrincipal)
         try:
             # 'clam' suele permitir más personalización en Windows y Linux
-            self.style.theme_use('clam')
+            style.theme_use('clam')
         except Exception:
             pass
         # Tipografías y colores base
         default_font = ('Segoe UI', 10)
         label_font = ('Helvetica', 10)
         # Configuraciones generales
-        self.style.configure('TLabel', font=label_font, background='#0b5c71', foreground='#e6e6e6')
-        self.style.configure('TFrame', background='#0b5c71')
-        self.style.configure('TButton', font=default_font, padding=6)
-        self.style.configure('TEntry', font=default_font)
-        self.style.configure('TCombobox', font=default_font)
+        style.configure('TLabel', font=label_font, background='#0b5c71', foreground='#e6e6e6')
+        style.configure('TFrame', background='#0b5c71')
+        style.configure('TButton', font=default_font, padding=6)
+        style.configure('TEntry', font=default_font)
+        style.configure('TCombobox', font=default_font)
         # Botón destacado
-        self.style.configure('Accent.TButton', font=default_font, padding=8, foreground='#e6e6e6', background='#3b8b87')
-        self.style.map('Accent.TButton', background=[('active', '#0d6462'), ('!disabled', '#3b8b87')])
+        style.configure('Accent.TButton', font=default_font, padding=8, foreground='#e6e6e6', background='#3b8b87')
+        style.map('Accent.TButton', background=[('active', '#0d6462'), ('!disabled', '#3b8b87')])
         # Resultado
-        self.style.configure('Result.TLabel', background='white', padding=6, font=default_font)
+        style.configure('Result.TLabel', background='white', padding=6, font=default_font)
         # Fondo de la ventana
         try:
             self.ventanaPrincipal.configure(background='#0b5c71')
@@ -95,7 +146,7 @@ class Interfaz:
         self.matB_filas = tk.StringVar(value="")
         self.matB_columnas = tk.StringVar(value="")
         self.matB_escalar = tk.StringVar(value="")
-        self.metodoEscoger = tk.StringVar(value="Elija un método")
+        self.metodoEscoger = tk.StringVar(value="(Elija un método)")
 
         # Grids de entrada
         self.entradas_aug = []
@@ -103,6 +154,64 @@ class Interfaz:
         self.entradas_B = []
 
         self._build_ui()
+
+    def analisisNumerico(self):
+
+        self.ventanaPrincipal_AN = Toplevel(self.menuPrincipal)
+        self.ventanaPrincipal_AN.title("NumExpert (Análisis Numérico)")
+        self.ventanaPrincipal_AN.geometry("1350x720")
+        self.ventanaPrincipal_AN.resizable(width=False, height=False)
+
+        # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
+        # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
+        try:
+            
+            self.ventanaPrincipal_AN.state('zoomed')
+        except Exception:
+            try:
+                
+                self.ventanaPrincipal_AN.attributes('-zoomed', True)
+            except Exception:
+                
+                # No se pudo maximizar automáticamente; se mantiene la geometría por defecto
+                pass
+
+        # Configuración de estilos (tema y apariencia)
+        # Usamos ttk.Style para aplicar una apariencia más moderna y coherente
+        style = ttk.Style(self.menuPrincipal)
+        try:
+            # 'clam' suele permitir más personalización en Windows y Linux
+            style.theme_use('clam')
+        except Exception:
+            pass
+        
+        # Tipografías y colores base
+        default_font = ('Segoe UI', 10)
+        label_font = ('Helvetica', 10)
+        
+        # Configuraciones generales
+        style.configure('TLabel', font=label_font, background='#0b5c71', foreground='#e6e6e6')
+        style.configure('TFrame', background='#0b5c71')
+        style.configure('TButton', font=default_font, padding=6)
+        style.configure('TEntry', font=default_font)
+        style.configure('TCombobox', font=default_font)
+        
+        # Botón destacado
+        style.configure('Accent.TButton', font=default_font, padding=8, foreground='#e6e6e6', background='#3b8b87')
+        style.map('Accent.TButton', background=[('active', '#0d6462'), ('!disabled', '#3b8b87')])
+
+        # Variables
+
+        self.metodoNum = tk.StringVar(value="")
+
+        metodos = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
+        metodos.pack(side=tk.TOP, fill=tk.X)
+
+        ttk.Button(metodos, text="Método Bisección", width=25).pack(side=tk.LEFT, padx=5)
+        ttk.Button(metodos, text="Volver al menú", width=25, command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify()]).pack(side=tk.RIGHT, padx=5)
+
+        izquierda = ttk.Frame(self.ventanaPrincipal_AN)
+        izquierda.pack(side=tk.LEFT, fill=tk.X)
 
     def _build_ui(self):
         # Selección de tipo de operación
@@ -113,7 +222,7 @@ class Interfaz:
         ttk.Button(top, text="Generar entradas", command=self.generar_entradas, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
         ttk.Button(top, text="Resolver / Ejecutar", command=self.resolver, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
         ttk.Button(top, text="Limpiar", command=self.limpiar, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
-        ttk.Button(top, text="Guardar registro", command=self._guardar_log, style='Accent.TButton').pack(side=tk.RIGHT, padx=6)
+        ttk.Button(top, text="Volver al menú", command=lambda: [self.ventanaPrincipal.wm_withdraw(), self.menuPrincipal.wm_deiconify()], style='Accent.TButton').pack(side=tk.RIGHT, padx=6)
 
 
         paned = ttk.Panedwindow(self.ventanaPrincipal, orient=tk.HORIZONTAL)
@@ -253,6 +362,10 @@ class Interfaz:
 
         else:
             ttk.Label(self.entradas_contenedor, text="Seleccione un método de operación.").pack(anchor='w')
+
+    def metodoNumerico():
+
+        eleccion = "bruh"
 
     def generar_entradas(self):
         metodo = self.metodo.get()
@@ -721,4 +834,4 @@ class Interfaz:
 
     def run(self):
         
-        self.ventanaPrincipal.mainloop()
+        self.menuPrincipal.mainloop()
