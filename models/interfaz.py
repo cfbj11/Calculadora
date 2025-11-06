@@ -236,8 +236,8 @@ class Interfaz:
         ttk.Button(botonesEcuacion, text="tan(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'tan(x)')).grid(row=0,column=3,pady=5, padx=6)
 
         # 1er fila de botones
-        ttk.Button(botonesEcuacion, text="e", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'e')).grid(row=1,column=1,pady=5, padx=6)
-        ttk.Button(botonesEcuacion, text="π", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'pi')).grid(row=1,column=2,pady=5, padx=6)
+        ttk.Button(botonesEcuacion, text="e", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),numpy.e)).grid(row=1,column=1,pady=5, padx=6)
+        ttk.Button(botonesEcuacion, text="π", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),numpy.pi)).grid(row=1,column=2,pady=5, padx=6)
 
         # Entradas del intervalo
 
@@ -251,11 +251,39 @@ class Interfaz:
         ttk.Label(intervaloRaiz, text="Límite superior (b)").pack(anchor='w', pady=4)
         self.limS = ttk.Entry(intervaloRaiz, width=30)
         self.limS.pack(anchor='center', pady=2)
-        ttk.Button(intervaloRaiz, text="Encontrar respuesta", command=lambda: metodoBiseccion(limInf=float(self.limI.get().strip()),limSup=float(self.limS.get().strip()),funcion=self.ecuacion.get().strip())).pack(anchor='center', pady=7)
+        ttk.Button(intervaloRaiz, text="Encontrar respuesta", command=self.resolverEcuacion).pack(anchor='center', pady=7)
 
+        self.procedimiento = ttk.Frame(self.ventanaPrincipal_AN)
+        self.procedimiento.pack(side=tk.TOP, fill=tk.BOTH)
+        ttk.Label(self.procedimiento, text="PROCEDIMIENTO:", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
+        
+        # Log con fuente monoespaciada y fondo blanco para legibilidad
+        self.log_texto = tk.Text(self.procedimiento, height=24, state='disabled', bg='#ffffff', font=('Consolas', 10), padx=6, pady=6)
+        self.log_texto.pack(fill=tk.BOTH, expand=True)
+        log_scroll = ttk.Scrollbar(self.procedimiento, orient=tk.VERTICAL, command=self.log_texto.yview)
+        log_scroll.place(relx=1.0, rely=0, relheight=1.0, anchor='ne')
+        self.log_texto.configure(yscrollcommand=log_scroll.set)
+        
         self.grafica = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
         self.grafica.pack(side=tk.TOP, fill=tk.BOTH)
 
+    def resolverEcuacion(self):
+
+        self.log_texto.configure(state='normal')
+        self.log_texto.delete('1.0', tk.END)
+        self.log_texto.configure(state='disabled')
+        
+        lim_inferior = float(self.limI.get().strip())
+        lim_superior = float(self.limS.get().strip())
+
+        func = self.ecuacion.get().strip()
+
+        text_redirector = _TextRedirector(self.log_texto)
+
+        with redirect_stdout(text_redirector):
+
+            metodoBiseccion(limInf=lim_inferior, limSup=lim_superior, funcion=func)
+    
     def graficarFuncion(self):
 
         for e in self.grafica.winfo_children():
