@@ -2,60 +2,68 @@ from tkinter import messagebox
 from sympy import sympify, symbols
 import re
 
-def metodoBiseccion(limInf, limSup, funcion):
-
+def metodoBiseccion(limInf, limSup, funcion, error_conv = 0.0001):
     x = symbols('x')
     i = limInf
     s = limSup
     
+    # Reemplazar operadores y corregir formato
     funcion = funcion.replace("^", "**")
-
     funcion = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', funcion)
 
     # La vuelve simbólica la función
     funcionArreglada = sympify(funcion)
 
-    a = funcionArreglada.subs(x, limInf).evalf()
-    b = funcionArreglada.subs(x, limSup).evalf()
+    # Evaluar extremos
+    f_a = funcionArreglada.subs(x, i).evalf()
+    f_b = funcionArreglada.subs(x, s).evalf()
 
-    if (a >= 0 and b >= 0): # lanza excepción si los dos salen positivos
+    if (f_a >= 0 and f_b >= 0) or (f_a <= 0 and f_b <= 0):
+        messagebox.showwarning(
+            title="Signos iguales",
+            message="No hay raíz en los intervalos, porque f(a) y f(b) tienen los signos iguales.\nf(a) ={a} y f(b) = {b}")
+        return []
 
-        messagebox.showwarning(title="Signos iguales", message=f"No hay raíz en los intervalos, porque, al evaluar f(a) y f(b), tienen los signos iguales.\nf(a) ={a} y f(b) = {b}")
-    elif a < 0 and b < 0: # lanza excepción si los dos salen negativos
-
-        messagebox.showwarning(title="Signos iguales", message=f"No hay raíz en los intervalos, porque, al evaluar f(a) y f(b), tienen los signos iguales.\nf(a) ={a} y f(b) = {b}")
     elif i > s:
-        
-        messagebox.showerror(title="Inconsistencia", message="El límite inferior, es mayor que el superior")
-    else:
-        
-        k = 1
-        
-        while True: # Bucle infinito
+        messagebox.showerror(title="Inconsistencia", message="El límite inferior es mayor que el superior")
+        return []
 
-            print("Iteración:", k)
-            
-            print("Límite inferior:", i)
-            print("Límite superior:", s)
-            
-            c = (i + s) / 2
-            print("Punto medio:", c)
-            
-            m = funcionArreglada.subs(x, c).evalf() # Esto sería equivalente a f(c)
-            print(f"Error en la iteración {k + 1}: {m}")
+    resultados = []
+    k = 1
+    max_iter = 100
+    c_anterior = None
 
-            if m < 0.00001 and m > -0.00001: # Si f(c) está entre -0.00001 y 0.00001
+    while k <= max_iter:
+        c = (i + s) / 2
+        f_c = funcionArreglada.subs(x, c).evalf()
 
-                messagebox.showinfo(title="Respuesta", message=f"La raíz de la función es {c}, y converge a {k} iteraciones")
+        # Calcular error porcentual
+        if c_anterior is None:
+            Ea = 0
+        else:
+            if c == 0:
+                Ea = abs(c - c_anterior)
+            else:
+                Ea = abs((c - c_anterior) / c) * 100
+
+        # Agregar fila de resultados
+        resultados.append((k, float(i), float(s), float(c), float(Ea), float(f_a), float(f_b), float(f_c)))
+
+        # Condición de convergencia
+        if Ea != 0:
+            if Ea < error_conv * 100 or abs(f_c) < 1e-12:
+                messagebox.showinfo("Resultado", f"La raíz aproximada es {c:.10f} \nIteraciones. {k}")
                 break
 
-            if (a < 0 and m < 0) or (a >= 0 and m >= 0):
+        # Actualización de intervalos
+        if f_a * f_c < 0:
+            s = c
+            f_b = f_c
+        else:
+            i = c
+            f_a = f_c
 
-                i = c
-            elif (b < 0 and m < 0) or (b >= 0 and m >= 0):
+        c_anterior = c
+        k += 1
 
-                s = c
-
-            k += 1
-
-            print("\n---------------------------------\n")
+    return resultados

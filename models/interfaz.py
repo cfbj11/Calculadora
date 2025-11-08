@@ -158,7 +158,6 @@ class Interfaz:
         self._build_ui()
 
     def analisisNumerico(self):
-
         self.ventanaPrincipal_AN = Toplevel(self.menuPrincipal)
         self.ventanaPrincipal_AN.title("NumExpert (Análisis Numérico)")
         self.ventanaPrincipal_AN.geometry("1350x720")
@@ -203,7 +202,6 @@ class Interfaz:
         style.map('Accent.TButton', background=[('active', '#0d6462'), ('!disabled', '#3b8b87')])
 
         # Variables
-
         self.metodoNum = tk.StringVar(value="")
         self.ecuacionEntrada = tk.StringVar(value="")
         self.limInf = tk.StringVar(value="")
@@ -212,91 +210,92 @@ class Interfaz:
         metodos = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
         metodos.pack(side=tk.TOP, fill=tk.X)
 
-        ttk.Button(metodos, text="Método Bisección", width=25).pack(side=tk.LEFT, padx=5)
-        ttk.Button(metodos, text="Volver al menú", width=25, command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify()]).pack(side=tk.RIGHT, padx=5)
+        ttk.Button(metodos, text="Método Bisección", width=25, style='Accent.TButton').pack(side=tk.LEFT, padx=5)
+        ttk.Button(metodos, text="Volver al menú", width=25, command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify()], style='Accent.TButton').pack(side=tk.RIGHT, padx=5)
 
         izquierda = ttk.Frame(self.ventanaPrincipal_AN, style='TFrame')
         izquierda.pack(side=tk.LEFT, fill=tk.BOTH)
 
         ttk.Label(izquierda, text="Ingrese la ecuación:").grid(row=0,column=0,pady=10, padx=5)
-        self.ecuacion = ttk.Entry(izquierda, width=40)
+        self.ecuacion = ttk.Entry(izquierda, width=52)
         self.ecuacion.grid(row=1,column=0,pady=10)
 
-        ttk.Button(izquierda, text="Graficar función", command=self.graficarFuncion, width=30).grid(row=2,column=0,pady=10)
+        ttk.Button(izquierda, text="Graficar función", command=self.graficarFuncion, width=42, style='Accent.TButton').grid(row=2,column=0,pady=5, padx=5)
 
         # Botones para mejorar la escritura de la ecuación
-
         botonesEcuacion = ttk.Frame(izquierda, padding=10)
         botonesEcuacion.grid(row=3,column=0)
 
         # 1er fila de botones
-        ttk.Button(botonesEcuacion, text="^", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'^')).grid(row=0,column=0,pady=5, padx=6)
-        ttk.Button(botonesEcuacion, text="sin(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'sin(x)')).grid(row=0,column=1,pady=5, padx=6)
-        ttk.Button(botonesEcuacion, text="cos(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'cos(x)')).grid(row=0,column=2,pady=5, padx=6)
-        ttk.Button(botonesEcuacion, text="tan(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'tan(x)')).grid(row=0,column=3,pady=5, padx=6)
+        ttk.Button(botonesEcuacion, text="^", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'^'), style='Accent.TButton').grid(row=0,column=0,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="e", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),numpy.e), style='Accent.TButton').grid(row=0,column=1,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="π", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),numpy.pi), style='Accent.TButton').grid(row=0,column=2,pady=5, padx=5)
 
-        # 1er fila de botones
-        ttk.Button(botonesEcuacion, text="e", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),numpy.e)).grid(row=1,column=1,pady=5, padx=6)
-        ttk.Button(botonesEcuacion, text="π", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),numpy.pi)).grid(row=1,column=2,pady=5, padx=6)
+        # 2da fila de botones
+        ttk.Button(botonesEcuacion, text="sin(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'sin(x)'), style='Accent.TButton').grid(row=1,column=0,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="cos(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'cos(x)'), style='Accent.TButton').grid(row=1,column=1,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="tan(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'tan(x)'), style='Accent.TButton').grid(row=1,column=2,pady=5, padx=5)
 
         # Entradas del intervalo
-
         intervaloRaiz = ttk.Frame(izquierda, padding=10)
         intervaloRaiz.grid(row=4,column=0)
 
-        ttk.Label(intervaloRaiz, text="Intervalo para encontrar la raíz (a partir de la gráfica)").pack(anchor='center')
-        ttk.Label(intervaloRaiz, text="Límite inferior (a)").pack(anchor='w', pady=4)
+        ttk.Label(intervaloRaiz, text="Intervalo para encontrar la raíz").pack(anchor='center')
+        
+        ttk.Label(intervaloRaiz, text="Límite Inferior (A)").pack(anchor='w', pady=4)
         self.limI = ttk.Entry(intervaloRaiz, width=30)
         self.limI.pack(anchor='center', pady=2)
-        ttk.Label(intervaloRaiz, text="Límite superior (b)").pack(anchor='w', pady=4)
+
+        ttk.Label(intervaloRaiz, text="Límite Superior (B)").pack(anchor='w', pady=4)
         self.limS = ttk.Entry(intervaloRaiz, width=30)
         self.limS.pack(anchor='center', pady=2)
-        ttk.Button(intervaloRaiz, text="Encontrar respuesta", command=self.resolverEcuacion).pack(anchor='center', pady=7)
 
+        ttk.Button(intervaloRaiz, text="Encontrar Respuesta", command=self.resolverEcuacion, style='Accent.TButton').pack(anchor='center', pady=7)
+
+        # PROCEDIMIENTO Y RESULTADOS
         self.procedimiento = ttk.Frame(self.ventanaPrincipal_AN)
         self.procedimiento.pack(side=tk.TOP, fill=tk.BOTH)
-        ttk.Label(self.procedimiento, text="PROCEDIMIENTO:", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
-        
-        # Log con fuente monoespaciada y fondo blanco para legibilidad
-        self.log_texto = tk.Text(self.procedimiento, height=24, state='disabled', bg='#ffffff', font=('Consolas', 10), padx=6, pady=6)
-        self.log_texto.pack(fill=tk.BOTH, expand=True)
-        log_scroll = ttk.Scrollbar(self.procedimiento, orient=tk.VERTICAL, command=self.log_texto.yview)
-        log_scroll.place(relx=1.0, rely=0, relheight=1.0, anchor='ne')
-        self.log_texto.configure(yscrollcommand=log_scroll.set)
-        
+        ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
+
+        # TABLA TREEVIEW
+        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Límite Inferior (A)", "Límite Superior (B)", "Punto Medio (C)", "Error (Ea)", "F(A)", "F(B)", "F(C)"), show='headings')
+        self.tablaTrv.heading("#", text="#")
+        self.tablaTrv.column("#", width=30, anchor='center')
+        for col in ("Límite Inferior (A)", "Límite Superior (B)", "Punto Medio (C)", "Error (Ea)", "F(A)", "F(B)", "F(C)"):
+            self.tablaTrv.heading(col, text=col)
+            self.tablaTrv.column(col, width=150, anchor='w')
+        self.tablaTrv.pack(fill=tk.BOTH, expand=True)
+
+        # GRAFICADOR
         self.grafica = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
         self.grafica.pack(side=tk.TOP, fill=tk.BOTH)
 
     def resolverEcuacion(self):
+        try:
+            lim_inferior = float(self.limI.get().strip())
+            lim_superior = float(self.limS.get().strip())
+            func = self.ecuacion.get().strip()
 
-        self.log_texto.configure(state='normal')
-        self.log_texto.delete('1.0', tk.END)
-        self.log_texto.configure(state='disabled')
-        
-        lim_inferior = float(self.limI.get().strip())
-        lim_superior = float(self.limS.get().strip())
+            self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-        func = self.ecuacion.get().strip()
+            resultados = metodoBiseccion(lim_inferior, lim_superior, func)
+            for fila in resultados:
+                self.tablaTrv.insert("", tk.END, values=fila)
 
-        text_redirector = _TextRedirector(self.log_texto)
+        except Exception as e:
+            messagebox.showerror("Error", f"Ocurrió un error: {e}")
 
-        with redirect_stdout(text_redirector):
-
-            metodoBiseccion(limInf=lim_inferior, limSup=lim_superior, funcion=func)
-    
     def graficarFuncion(self):
 
         for e in self.grafica.winfo_children():
-
             e.destroy()
-        
+
         ecua = self.ecuacion.get().strip()
         ecua = ecua.replace("^", "**")
 
         ecua = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', ecua)
         
         try:
-
             ejeX = numpy.linspace(-10, 10, 400)
         
             # Crear un entorno seguro para evaluar la función
@@ -306,7 +305,7 @@ class Interfaz:
 
             ejeY = eval(ecua, {"__builtins__": None}, entorno)
             # Crear figura
-            fig = Figure(figsize=(6, 4), dpi=100)
+            fig = Figure(figsize=(4, 6), dpi=100)
             ax = fig.add_subplot(111)
             ax.plot(ejeX, ejeY, color="blue")
             # --- CONFIGURAR COMO PLANO CARTESIANO ---
@@ -323,8 +322,8 @@ class Interfaz:
             canvas = FigureCanvasTkAgg(fig, master=self.grafica)
             canvas.draw()
             canvas.get_tk_widget().pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-        except:
 
+        except:
             messagebox.showerror(title="Error a la hora de graficar", message="Algo salió mal a la hora de grafica la función")
 
     def _build_ui(self):
