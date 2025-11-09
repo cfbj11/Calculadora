@@ -296,7 +296,7 @@ class Interfaz:
         ecua = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', ecua)
         
         try:
-            ejeX = numpy.linspace(-10, 10, 400)
+            ejeX = numpy.linspace(-10, 10, 40)
         
             # Crear un entorno seguro para evaluar la función
             # Permitimos las funciones matemáticas comunes
@@ -315,7 +315,7 @@ class Interfaz:
             ax.spines["bottom"].set_position("zero")# Eje X pasa por y=0
 
             ax.set_aspect("auto")                   # Mantiene proporción libre
-            ax.grid(True, linestyle="--", linewidth=0.5)
+            ax.grid(True, linestyle="--", linewidth=0.1)
             ax.set_title(f"Gráfica de y = {pretty(ecua)}", fontsize=12)
 
             # Mostrar en Tkinter
