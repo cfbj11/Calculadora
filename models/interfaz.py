@@ -248,28 +248,33 @@ class Interfaz:
         ttk.Button(botonesEcuacion, text="cot(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'cot(x)'), style='Accent.TButton').grid(row=2,column=2,pady=5, padx=5)
 
         # 4ta fila de botones
-        ttk.Button(botonesEcuacion, text="log(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'log(x)'), style='Accent.TButton').grid(row=3,column=0,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="ln(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'ln(x)'), style='Accent.TButton').grid(row=3,column=1,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="asin(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'asin(x)'), style='Accent.TButton').grid(row=3,column=0,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="acos(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'acos(x)'), style='Accent.TButton').grid(row=3,column=1,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="atan(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'atan(x)'), style='Accent.TButton').grid(row=3,column=2,pady=5, padx=5)
+
+        # 5ta fila de botones
+        ttk.Button(botonesEcuacion, text="log(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'log(x)'), style='Accent.TButton').grid(row=4,column=0,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="ln(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'ln(x)'), style='Accent.TButton').grid(row=4,column=1,pady=5, padx=5)
 
         # Entradas del intervalo
-        intervaloRaiz = ttk.Frame(izquierda, padding=10)
-        intervaloRaiz.grid(row=6,column=0)
+        self.intervaloRaiz = ttk.Frame(izquierda, padding=10)
+        self.intervaloRaiz.grid(row=6,column=0)
 
-        ttk.Label(intervaloRaiz, text="Intervalo para encontrar la raíz (a partir de la gráfica)").pack(anchor='center')
+        ttk.Label(self.intervaloRaiz, text="Intervalo para encontrar la raíz (a partir de la gráfica)").pack(anchor='center')
         
-        ttk.Label(intervaloRaiz, text="Límite Inferior (A)").pack(anchor='w', pady=4)
-        self.limI = ttk.Entry(intervaloRaiz, width=30)
+        ttk.Label(self.intervaloRaiz, text="Límite Inferior (A)").pack(anchor='w', pady=4)
+        self.limI = ttk.Entry(self.intervaloRaiz, width=30)
         self.limI.pack(anchor='center', pady=2)
 
-        ttk.Label(intervaloRaiz, text="Límite Superior (B)").pack(anchor='w', pady=4)
-        self.limS = ttk.Entry(intervaloRaiz, width=30)
+        ttk.Label(self.intervaloRaiz, text="Límite Superior (B)").pack(anchor='w', pady=4)
+        self.limS = ttk.Entry(self.intervaloRaiz, width=30)
         self.limS.pack(anchor='center', pady=2)
 
-        ttk.Label(intervaloRaiz, text="Tolerancia (Valor por defecto: 0.00001)").pack(anchor='w', pady=4)
-        self.tol = ttk.Entry(intervaloRaiz, width=30)
+        ttk.Label(self.intervaloRaiz, text="Tolerancia (Valor por defecto: 0.00001)").pack(anchor='w', pady=4)
+        self.tol = ttk.Entry(self.intervaloRaiz, width=30)
         self.tol.pack(anchor='center', pady=2)
 
-        ttk.Button(intervaloRaiz, text="Encontrar Respuesta", command=self.resolverEcuacion, style='Accent.TButton').pack(anchor='center', pady=7)
+        ttk.Button(self.intervaloRaiz, text="Encontrar Respuesta", command=self.resolverEcuacion, style='Accent.TButton').pack(anchor='center', pady=7)
 
         # PROCEDIMIENTO Y RESULTADOS
         self.procedimiento = ttk.Frame(self.ventanaPrincipal_AN)
@@ -308,9 +313,11 @@ class Interfaz:
 
                 self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                resultados = metodoBiseccion(lim_inferior, lim_superior, func, err)
+                resultados, resp = metodoBiseccion(lim_inferior, lim_superior, func, err)
                 for fila in resultados:
                     self.tablaTrv.insert("", tk.END, values=fila)
+
+                ttk.Label(self.intervaloRaiz, text=f"Respuesta: {resp}").pack(anchor='center',pady=3)
 
             except Exception as e:
                 messagebox.showerror("Error", f"Ocurrió un error: {e}")
@@ -331,9 +338,11 @@ class Interfaz:
                 
                 self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                resultados = reglaFalsa(lim_inferior, lim_superior, func, err)
+                resultados, resp = reglaFalsa(lim_inferior, lim_superior, func, err)
                 for fila in resultados:
                     self.tablaTrv.insert("", tk.END, values=fila)
+
+                ttk.Label(self.intervaloRaiz, text=f"Respuesta: {resp}").pack(anchor='center',pady=3)
 
             except Exception as e:
                 messagebox.showerror("Error", f"Ocurrió un error: {e}")

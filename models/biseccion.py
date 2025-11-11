@@ -24,22 +24,22 @@ def metodoBiseccion(limInf, limSup, funcion, error_conv):
     if f_a == 0:
 
         messagebox.showinfo("Resultado", f"La raíz aproximada es {i}, porque al evaluar el límite inferior en la función (o sea, {i}), da 0")
-        return []
+        return [], f_a
     elif f_b == 0:
 
         messagebox.showinfo("Resultado", f"La raíz aproximada es {s}, porque al evaluar el límite superior (o sea, {s}) en la función, da 0")
-        return []
+        return [], f_b
     else:
     
         if (f_a >= 0 and f_b >= 0) or (f_a <= 0 and f_b <= 0):
             messagebox.showwarning(
                 title="Signos iguales",
                 message=f"No hay raíz en los intervalos, porque f(a) y f(b) tienen los signos iguales.\nf(a) ={f_a} y f(b) = {f_b}")
-            return []
+            return [], ""
 
         elif i > s:
             messagebox.showerror(title="Inconsistencia", message="El límite inferior es mayor que el superior")
-            return []
+            return [], ""
 
         resultados = []
         k = 1
@@ -76,4 +76,4 @@ def metodoBiseccion(limInf, limSup, funcion, error_conv):
             c_anterior = c
             k += 1
 
-        return resultados
+        return resultados, c
