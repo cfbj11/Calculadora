@@ -202,7 +202,7 @@ class Interfaz:
         style.map('Accent.TButton', background=[('active', '#0d6462'), ('!disabled', '#3b8b87')])
 
         # Variables
-        self.metodoNum = tk.StringVar(value="")
+        self.metodoNum = tk.StringVar(value="(Elige un método)")
         self.ecuacionEntrada = tk.StringVar(value="")
         self.limInf = tk.StringVar(value="")
         self.limSup = tk.StringVar(value="")
@@ -210,8 +210,7 @@ class Interfaz:
         metodos = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
         metodos.pack(side=tk.TOP, fill=tk.X)
 
-        ttk.Button(metodos, text="Método Bisección", width=25, command=lambda: [self.metodoNum.set('biseccion'), self.resolverEcuacion()], style='Accent.TButton').pack(side=tk.LEFT, padx=5)
-        ttk.Button(metodos, text="Método Falsa Posición", width=25, command=lambda: [self.metodoNum.set('falsapos'), self.resolverEcuacion()], style='Accent.TButton').pack(side=tk.LEFT, padx=5)
+        ttk.Button(metodos, text="Métodos Cerrados", width=25, style='Accent.TButton').pack(side=tk.LEFT, padx=5)
         ttk.Button(metodos, text="Volver al menú", width=25, command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify()], style='Accent.TButton').pack(side=tk.RIGHT, padx=5)
 
         izquierda = ttk.Frame(self.ventanaPrincipal_AN, style='TFrame')
@@ -223,14 +222,19 @@ class Interfaz:
 
         ttk.Button(izquierda, text="Graficar función", command=self.graficarFuncion, width=42, style='Accent.TButton').grid(row=2,column=0,pady=5, padx=5)
 
+        ttk.Label(izquierda, text="Método para resolver la ecuación").grid(row=3,column=0, pady=10)
+        self.metodosCerrados = ttk.Combobox(izquierda, textvariable=self.metodoNum, values=('Método de bisección', 'Método de falsa posición'), width=30)
+        self.metodosCerrados.grid(row=4, column=0, pady=8)
+        self.metodosCerrados.state(['readonly'])
+
         # Botones para mejorar la escritura de la ecuación
         botonesEcuacion = ttk.Frame(izquierda, padding=10)
-        botonesEcuacion.grid(row=3,column=0)
+        botonesEcuacion.grid(row=5,column=0)
 
         # 1er fila de botones
         ttk.Button(botonesEcuacion, text="^", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'^'), style='Accent.TButton').grid(row=0,column=0,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="e", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),numpy.e), style='Accent.TButton').grid(row=0,column=1,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="π", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),numpy.pi), style='Accent.TButton').grid(row=0,column=2,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="e", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT), 'e'), style='Accent.TButton').grid(row=0,column=1,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="π", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT), 'π'), style='Accent.TButton').grid(row=0,column=2,pady=5, padx=5)
 
         # 2da fila de botones
         ttk.Button(botonesEcuacion, text="sin(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'sin(x)'), style='Accent.TButton').grid(row=1,column=0,pady=5, padx=5)
@@ -239,7 +243,7 @@ class Interfaz:
 
         # Entradas del intervalo
         intervaloRaiz = ttk.Frame(izquierda, padding=10)
-        intervaloRaiz.grid(row=4,column=0)
+        intervaloRaiz.grid(row=6,column=0)
 
         ttk.Label(intervaloRaiz, text="Intervalo para encontrar la raíz").pack(anchor='center')
         
@@ -272,9 +276,9 @@ class Interfaz:
         self.grafica.pack(side=tk.TOP, fill=tk.BOTH)
 
     def resolverEcuacion(self):
-        metodo_num = self.metodoNum.get()
+        metodo_num = self.metodosCerrados.get()
 
-        if metodo_num == 'biseccion':
+        if metodo_num == 'Método de bisección':
             try:
                 lim_inferior = float(self.limI.get().strip())
                 lim_superior = float(self.limS.get().strip())
@@ -289,7 +293,7 @@ class Interfaz:
             except Exception as e:
                 messagebox.showerror("Error", f"Ocurrió un error: {e}")
 
-        elif metodo_num == 'falsapos':
+        elif metodo_num == 'Método de falsa posición':
             try:
                 self.tablaTrv.delete(*self.tablaTrv.get_children())
 
