@@ -276,6 +276,9 @@ class Interfaz:
 
         ttk.Button(self.intervaloRaiz, text="Encontrar Respuesta", command=self.resolverEcuacion, style='Accent.TButton').pack(anchor='center', pady=7)
 
+        self.respuestaNum = ttk.Frame(self.ventanaPrincipal_AN)
+        self.respuestaNum.pack(side=tk.TOP, fill=tk.BOTH)
+
         # PROCEDIMIENTO Y RESULTADOS
         self.procedimiento = ttk.Frame(self.ventanaPrincipal_AN)
         self.procedimiento.pack(side=tk.TOP, fill=tk.BOTH)
@@ -317,7 +320,11 @@ class Interfaz:
                 for fila in resultados:
                     self.tablaTrv.insert("", tk.END, values=fila)
 
-                ttk.Label(self.intervaloRaiz, text=f"Respuesta: {resp}").pack(anchor='center',pady=3)
+                for w in self.respuestaNum.winfo_children():
+
+                    w.destroy()
+                
+                ttk.Label(self.respuestaNum, text=f"Respuesta: {resp}").pack(anchor='center',pady=3)
 
             except Exception as e:
                 messagebox.showerror("Error", f"Ocurrió un error: {e}")
@@ -342,7 +349,11 @@ class Interfaz:
                 for fila in resultados:
                     self.tablaTrv.insert("", tk.END, values=fila)
 
-                ttk.Label(self.intervaloRaiz, text=f"Respuesta: {resp}").pack(anchor='center',pady=3)
+                for w in self.respuestaNum.winfo_children():
+
+                    w.destroy()
+                
+                ttk.Label(self.respuestaNum, text=f"Respuesta: {resp}").pack(anchor='center',pady=3)
 
             except Exception as e:
                 messagebox.showerror("Error", f"Ocurrió un error: {e}")
