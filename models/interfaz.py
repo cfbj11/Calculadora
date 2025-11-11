@@ -3,7 +3,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, Toplevel
 from contextlib import redirect_stdout
-from sympy import sympify, symbols, pretty
+from sympy import sympify, symbols, pretty, Symbol, lambdify
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy
@@ -241,6 +241,15 @@ class Interfaz:
         ttk.Button(botonesEcuacion, text="cos(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'cos(x)'), style='Accent.TButton').grid(row=1,column=1,pady=5, padx=5)
         ttk.Button(botonesEcuacion, text="tan(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'tan(x)'), style='Accent.TButton').grid(row=1,column=2,pady=5, padx=5)
 
+        # 3ra fila de botones
+        ttk.Button(botonesEcuacion, text="csc(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'csc(x)'), style='Accent.TButton').grid(row=2,column=0,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="sec(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'sec(x)'), style='Accent.TButton').grid(row=2,column=1,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="cot(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'cot(x)'), style='Accent.TButton').grid(row=2,column=2,pady=5, padx=5)
+
+        # 4ta fila de botones
+        ttk.Button(botonesEcuacion, text="log(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'log(x)'), style='Accent.TButton').grid(row=3,column=0,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="ln(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'ln(x)'), style='Accent.TButton').grid(row=3,column=1,pady=5, padx=5)
+
         # Entradas del intervalo
         intervaloRaiz = ttk.Frame(izquierda, padding=10)
         intervaloRaiz.grid(row=6,column=0)
@@ -301,26 +310,38 @@ class Interfaz:
 
             except Exception as e:
                 messagebox.showerror("Error", f"Ocurrió un error: {e}")
+        else:
+
+            messagebox.showerror(title="Método no definido", message="No se ha definido el método para encontrar la raíz de la ecuación")
 
     def graficarFuncion(self):
 
         for e in self.grafica.winfo_children():
             e.destroy()
 
-        ecua = self.ecuacion.get().strip()
-        ecua = ecua.replace("^", "**")
-
-        ecua = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', ecua)
-        
         try:
-            ejeX = numpy.linspace(-10, 10, 40)
+            x = Symbol('x')
         
-            # Crear un entorno seguro para evaluar la función
-            # Permitimos las funciones matemáticas comunes
-            entorno = {name: getattr(numpy, name) for name in dir(numpy) if not name.startswith("_")}
-            entorno.update({"x": ejeX, "pi": numpy.pi, "e": numpy.e})
+            ecua = self.ecuacion.get().strip()
+            ecua = ecua.replace("^", "**")
+            ecua = ecua.replace("log", "log10")
+            ecua = ecua.replace("ln", "log")
 
-            ejeY = eval(ecua, {"__builtins__": None}, entorno)
+            ecua = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', ecua)
+
+            nuevaEcua = sympify(ecua)
+
+            func = lambdify(x, nuevaEcua, modules=["numpy"])
+        
+            ejeX = numpy.linspace(-8, 8, 400)
+
+            with numpy.errstate(divide='ignore', invalid='ignore'):
+                ejeY = func(ejeX)
+        
+            # Limpiar valores no numéricos
+            ejeY = numpy.array(ejeY, dtype=float)
+            ejeY[~numpy.isfinite(ejeY)] = numpy.nan
+
             # Crear figura
             fig = Figure(figsize=(4, 6), dpi=100)
             ax = fig.add_subplot(111)
@@ -333,7 +354,7 @@ class Interfaz:
 
             ax.set_aspect("auto")                   # Mantiene proporción libre
             ax.grid(True, linestyle="--", linewidth=0.1)
-            ax.set_title(f"Gráfica de y = {pretty(ecua)}", fontsize=12)
+            ax.set_title(f"Gráfica de y = {ecua}", fontsize=12)
 
             # Mostrar en Tkinter
             canvas = FigureCanvasTkAgg(fig, master=self.grafica)
