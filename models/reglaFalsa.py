@@ -3,7 +3,7 @@ from sympy import sympify, symbols
 import re
 import numpy
 
-def reglaFalsa(limInf, limSup, funcion, error_conv = 0.0001):
+def reglaFalsa(limInf, limSup, funcion, error_conv):
     x = symbols('x')
     i = limInf
     s = limSup
@@ -57,10 +57,7 @@ def reglaFalsa(limInf, limSup, funcion, error_conv = 0.0001):
             if c_anterior is None:
                 Ea = 0
             else:
-                if c == 0:
-                    Ea = abs(c - c_anterior)
-                else:
-                    Ea = abs((c - c_anterior) / c) * 100
+                Ea = abs(c - c_anterior)
 
             # Agregar fila de resultados
             resultados.append((k, float(i), float(s), float(c), float(Ea), float(f_a), float(f_b), float(f_c)))
@@ -68,7 +65,7 @@ def reglaFalsa(limInf, limSup, funcion, error_conv = 0.0001):
             # Condición de convergencia
             if Ea != 0:
                 if Ea < error_conv * 100 or abs(f_c) < 1e-12:
-                    messagebox.showinfo("Resultado", f"La raíz aproximada es {c:.10f} \nIteraciones. {k}")
+                    messagebox.showinfo("Resultado", f"La raíz aproximada es {c:.10f} \nNúmero de Iteraciones: {k}\nError: {error_conv}")
                     break
 
             # Actualización de intervalos

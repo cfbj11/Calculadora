@@ -255,7 +255,7 @@ class Interfaz:
         intervaloRaiz = ttk.Frame(izquierda, padding=10)
         intervaloRaiz.grid(row=6,column=0)
 
-        ttk.Label(intervaloRaiz, text="Intervalo para encontrar la raíz").pack(anchor='center')
+        ttk.Label(intervaloRaiz, text="Intervalo para encontrar la raíz (a partir de la gráfica)").pack(anchor='center')
         
         ttk.Label(intervaloRaiz, text="Límite Inferior (A)").pack(anchor='w', pady=4)
         self.limI = ttk.Entry(intervaloRaiz, width=30)
@@ -265,6 +265,10 @@ class Interfaz:
         self.limS = ttk.Entry(intervaloRaiz, width=30)
         self.limS.pack(anchor='center', pady=2)
 
+        ttk.Label(intervaloRaiz, text="Tolerancia (Valor por defecto: 0.00001)").pack(anchor='w', pady=4)
+        self.tol = ttk.Entry(intervaloRaiz, width=30)
+        self.tol.pack(anchor='center', pady=2)
+
         ttk.Button(intervaloRaiz, text="Encontrar Respuesta", command=self.resolverEcuacion, style='Accent.TButton').pack(anchor='center', pady=7)
 
         # PROCEDIMIENTO Y RESULTADOS
@@ -273,10 +277,10 @@ class Interfaz:
         ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
 
         # TABLA TREEVIEW
-        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Límite Inferior (A)", "Límite Superior (B)", "C", "Error (Ea)", "F(A)", "F(B)", "F(C)"), show='headings')
+        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Límite Inferior (A)", "Límite Superior (B)", "C", "Error Relativo", "F(A)", "F(B)", "F(C)"), show='headings')
         self.tablaTrv.heading("#", text="#")
         self.tablaTrv.column("#", width=30, anchor='center')
-        for col in ("Límite Inferior (A)", "Límite Superior (B)", "C", "Error (Ea)", "F(A)", "F(B)", "F(C)"):
+        for col in ("Límite Inferior (A)", "Límite Superior (B)", "C", "Error Relativo", "F(A)", "F(B)", "F(C)"):
             self.tablaTrv.heading(col, text=col)
             self.tablaTrv.column(col, width=150, anchor='w')
         self.tablaTrv.pack(fill=tk.BOTH, expand=True)
@@ -293,10 +297,18 @@ class Interfaz:
                 lim_inferior = float(self.limI.get().strip())
                 lim_superior = float(self.limS.get().strip())
                 func = self.ecuacion.get().strip()
+                
+                # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
+                if self.tol.get().strip() == "":
+
+                    err = 0.00001
+                else:
+
+                    err = float(self.tol.get().strip())
 
                 self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                resultados = metodoBiseccion(lim_inferior, lim_superior, func)
+                resultados = metodoBiseccion(lim_inferior, lim_superior, func, err)
                 for fila in resultados:
                     self.tablaTrv.insert("", tk.END, values=fila)
 
@@ -309,9 +321,17 @@ class Interfaz:
                 lim_superior = float(self.limS.get().strip())
                 func = self.ecuacion.get().strip()
                 
+                # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
+                if self.tol.get().strip() == "":
+
+                    err = 0.00001
+                else:
+
+                    err = float(self.tol.get().strip())
+                
                 self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                resultados = reglaFalsa(lim_inferior, lim_superior, func)
+                resultados = reglaFalsa(lim_inferior, lim_superior, func, err)
                 for fila in resultados:
                     self.tablaTrv.insert("", tk.END, values=fila)
 
