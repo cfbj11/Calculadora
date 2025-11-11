@@ -21,6 +21,7 @@ from models.vectoresMatrices.inversa import inversaMatriz
 from models.determinantes.determinante import detMatriz
 from models.determinantes.cramer import reglaCramer
 from models.biseccion import metodoBiseccion
+from models.reglaFalsa import reglaFalsa
 
 from models.imprimir_matriz import imprimir_matriz
 
@@ -272,10 +273,10 @@ class Interfaz:
         ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
 
         # TABLA TREEVIEW
-        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Límite Inferior (A)", "Límite Superior (B)", "Punto Medio (C)", "Error (Ea)", "F(A)", "F(B)", "F(C)"), show='headings')
+        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Límite Inferior (A)", "Límite Superior (B)", "C", "Error (Ea)", "F(A)", "F(B)", "F(C)"), show='headings')
         self.tablaTrv.heading("#", text="#")
         self.tablaTrv.column("#", width=30, anchor='center')
-        for col in ("Límite Inferior (A)", "Límite Superior (B)", "Punto Medio (C)", "Error (Ea)", "F(A)", "F(B)", "F(C)"):
+        for col in ("Límite Inferior (A)", "Límite Superior (B)", "C", "Error (Ea)", "F(A)", "F(B)", "F(C)"):
             self.tablaTrv.heading(col, text=col)
             self.tablaTrv.column(col, width=150, anchor='w')
         self.tablaTrv.pack(fill=tk.BOTH, expand=True)
@@ -304,9 +305,15 @@ class Interfaz:
 
         elif metodo_num == 'Método de falsa posición':
             try:
+                lim_inferior = float(self.limI.get().strip())
+                lim_superior = float(self.limS.get().strip())
+                func = self.ecuacion.get().strip()
+                
                 self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                # Ingresar algoritmo para metodo de Falsa Posición aquí
+                resultados = reglaFalsa(lim_inferior, lim_superior, func)
+                for fila in resultados:
+                    self.tablaTrv.insert("", tk.END, values=fila)
 
             except Exception as e:
                 messagebox.showerror("Error", f"Ocurrió un error: {e}")
