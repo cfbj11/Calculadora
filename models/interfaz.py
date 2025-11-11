@@ -210,7 +210,8 @@ class Interfaz:
         metodos = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
         metodos.pack(side=tk.TOP, fill=tk.X)
 
-        ttk.Button(metodos, text="Método Bisección", width=25, style='Accent.TButton').pack(side=tk.LEFT, padx=5)
+        ttk.Button(metodos, text="Método Bisección", width=25, command=lambda: [self.metodoNum.set('biseccion'), self.resolverEcuacion()], style='Accent.TButton').pack(side=tk.LEFT, padx=5)
+        ttk.Button(metodos, text="Método Falsa Posición", width=25, command=lambda: [self.metodoNum.set('falsapos'), self.resolverEcuacion()], style='Accent.TButton').pack(side=tk.LEFT, padx=5)
         ttk.Button(metodos, text="Volver al menú", width=25, command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify()], style='Accent.TButton').pack(side=tk.RIGHT, padx=5)
 
         izquierda = ttk.Frame(self.ventanaPrincipal_AN, style='TFrame')
@@ -271,19 +272,31 @@ class Interfaz:
         self.grafica.pack(side=tk.TOP, fill=tk.BOTH)
 
     def resolverEcuacion(self):
-        try:
-            lim_inferior = float(self.limI.get().strip())
-            lim_superior = float(self.limS.get().strip())
-            func = self.ecuacion.get().strip()
+        metodo_num = self.metodoNum.get()
 
-            self.tablaTrv.delete(*self.tablaTrv.get_children())
+        if metodo_num == 'biseccion':
+            try:
+                lim_inferior = float(self.limI.get().strip())
+                lim_superior = float(self.limS.get().strip())
+                func = self.ecuacion.get().strip()
 
-            resultados = metodoBiseccion(lim_inferior, lim_superior, func)
-            for fila in resultados:
-                self.tablaTrv.insert("", tk.END, values=fila)
+                self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-        except Exception as e:
-            messagebox.showerror("Error", f"Ocurrió un error: {e}")
+                resultados = metodoBiseccion(lim_inferior, lim_superior, func)
+                for fila in resultados:
+                    self.tablaTrv.insert("", tk.END, values=fila)
+
+            except Exception as e:
+                messagebox.showerror("Error", f"Ocurrió un error: {e}")
+
+        elif metodo_num == 'falsapos':
+            try:
+                self.tablaTrv.delete(*self.tablaTrv.get_children())
+
+                # Ingresar algoritmo para metodo de Falsa Posición aquí
+
+            except Exception as e:
+                messagebox.showerror("Error", f"Ocurrió un error: {e}")
 
     def graficarFuncion(self):
 
@@ -296,7 +309,7 @@ class Interfaz:
         ecua = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', ecua)
         
         try:
-            ejeX = numpy.linspace(-10, 10, 400)
+            ejeX = numpy.linspace(-10, 10, 40)
         
             # Crear un entorno seguro para evaluar la función
             # Permitimos las funciones matemáticas comunes
@@ -315,7 +328,7 @@ class Interfaz:
             ax.spines["bottom"].set_position("zero")# Eje X pasa por y=0
 
             ax.set_aspect("auto")                   # Mantiene proporción libre
-            ax.grid(True, linestyle="--", linewidth=0.5)
+            ax.grid(True, linestyle="--", linewidth=0.1)
             ax.set_title(f"Gráfica de y = {pretty(ecua)}", fontsize=12)
 
             # Mostrar en Tkinter

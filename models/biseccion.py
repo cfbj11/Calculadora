@@ -1,6 +1,7 @@
 from tkinter import messagebox
 from sympy import sympify, symbols
 import re
+from numpy import e
 
 def metodoBiseccion(limInf, limSup, funcion, error_conv = 0.0001):
     x = symbols('x')
@@ -21,7 +22,7 @@ def metodoBiseccion(limInf, limSup, funcion, error_conv = 0.0001):
     if (f_a >= 0 and f_b >= 0) or (f_a <= 0 and f_b <= 0):
         messagebox.showwarning(
             title="Signos iguales",
-            message="No hay raíz en los intervalos, porque f(a) y f(b) tienen los signos iguales.\nf(a) ={a} y f(b) = {b}")
+            message=f"No hay raíz en los intervalos, porque f(a) y f(b) tienen los signos iguales.\nf(a) ={f_a} y f(b) = {f_b}")
         return []
 
     elif i > s:
