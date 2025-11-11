@@ -326,6 +326,8 @@ class Interfaz:
             ecua = ecua.replace("^", "**")
             ecua = ecua.replace("log", "log10")
             ecua = ecua.replace("ln", "log")
+            ecua = ecua.replace("e", str(numpy.e))
+            ecua = ecua.replace("π", str(numpy.pi))
 
             ecua = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', ecua)
 
@@ -345,7 +347,7 @@ class Interfaz:
             # Crear figura
             fig = Figure(figsize=(4, 6), dpi=100)
             ax = fig.add_subplot(111)
-            ax.plot(ejeX, ejeY, color="blue")
+            ax.plot(ejeX, ejeY, color="red")
             # --- CONFIGURAR COMO PLANO CARTESIANO ---
             ax.spines["top"].set_color("none")      # Quita borde superior
             ax.spines["right"].set_color("none")    # Quita borde derecho
@@ -353,8 +355,8 @@ class Interfaz:
             ax.spines["bottom"].set_position("zero")# Eje X pasa por y=0
 
             ax.set_aspect("auto")                   # Mantiene proporción libre
-            ax.grid(True, linestyle="--", linewidth=0.1)
-            ax.set_title(f"Gráfica de y = {ecua}", fontsize=12)
+            ax.grid(True, linestyle="--", linewidth=0.6)
+            ax.set_title(f"Gráfica de y = {self.ecuacion.get().strip()}", fontsize=12)
 
             # Mostrar en Tkinter
             canvas = FigureCanvasTkAgg(fig, master=self.grafica)
