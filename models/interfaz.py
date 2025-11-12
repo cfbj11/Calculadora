@@ -376,6 +376,7 @@ class Interfaz:
             ecua = ecua.replace("ln", "log")
             ecua = ecua.replace("√", "sqrt")
             ecua = ecua.replace("e", str(numpy.e))
+            ecua = ecua.replace(f"s{str(numpy.e)}c", "sec")
             ecua = ecua.replace("π", str(numpy.pi))
 
             ecua = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', ecua)

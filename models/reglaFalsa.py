@@ -14,6 +14,7 @@ def reglaFalsa(limInf, limSup, funcion, error_conv):
     funcion = funcion.replace("log", "log10")
     funcion = funcion.replace("ln", "log")
     funcion = funcion.replace("e", str(numpy.e))
+    funcion = funcion.replace(f"s{str(numpy.e)}c", "sec")
     funcion = funcion.replace("π", str(numpy.pi))
     funcion = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', funcion)
 
