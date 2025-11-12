@@ -10,6 +10,7 @@ def metodoBiseccion(limInf, limSup, funcion, error_conv):
     
     # Reemplazar operadores y corregir formato
     funcion = funcion.replace("^", "**")
+    funcion = funcion.replace("√", "sqrt")
     funcion = funcion.replace("e", str(numpy.e))
     funcion = funcion.replace("π", str(numpy.pi))
     funcion = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', funcion)

@@ -255,6 +255,7 @@ class Interfaz:
         # 5ta fila de botones
         ttk.Button(botonesEcuacion, text="log(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'log(x)'), style='Accent.TButton').grid(row=4,column=0,pady=5, padx=5)
         ttk.Button(botonesEcuacion, text="ln(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'ln(x)'), style='Accent.TButton').grid(row=4,column=1,pady=5, padx=5)
+        ttk.Button(botonesEcuacion, text="√", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'√()'), style='Accent.TButton').grid(row=4,column=2,pady=5, padx=5)
 
         # Entradas del intervalo
         self.intervaloRaiz = ttk.Frame(izquierda, padding=10)
@@ -373,6 +374,7 @@ class Interfaz:
             ecua = ecua.replace("^", "**")
             ecua = ecua.replace("log", "log10")
             ecua = ecua.replace("ln", "log")
+            ecua = ecua.replace("√", "sqrt")
             ecua = ecua.replace("e", str(numpy.e))
             ecua = ecua.replace("π", str(numpy.pi))
 
