@@ -44,7 +44,7 @@ def reglaCramer(matriz):
                 print(f"O sea, D{m + 1} = {det_mN}")
                 soluciones.append(Fraction(det_mN, det_mC))
             
-            print("\nPara encontrar las soluciones, se divide D, entre las determinantes que se calcularon (D1, D2, ...)")
+            print("\nPara encontrar las soluciones, se divide las determinantes que se calcularon (D1, D2, ...), entre D respectivamente.")
             print("\nSOLUCIONES DEL SISTEMA:\n")
 
             for s in range(len(matriz)):

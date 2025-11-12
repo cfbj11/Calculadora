@@ -286,10 +286,10 @@ class Interfaz:
         ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
 
         # TABLA TREEVIEW
-        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Límite Inferior (A)", "Límite Superior (B)", "C", "Error Relativo", "F(A)", "F(B)", "F(C)"), show='headings')
+        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Límite Inferior (A)", "Límite Superior (B)", "C", "Error Absoluto", "F(A)", "F(B)", "F(C)"), show='headings')
         self.tablaTrv.heading("#", text="#")
         self.tablaTrv.column("#", width=30, anchor='center')
-        for col in ("Límite Inferior (A)", "Límite Superior (B)", "C", "Error Relativo", "F(A)", "F(B)", "F(C)"):
+        for col in ("Límite Inferior (A)", "Límite Superior (B)", "C", "Error Absoluto", "F(A)", "F(B)", "F(C)"):
             self.tablaTrv.heading(col, text=col)
             self.tablaTrv.column(col, width=150, anchor='w')
         self.tablaTrv.pack(fill=tk.BOTH, expand=True)
