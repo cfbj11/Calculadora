@@ -1,5 +1,5 @@
 from tkinter import messagebox
-from sympy import sympify, symbols
+from sympy import sympify, symbols, lambdify
 import re
 import numpy
 
@@ -11,16 +11,19 @@ def reglaFalsa(limInf, limSup, funcion, error_conv):
     # Reemplazar operadores y corregir formato
     funcion = funcion.replace("^", "**")
     funcion = funcion.replace("√", "sqrt")
+    funcion = funcion.replace("log", "log10")
+    funcion = funcion.replace("ln", "log")
     funcion = funcion.replace("e", str(numpy.e))
     funcion = funcion.replace("π", str(numpy.pi))
     funcion = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', funcion)
 
     # La vuelve simbólica la función
-    funcionArreglada = sympify(funcion)
+    func = sympify(funcion)
+    funcionArreglada = lambdify(x, func, modules=["numpy"])
 
     # Evaluar extremos
-    f_a = funcionArreglada.subs(x, i).evalf()
-    f_b = funcionArreglada.subs(x, s).evalf()
+    f_a = funcionArreglada(i)
+    f_b = funcionArreglada(s)
 
     if f_a == 0:
 
@@ -49,11 +52,11 @@ def reglaFalsa(limInf, limSup, funcion, error_conv):
 
         while k <= max_iter:
 
-            f_a = funcionArreglada.subs(x, i).evalf()
-            f_b = funcionArreglada.subs(x, s).evalf()
+            f_a = funcionArreglada(i)
+            f_b = funcionArreglada(s)
             
             c = ((s * f_a) - (i * f_b))/(f_a - f_b)
-            f_c = funcionArreglada.subs(x, c).evalf()
+            f_c = funcionArreglada(c)
 
             if c_anterior is None:
                 Ea = 0
@@ -63,11 +66,10 @@ def reglaFalsa(limInf, limSup, funcion, error_conv):
             # Agregar fila de resultados
             resultados.append((k, float(i), float(s), float(c), float(Ea), float(f_a), float(f_b), float(f_c)))
 
-            # Condición de convergencia
-            if Ea != 0:
-                if Ea < error_conv * 100 or abs(f_c) < 1e-12:
-                    messagebox.showinfo("Resultado", f"La raíz aproximada es {c:.10f} \nNúmero de Iteraciones: {k}\nError: {error_conv}")
-                    break
+            if abs(f_c) < error_conv:
+                
+                messagebox.showinfo("Resultado", f"La raíz aproximada es {c:.10f} \nNúmero de Iteraciones: {k}\nError: {error_conv}")
+                break
 
             # Actualización de intervalos
             if f_a * f_c < 0:
