@@ -35,14 +35,13 @@ def metodoBiseccion(limInf, limSup, funcion, error_conv):
         return [], f_b
     else:
     
-        if (f_a >= 0 and f_b >= 0) or (f_a <= 0 and f_b <= 0):
+        if i > s:
+            messagebox.showerror(title="Inconsistencia", message="El límite inferior es mayor que el superior")
+            return [], ""
+        elif (f_a >= 0 and f_b >= 0) or (f_a < 0 and f_b < 0):
             messagebox.showwarning(
                 title="Signos iguales",
                 message=f"No hay raíz en los intervalos, porque f(a) y f(b) tienen los signos iguales.\nf(a) ={f_a} y f(b) = {f_b}")
-            return [], ""
-
-        elif i > s:
-            messagebox.showerror(title="Inconsistencia", message="El límite inferior es mayor que el superior")
             return [], ""
 
         resultados = []
