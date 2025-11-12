@@ -1,6 +1,5 @@
 from tkinter import messagebox
 from sympy import sympify, symbols, lambdify
-from sympy.codegen.cfunctions import log10
 import re
 import numpy
 
