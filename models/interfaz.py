@@ -480,7 +480,7 @@ class Interfaz:
         for w in self.entradas_contenedor.winfo_children():
             w.destroy()
 
-        ttk.Label(self.entradas_contenedor, text="Instrucciones de Entrada:\n", font=('Helvetica',12,'bold')).pack(anchor='w', pady=(0,6))
+        ttk.Label(self.entradas_contenedor, text="Instrucciones de Entrada:\n", font=('Helvetica',12,'bold')).pack(anchor='w')
 
         cuadro_marco = ttk.Frame(self.entradas_contenedor)
         cuadro_marco.pack(anchor='w')
@@ -524,31 +524,27 @@ class Interfaz:
                 ttk.Entry(cuadro_marco, textvariable=self.matB_escalar, width=4).grid(row=1, column=5)
 
         if metodo == 'sistemas':
-            ttk.Label(self.entradas_contenedor, text="1. Seleccione el método para resolver el sistema de ecuaciones.").pack(anchor='w')
-            self.opciones = ttk.Combobox(self.entradas_contenedor, textvariable=self.metodoEscoger, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
-            self.opciones.pack(anchor='w')
-            self.opciones.state(["readonly"])
+            ttk.Label(cuadro_marco, text="1. Seleccione el método para resolver el sistema de ecuaciones.").grid(row=0,column=0,pady=3, sticky='w')
 
-            ttk.Label(self.entradas_contenedor, text="2. Ingrese el número de ecuaciones del sistema").pack(anchor='w')
-            ttk.Label(cuadro_marco, text="N° de ecuaciones:").grid(row=0, column=0, sticky='w')
-            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
-            ttk.Label(self.entradas_contenedor, text="3. Genere los cuadros de entradas, y en cada uno,\ningrese la ecuación").pack(anchor='w')
-            ttk.Label(self.entradas_contenedor, text="4. Una vez ingresadas las ecuaciones, si desea, haga clic en \n'Ecuación Matricial'. Si no, haga clic en 'Resolver'").pack(anchor='w')
+            ttk.Label(cuadro_marco, text="2. Ingrese el número de ecuaciones del sistema").grid(row=1,column=0,pady=3, sticky='w')
+            ttk.Label(cuadro_marco, text="3. Genere los cuadros de entradas, y en cada uno,\ningrese la ecuación").grid(row=2,column=0,pady=3, sticky='w')
+            ttk.Label(cuadro_marco, text="4. Una vez ingresadas las ecuaciones, si desea, haga clic en \n'Ecuación Matricial'. Si no, haga clic en 'Resolver'").grid(row=3,column=0,pady=3, sticky='w')
 
             # Una pequeña nota al usuario, sobre cómo debe ingresar cada ecuación
-            ttk.Label(self.entradas_contenedor, text="Nota: Para las incógnitas, escribalas como x1, x2, x3 y así\nsucesivamente.").pack(anchor='w')
+            ttk.Label(cuadro_marco, text="Nota: Para las incógnitas, escribalas como x1, x2, x3 y así\nsucesivamente.").grid(row=4,column=0,pady=3, sticky='w')
+
+            ttk.Label(cuadro_marco, text="N° de ecuaciones:", font=('Helvetica',12,'bold')).grid(row=5,column=0, pady=10, sticky='w')
+            ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=5,column=0,padx=5)
+            self.opciones = ttk.Combobox(cuadro_marco, textvariable=self.metodoEscoger, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
+            self.opciones.grid(row=6,column=0,pady=3, sticky='w')
+            self.opciones.state(["readonly"])
 
 
-        elif metodo == 'suma':
+        elif metodo in ('suma','multiplicacion'):
             ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de las dos matrices.").pack(anchor='w')
             a_b()
             ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de las matrices.\n3. Digite los valores de cada matriz.").pack(anchor='w')
             ttk.Label(self.entradas_contenedor, text="(Si no se especifica la escalar para alguna de las matrices,\n entonces la escalar para dicha matriz será 1)").pack(anchor='w')
-
-        elif metodo == 'multiplicacion':
-            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas para las matrices A y B.").pack(anchor='w')
-            a_b()
-            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas para ambas matrices\n3. Digite los valores para cada matriz").pack(anchor='w')
 
         elif metodo in ('transpuesta', 'inversa', 'det'):
             ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de la matriz inicial.").pack(anchor='w')
@@ -580,7 +576,7 @@ class Interfaz:
                 messagebox.showerror('Entrada inválida', 'N° de ecuaciones debe ser un número no negativo')
                 return
 
-            ttk.Label(self.entradas_contenedor,text="Sistema lineal:").pack(anchor='w')
+            ttk.Label(self.entradas_contenedor,text="Sistema lineal:", font=('Helvetica',12,'bold')).pack(anchor='w')
             
             grid_e = ttk.Frame(self.entradas_contenedor)
             grid_e.pack(anchor='w')
