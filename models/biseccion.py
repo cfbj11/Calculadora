@@ -29,11 +29,11 @@ def metodoBiseccion(limInf, limSup, funcion, error_conv):
     if f_a == 0:
 
         messagebox.showinfo("Resultado", f"La raíz aproximada es {i}, porque al evaluar el límite inferior en la función (o sea, {i}), da 0")
-        return [], f_a
+        return [], i
     elif f_b == 0:
 
         messagebox.showinfo("Resultado", f"La raíz aproximada es {s}, porque al evaluar el límite superior (o sea, {s}) en la función, da 0")
-        return [], f_b
+        return [], s
     else:
     
         if i > s:
@@ -63,9 +63,9 @@ def metodoBiseccion(limInf, limSup, funcion, error_conv):
             # Agregar fila de resultados
             resultados.append((k, float(i), float(s), float(c), float(Ea), float(f_a), float(f_b), float(f_c)))
 
-            if abs(f_c) < error_conv:
+            if abs(Ea) < error_conv and k != 1:
                 
-                messagebox.showinfo("Resultado", f"La raíz aproximada es {c:.10f} \nNúmero de Iteraciones: {k}\nError: {error_conv}")
+                messagebox.showinfo("Resultado", f"La raíz aproximada es {c:.10f} \nNúmero de Iteraciones: {k}\nTolerancia: {error_conv}")
                 break
 
             # Actualización de intervalos

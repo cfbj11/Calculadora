@@ -325,7 +325,7 @@ class Interfaz:
 
                     w.destroy()
                 
-                ttk.Label(self.respuestaNum, text=f"Respuesta: {resp}").pack(anchor='center',pady=3)
+                ttk.Label(self.respuestaNum, text=f"Respuesta: {resp} (La respuesta se puede ver en la última iteración, si es que se realizaron)").pack(anchor='center',pady=3)
 
             except Exception as e:
                 messagebox.showerror("Error", f"Ocurrió un error: {e}")
@@ -354,7 +354,7 @@ class Interfaz:
 
                     w.destroy()
                 
-                ttk.Label(self.respuestaNum, text=f"Respuesta: {resp}").pack(anchor='center',pady=3)
+                ttk.Label(self.respuestaNum, text=f"Respuesta: {resp} (La respuesta se puede ver en la última iteración, si es que se realizaron)").pack(anchor='center',pady=3)
 
             except Exception as e:
                 messagebox.showerror("Error", f"Ocurrió un error: {e}")
