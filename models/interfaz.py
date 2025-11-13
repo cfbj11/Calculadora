@@ -384,12 +384,12 @@ class Interfaz:
             nuevaEcua = sympify(ecua)
 
             func = lambdify(x, nuevaEcua, modules=["numpy"])
-        
-            ejeX = numpy.linspace(-8, 8, 400)
+
+            ejeX = numpy.linspace(-10, 10, 400)
 
             with numpy.errstate(divide='ignore', invalid='ignore'):
                 ejeY = func(ejeX)
-        
+
             # Limpiar valores no numéricos
             ejeY = numpy.array(ejeY, dtype=float)
             ejeY[~numpy.isfinite(ejeY)] = numpy.nan
@@ -398,6 +398,15 @@ class Interfaz:
             fig = Figure(figsize=(4, 6), dpi=100)
             ax = fig.add_subplot(111)
             ax.plot(ejeX, ejeY, color="red")
+
+            # Límites de la gráfica en X y Y
+            ax.set_xlim(-10, 10)
+            ax.set_ylim(-10, 10)
+
+            # Separadores/números en la gráfica
+            ax.set_xticks(numpy.arange(-10, 11, 2))
+            ax.set_yticks(numpy.arange(-10, 11, 2))
+
             # --- CONFIGURAR COMO PLANO CARTESIANO ---
             ax.spines["top"].set_color("none")      # Quita borde superior
             ax.spines["right"].set_color("none")    # Quita borde derecho
