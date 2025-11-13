@@ -3,7 +3,7 @@ from sympy import sympify, symbols, lambdify
 import re
 import numpy
 
-def metodoBiseccion(limInf, limSup, funcion, error_conv):
+def reglaFalsa(limInf, limSup, funcion, error_conv):
     x = symbols('x')
     i = limInf
     s = limSup
@@ -35,7 +35,7 @@ def metodoBiseccion(limInf, limSup, funcion, error_conv):
         messagebox.showinfo("Resultado", f"La raíz aproximada es {s}, porque al evaluar el límite superior (o sea, {s}) en la función, da 0")
         return [], f_b
     else:
-    
+
         if i > s:
             messagebox.showerror(title="Inconsistencia", message="El límite inferior es mayor que el superior")
             return [], ""
@@ -44,17 +44,20 @@ def metodoBiseccion(limInf, limSup, funcion, error_conv):
                 title="Signos iguales",
                 message=f"No hay raíz en los intervalos, porque f(a) y f(b) tienen los signos iguales.\nf(a) ={f_a} y f(b) = {f_b}")
             return [], ""
-
+        
         resultados = []
         k = 1
         max_iter = 100
         c_anterior = None
-        
+
         while k <= max_iter:
-            c = (i + s) / 2
+
+            f_a = funcionArreglada(i)
+            f_b = funcionArreglada(s)
+            
+            c = ((s * f_a) - (i * f_b))/(f_a - f_b)
             f_c = funcionArreglada(c)
 
-            # Calcular error relativo
             if c_anterior is None:
                 Ea = 0
             else:
