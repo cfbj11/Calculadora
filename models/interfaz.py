@@ -7,6 +7,7 @@ from sympy import sympify, symbols, pretty, Symbol, lambdify
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy
+import customtkinter as ctk
 
 # Acrónimo de 'Regular Expressions'. Utilizada para que sea más fácil ingresar ecuaciones
 import re
@@ -51,7 +52,7 @@ class Interfaz:
 
         self.menuPrincipal = tk.Tk()
         self.menuPrincipal.title("Calculadora NumExpert")
-        self.menuPrincipal.geometry("600x450")
+        self.menuPrincipal.geometry("450x450")
         self.menuPrincipal.resizable(width=False, height=False)
 
         # Configuración de estilos (tema y apariencia)
@@ -84,20 +85,20 @@ class Interfaz:
         except Exception:
             pass
 
-        ttk.Label(self.menuPrincipal, text="Bienvenido a NumExpert", font=('Cambria Math', 24, 'bold')).grid(row=0, column=0, padx=105)
-        ttk.Label(self.menuPrincipal, text="Seleccione una opción", font=('Times New Roman', 12)).grid(row=1,column=0)
+        ctk.CTkLabel(self.menuPrincipal, text="Bienvenido a NumExpert", font=('Cambria Math', 24, 'bold')).grid(row=0, column=0, padx=90)
+        ctk.CTkLabel(self.menuPrincipal, text="Seleccione una opción", font=('Times New Roman', 12)).grid(row=1,column=0)
 
-        ttk.Button(self.menuPrincipal, text="Álgebra Lineal", padding=7, command=lambda: [self.menuPrincipal.wm_withdraw(), self.algebraLineal()]).grid(row=2, column=0, pady=8)
-        ttk.Button(self.menuPrincipal, text="Análisis Númerico", padding=7, command=lambda: [self.menuPrincipal.wm_withdraw(), self.analisisNumerico()]).grid(row=3, column=0, pady=8)
+        ctk.CTkButton(self.menuPrincipal, text="Álgebra Lineal", command=lambda: [self.menuPrincipal.wm_withdraw(), self.algebraLineal()], fg_color='#3b8b87').grid(row=2, column=0, pady=8)
+        ctk.CTkButton(self.menuPrincipal, text="Análisis Númerico", command=lambda: [self.menuPrincipal.wm_withdraw(), self.analisisNumerico()], fg_color='#3b8b87').grid(row=3, column=0, pady=8)
 
-        ttk.Label(self.menuPrincipal, text="© Copyright 2025 - 2025", font=('Times New Roman', 12)).grid(row=5, column=0, pady=7)
+        ctk.CTkLabel(self.menuPrincipal, text="© Copyright 2025 - 2025", font=('Times New Roman', 12)).grid(row=5, column=0, pady=7)
     
     def algebraLineal(self):
-        
         self.ventanaPrincipal = Toplevel(self.menuPrincipal)
         self.ventanaPrincipal.title("NumExpert (Álgebra Lineal)")
         self.ventanaPrincipal.geometry("1350x720")
         self.ventanaPrincipal.resizable(width=False, height=False)
+        self.ventanaPrincipal.configure(background='#0b5c71')
         # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
         # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
         try:
@@ -163,18 +164,16 @@ class Interfaz:
         self.ventanaPrincipal_AN.title("NumExpert (Análisis Numérico)")
         self.ventanaPrincipal_AN.geometry("1350x720")
         self.ventanaPrincipal_AN.resizable(width=False, height=False)
+        self.ventanaPrincipal_AN.configure(background='#0b5c71')
 
         # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
         # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
         try:
-            
             self.ventanaPrincipal_AN.state('zoomed')
         except Exception:
             try:
-                
                 self.ventanaPrincipal_AN.attributes('-zoomed', True)
             except Exception:
-                
                 # No se pudo maximizar automáticamente; se mantiene la geometría por defecto
                 pass
 
@@ -186,181 +185,202 @@ class Interfaz:
             style.theme_use('clam')
         except Exception:
             pass
-        
-        # Tipografías y colores base
-        default_font = ('Segoe UI', 10)
-        label_font = ('Helvetica', 10)
-        
-        # Configuraciones generales
-        style.configure('TLabel', font=label_font, background='#0b5c71', foreground='#e6e6e6')
-        style.configure('TFrame', background='#0b5c71')
-        style.configure('TButton', font=default_font, padding=6)
-        style.configure('TEntry', font=default_font)
-        style.configure('TCombobox', font=default_font)
-        
-        # Botón destacado
-        style.configure('Accent.TButton', font=default_font, padding=8, foreground='#e6e6e6', background='#3b8b87')
-        style.map('Accent.TButton', background=[('active', '#0d6462'), ('!disabled', '#3b8b87')])
 
-        # Variables
+        # VARIABLES
+        self.tipo_metnum = tk.StringVar(value="met_cerr")
         self.metodoNum = tk.StringVar(value="(Elige un método)")
         self.ecuacionEntrada = tk.StringVar(value="")
         self.limInf = tk.StringVar(value="")
         self.limSup = tk.StringVar(value="")
+        self.tolerancia = tk.StringVar(value="0.00001")
 
-        metodos = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
-        metodos.pack(side=tk.TOP, fill=tk.X)
+        metodos = ttk.Frame(self.ventanaPrincipal_AN)
+        metodos.pack(side='top', fill='x')
 
-        ttk.Button(metodos, text="Métodos Cerrados", width=25, style='Accent.TButton').pack(side=tk.LEFT, padx=5)
-        ttk.Button(metodos, text="Volver al menú", width=25, command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify()], style='Accent.TButton').pack(side=tk.RIGHT, padx=5)
+        # BOTONES DE LA PARTE SUPERIOR
+        ctk.CTkButton(metodos, text="Métodos Cerrados", font=(None, 12, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda:(self.tipo_metnum.set('met_cerr'), tipo_met())).pack(side='left', padx=5, pady=5)
+        ctk.CTkButton(metodos, text="Métodos Abiertos", font=(None, 12, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda:(self.tipo_metnum.set('met_abier'), tipo_met())).pack(side='left', padx=5, pady=5)
+        ctk.CTkButton(metodos, text="Volver al menú", font=(None, 12, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify()]).pack(side='right', padx=5, pady=5)
 
-        izquierda = ttk.Frame(self.ventanaPrincipal_AN, style='TFrame')
-        izquierda.pack(side=tk.LEFT, fill=tk.BOTH)
+        izquierda = ctk.CTkFrame(self.ventanaPrincipal_AN, fg_color='#0b5c71')
+        izquierda.pack(side='left', fill='y', padx=5, pady=5)
 
-        ttk.Label(izquierda, text="Ingrese la ecuación:").grid(row=0,column=0,pady=10, padx=5)
-        self.ecuacion = ttk.Entry(izquierda, width=52)
+        ttk.Label(izquierda, text="Ingrese la ecuación:", font=(None, 12, 'bold')).grid(row=0,column=0,pady=5, padx=5)
+        self.ecuacion = ttk.Entry(izquierda, width=45)
         self.ecuacion.grid(row=1,column=0,pady=10)
 
-        ttk.Button(izquierda, text="Graficar función", command=self.graficarFuncion, width=42, style='Accent.TButton').grid(row=2,column=0,pady=5, padx=5)
+        ctk.CTkButton(izquierda, text="Graficar función", command=self.graficarFuncion, fg_color='#3b8b87').grid(row=2,column=0,pady=5, padx=5)
 
-        ttk.Label(izquierda, text="Método para resolver la ecuación").grid(row=3,column=0, pady=10)
-        self.metodosCerrados = ttk.Combobox(izquierda, textvariable=self.metodoNum, values=('Método de bisección', 'Método de falsa posición'), width=30)
-        self.metodosCerrados.grid(row=4, column=0, pady=8)
-        self.metodosCerrados.state(['readonly'])
+        ttk.Label(izquierda, text="Método para resolver la ecuación", font=(None, 12, 'bold')).grid(row=3,column=0, pady=10)
+
+        def tipo_met():
+            tipo = self.tipo_metnum.get()
+
+            # Borrar lista si existe
+            for w in izquierda.grid_slaves(row=4, column=0):
+                w.destroy()
+                self.metodoNum = tk.StringVar(value="(Elige un método)")
+
+            if tipo == 'met_cerr':
+                self.metodosCerrados = ctk.CTkComboBox(izquierda, variable=self.metodoNum, width=230, values=('Método de Bisección', 'Método de Falsa Posición'), state='readonly')
+                self.metodosCerrados.grid(row=4, column=0, pady=5)
+            elif tipo == 'met_abier':
+                self.metodosAbiertos = ctk.CTkComboBox(izquierda, variable=self.metodoNum, width=230, values=('Método de Newton-Raphson', '-'), state='readonly')
+                self.metodosAbiertos.grid(row=4, column=0, pady=5)
+
+        tipo_met()
 
         # Botones para mejorar la escritura de la ecuación
-        botonesEcuacion = ttk.Frame(izquierda, padding=10)
+        botonesEcuacion = ctk.CTkFrame(izquierda, fg_color='#0b5c71')
         botonesEcuacion.grid(row=5,column=0)
 
-        # 1er fila de botones
-        ttk.Button(botonesEcuacion, text="^", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'^'), style='Accent.TButton').grid(row=0,column=0,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="e", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT), 'e'), style='Accent.TButton').grid(row=0,column=1,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="π", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT), 'π'), style='Accent.TButton').grid(row=0,column=2,pady=5, padx=5)
+        def insert(texto):
+            pos = self.ecuacion.index(tk.INSERT)
+            self.ecuacion.insert(pos, texto)
 
-        # 2da fila de botones
-        ttk.Button(botonesEcuacion, text="sin(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'sin(x)'), style='Accent.TButton').grid(row=1,column=0,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="cos(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'cos(x)'), style='Accent.TButton').grid(row=1,column=1,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="tan(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'tan(x)'), style='Accent.TButton').grid(row=1,column=2,pady=5, padx=5)
+        botones = [
+            ("^", "^"), ("e","e"), ("π","π"),
+            ("sin(x)", "sin(x)"), ("cos(x)","cos(x)"), ("tan(x)","tan(x)"),
+            ("csc(x)", "csc(x)"), ("sec(x)","sec(x)"), ("cot(x)","cot(x)"),
+            ("asin(x)", "asin(x)"), ("acos(x)","acos(x)"), ("atan(x)","atan(x)"),
+            ("log(x)", "log(x)"), ("ln(x)","ln(x)"), ("√","√()")
+        ]
 
-        # 3ra fila de botones
-        ttk.Button(botonesEcuacion, text="csc(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'csc(x)'), style='Accent.TButton').grid(row=2,column=0,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="sec(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'sec(x)'), style='Accent.TButton').grid(row=2,column=1,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="cot(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'cot(x)'), style='Accent.TButton').grid(row=2,column=2,pady=5, padx=5)
+        fila = col = 0
+        for txt, val in botones:
+            ctk.CTkButton(botonesEcuacion, text=txt, command=lambda v=val:insert(v), width=70, fg_color='#3b8b87').grid(row=fila, column=col, padx=5, pady=5)
 
-        # 4ta fila de botones
-        ttk.Button(botonesEcuacion, text="asin(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'asin(x)'), style='Accent.TButton').grid(row=3,column=0,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="acos(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'acos(x)'), style='Accent.TButton').grid(row=3,column=1,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="atan(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'atan(x)'), style='Accent.TButton').grid(row=3,column=2,pady=5, padx=5)
+            col += 1
+            # Se reinicia el bucle y pasa a la siguiente fila
+            if col == 3:
+                col = 0
+                fila += 1
 
-        # 5ta fila de botones
-        ttk.Button(botonesEcuacion, text="log(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'log(x)'), style='Accent.TButton').grid(row=4,column=0,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="ln(x)", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'ln(x)'), style='Accent.TButton').grid(row=4,column=1,pady=5, padx=5)
-        ttk.Button(botonesEcuacion, text="√", command=lambda: self.ecuacion.insert(self.ecuacion.index(tk.INSERT),'√()'), style='Accent.TButton').grid(row=4,column=2,pady=5, padx=5)
-
-        # Entradas del intervalo
-        self.intervaloRaiz = ttk.Frame(izquierda, padding=10)
+        # ENTRADAS DEL INTERVALO
+        self.intervaloRaiz = ctk.CTkFrame(izquierda, fg_color='#0b5c71')
         self.intervaloRaiz.grid(row=6,column=0)
 
-        ttk.Label(self.intervaloRaiz, text="Intervalo para encontrar la raíz (a partir de la gráfica)").pack(anchor='center')
+        ttk.Label(self.intervaloRaiz, text="Intervalo (a partir de la gráfica)", font=(None, 12, 'bold')).pack(anchor='center', pady=(30,10))
         
-        ttk.Label(self.intervaloRaiz, text="Límite Inferior (A)").pack(anchor='w', pady=4)
-        self.limI = ttk.Entry(self.intervaloRaiz, width=30)
-        self.limI.pack(anchor='center', pady=2)
+        ttk.Label(self.intervaloRaiz, text="Límite Inferior (A)", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+        self.limI = ttk.Entry(self.intervaloRaiz, width=13)
+        self.limI.pack(anchor='center', pady=5)
 
-        ttk.Label(self.intervaloRaiz, text="Límite Superior (B)").pack(anchor='w', pady=4)
-        self.limS = ttk.Entry(self.intervaloRaiz, width=30)
-        self.limS.pack(anchor='center', pady=2)
+        ttk.Label(self.intervaloRaiz, text="Límite Superior (B)", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+        self.limS = ttk.Entry(self.intervaloRaiz, width=13)
+        self.limS.pack(anchor='center', pady=5)
 
-        ttk.Label(self.intervaloRaiz, text="Tolerancia (Valor por defecto: 0.00001)").pack(anchor='w', pady=4)
-        self.tol = ttk.Entry(self.intervaloRaiz, width=30)
-        self.tol.pack(anchor='center', pady=2)
+        ttk.Label(self.intervaloRaiz, text="Tolerancia", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+        self.tol = ttk.Entry(self.intervaloRaiz, textvariable=self.tolerancia, width=13)
+        self.tol.pack(anchor='center', pady=5)
 
-        ttk.Button(self.intervaloRaiz, text="Encontrar Respuesta", command=self.resolverEcuacion, style='Accent.TButton').pack(anchor='center', pady=7)
+        ctk.CTkButton(self.intervaloRaiz, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
 
-        self.respuestaNum = ttk.Frame(self.ventanaPrincipal_AN)
-        self.respuestaNum.pack(side=tk.TOP, fill=tk.BOTH)
+        # RESULTADO NUMÉRICO
+        self.respuestaNum = ttk.Frame(self.ventanaPrincipal_AN, height=30)
+        self.respuestaNum.pack(side='top', fill='both')
 
         # PROCEDIMIENTO Y RESULTADOS
-        self.procedimiento = ttk.Frame(self.ventanaPrincipal_AN)
-        self.procedimiento.pack(side=tk.TOP, fill=tk.BOTH)
-        ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
+        self.procedimiento = ctk.CTkFrame(self.ventanaPrincipal_AN, fg_color='#0b5c71')
+        self.procedimiento.pack(side='top', fill='both', expand=True, padx=5, pady=5)
+
+        ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,12,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
 
         # TABLA TREEVIEW
         self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Límite Inferior (A)", "Límite Superior (B)", "C", "Error Absoluto", "F(A)", "F(B)", "F(C)"), show='headings')
-        self.tablaTrv.heading("#", text="#")
-        self.tablaTrv.column("#", width=30, anchor='center')
-        for col in ("Límite Inferior (A)", "Límite Superior (B)", "C", "Error Absoluto", "F(A)", "F(B)", "F(C)"):
-            self.tablaTrv.heading(col, text=col)
-            self.tablaTrv.column(col, width=150, anchor='w')
-        self.tablaTrv.pack(fill=tk.BOTH, expand=True)
+        self.tablaTrv.pack(fill='both', expand=True)
+
+        for col in ("#", "Límite Inferior (A)", "Límite Superior (B)", "C", "Error Absoluto", "F(A)", "F(B)", "F(C)"):
+            if col == "#":
+                self.tablaTrv.heading("#", text="#")
+                self.tablaTrv.column("#", width=30, anchor='center')
+            else:
+                self.tablaTrv.heading(col, text=col)
+                self.tablaTrv.column(col, width=150, anchor='w')
 
         # GRAFICADOR
         self.grafica = ttk.Frame(self.ventanaPrincipal_AN, padding=8)
-        self.grafica.pack(side=tk.TOP, fill=tk.BOTH)
+        self.grafica.pack(side='top', fill='both')
 
     def resolverEcuacion(self):
-        metodo_num = self.metodosCerrados.get()
+        metodo_num = self.tipo_metnum.get()
 
-        if metodo_num == 'Método de bisección':
-            try:
-                lim_inferior = float(self.limI.get().strip())
-                lim_superior = float(self.limS.get().strip())
-                func = self.ecuacion.get().strip()
-                
-                # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
-                if self.tol.get().strip() == "":
+        # MÉTODOS CERRADOS
 
-                    err = 0.00001
-                else:
+        if metodo_num == 'met_cerr':
+            metodo_cerr = self.metodosCerrados.get()
+            if metodo_cerr == 'Método de Bisección':
+                try:
+                    lim_inferior = float(self.limI.get().strip())
+                    lim_superior = float(self.limS.get().strip())
+                    func = self.ecuacion.get().strip()
 
-                    err = float(self.tol.get().strip())
+                    # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
+                    if self.tol.get().strip() == "":
+                        err = 0.00001
 
-                self.tablaTrv.delete(*self.tablaTrv.get_children())
+                    else:
+                        err = float(self.tol.get().strip())
 
-                resultados, resp = metodoBiseccion(lim_inferior, lim_superior, func, err)
-                for fila in resultados:
-                    self.tablaTrv.insert("", tk.END, values=fila)
+                    self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                for w in self.respuestaNum.winfo_children():
+                    resultados, resp = metodoBiseccion(lim_inferior, lim_superior, func, err)
+                    for fila in resultados:
+                        self.tablaTrv.insert("", tk.END, values=fila)
 
-                    w.destroy()
-                
-                ttk.Label(self.respuestaNum, text=f"Respuesta: {resp} (La respuesta se puede ver en la última iteración, si es que se realizaron)").pack(anchor='center',pady=3)
+                    for w in self.respuestaNum.winfo_children():
+                        w.destroy()
 
-            except Exception as e:
-                messagebox.showerror("Error", f"Ocurrió un error: {e}")
+                    ttk.Label(self.respuestaNum, text=f"Respuesta: {resp} (La respuesta se puede ver en la última iteración, si es que se realizaron)").pack(anchor='center',pady=3)
 
-        elif metodo_num == 'Método de falsa posición':
-            try:
-                lim_inferior = float(self.limI.get().strip())
-                lim_superior = float(self.limS.get().strip())
-                func = self.ecuacion.get().strip()
-                
-                # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
-                if self.tol.get().strip() == "":
+                except Exception as e:
+                    messagebox.showerror("Error", f"Ocurrió un error: {e}")
 
-                    err = 0.00001
-                else:
+            elif metodo_cerr == 'Método de Falsa Posición':
+                try:
+                    lim_inferior = float(self.limI.get().strip())
+                    lim_superior = float(self.limS.get().strip())
+                    func = self.ecuacion.get().strip()
 
-                    err = float(self.tol.get().strip())
-                
-                self.tablaTrv.delete(*self.tablaTrv.get_children())
+                    # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
+                    if self.tol.get().strip() == "":
+                        err = 0.00001
 
-                resultados, resp = reglaFalsa(lim_inferior, lim_superior, func, err)
-                for fila in resultados:
-                    self.tablaTrv.insert("", tk.END, values=fila)
+                    else:
+                        err = float(self.tol.get().strip())
 
-                for w in self.respuestaNum.winfo_children():
+                    self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                    w.destroy()
-                
-                ttk.Label(self.respuestaNum, text=f"Respuesta: {resp} (La respuesta se puede ver en la última iteración, si es que se realizaron)").pack(anchor='center',pady=3)
+                    resultados, resp = reglaFalsa(lim_inferior, lim_superior, func, err)
+                    for fila in resultados:
+                        self.tablaTrv.insert("", tk.END, values=fila)
 
-            except Exception as e:
-                messagebox.showerror("Error", f"Ocurrió un error: {e}")
-        else:
+                    for w in self.respuestaNum.winfo_children():
+                        w.destroy()
 
-            messagebox.showerror(title="Método no definido", message="No se ha definido el método para encontrar la raíz de la ecuación")
+                    ttk.Label(self.respuestaNum, text=f"Respuesta: {resp} (La respuesta se puede ver en la última iteración, si es que se realizaron)").pack(anchor='center',pady=3)
+
+                except Exception as e:
+                    messagebox.showerror("Error", f"Ocurrió un error: {e}")
+
+            else:
+                messagebox.showerror(title="Método no definido", message="No se ha definido el método para encontrar la raíz de la ecuación")
+
+        # MÉTODOS ABIERTOS
+
+        elif metodo_num == 'met_abier':
+            metodo_abier = self.metodosAbiertos.get()
+
+            if metodo_abier == "Método de Newton-Raphson":
+                try:
+                    func = self.ecuacion.get().strip()
+                    # ESCRIBIR AQUÍ PARA EL MÉTODO DE NEWTON-RAPHSON
+
+                except Exception as e:
+                    messagebox.showerror("Error", f"Ocurrió un error: {e}")
+
+            else:
+                messagebox.showerror(title="Método no definido", message="No se ha definido el método para encontrar la raíz de la ecuación")
 
     def graficarFuncion(self):
 
@@ -427,29 +447,33 @@ class Interfaz:
 
     def _build_ui(self):
         # Selección de tipo de operación
-        top = ttk.Frame(self.ventanaPrincipal, padding=8)
-        top.pack(side=tk.TOP, fill=tk.X)
+        top = ctk.CTkFrame(self.ventanaPrincipal, fg_color='#0b5c71')
+        top.pack(side='top', fill='x', pady=5)
 
-        # Botones
-        ttk.Button(top, text="Generar entradas", command=self.generar_entradas, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
-        ttk.Button(top, text="Resolver / Ejecutar", command=self.resolver, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
-        ttk.Button(top, text="Limpiar", command=self.limpiar, style='Accent.TButton').pack(side=tk.LEFT, padx=6)
-        ttk.Button(top, text="Volver al menú", command=lambda: [self.ventanaPrincipal.wm_withdraw(), self.menuPrincipal.wm_deiconify()], style='Accent.TButton').pack(side=tk.RIGHT, padx=6)
+        # Botones de acciones
+        ctk.CTkButton(top, text="Generar entradas", font=(None, 12, 'bold'), height=30, command=self.generar_entradas, fg_color='#e6e6e6', text_color='#3b8b87').pack(side='left', padx=5)
+        ctk.CTkButton(top, text="Resolver / Ejecutar", font=(None, 12, 'bold'), height=30, command=self.resolver, fg_color='#e6e6e6', text_color='#3b8b87').pack(side='left', padx=5)
+        ctk.CTkButton(top, text="Limpiar", font=(None, 12, 'bold'), height=30, command=self.limpiar, fg_color='#e6e6e6', text_color='#3b8b87').pack(side='left', padx=5)
+        ctk.CTkButton(top, text="Volver al menú", font=(None, 12, 'bold'), height=30, command=lambda: [self.ventanaPrincipal.wm_withdraw(), self.menuPrincipal.wm_deiconify()], fg_color='#e6e6e6', text_color='#3b8b87').pack(side='right', padx=5)
 
 
         paned = ttk.Panedwindow(self.ventanaPrincipal, orient=tk.HORIZONTAL)
         paned.pack(fill=tk.BOTH, expand=True, padx=8, pady=8)
 
         # Izquierda: Crear siete botones de manera vertical que reemplacen las acciones del raddiobutton
-        izquierda = ttk.Frame(paned, width=420)
+        izquierda = ttk.Frame(paned)
         paned.add(izquierda, weight=0)
-        ttk.Button(izquierda, text="Sistemas", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('sistemas'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=(0,30))
-        ttk.Button(izquierda, text="Suma", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('suma'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
-        ttk.Button(izquierda, text="Multiplicación", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('multiplicacion'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
-        ttk.Button(izquierda, text="Transpuesta", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('transpuesta'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
-        ttk.Button(izquierda, text="Independencia Lineal", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('independencia'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
-        ttk.Button(izquierda, text="Inversa", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('inversa'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
-        ttk.Button(izquierda, text="Determinante", width=25, style='Accent.TButton', command=lambda: [self.metodo.set('det'), self._on_method_change()]).pack(fill=tk.X, padx=2, pady=30)
+
+        # Botones de opciones
+        botones = [("Sistemas", "sistemas"),("Suma","suma"),("Multiplicación","multiplicacion"),("Transpuesta","transpuesta"),("Independencia Lineal","independencia"),("Inversa","inversa"),("Determinante","det")]
+
+        for texto, metodo in botones:
+            if texto == "Sistemas" and metodo == "sistemas":
+                ctk.CTkButton(izquierda, text=texto, font=(None, 15, 'bold'), width=200, height=60, fg_color='#3b8b87', command=lambda m=metodo: [self.metodo.set(m), self._on_method_change()]).pack(fill='x', pady=(50,20), padx=(0,10))
+            elif texto == "Determinante" and metodo == "det":
+                ctk.CTkButton(izquierda, text=texto, font=(None, 15, 'bold'), width=200, height=60, fg_color='#3b8b87', command=lambda m=metodo: [self.metodo.set(m), self._on_method_change()]).pack(fill='x', pady=(20,50), padx=(0,10))
+            else:
+                ctk.CTkButton(izquierda, text=texto, font=(None, 15, 'bold'), width=200, height=60, fg_color='#3b8b87', command=lambda m=metodo: [self.metodo.set(m), self._on_method_change()]).pack(fill='x', pady=20, padx=(0,10))
 
         # Barras de desplazamiento para las entradas
         centro = ttk.Frame(paned, width=420)
@@ -457,7 +481,8 @@ class Interfaz:
 
         self.canvas = tk.Canvas(centro)
         self.canvas.configure(background='#0b5c71')
-        self.canvas.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
         vbar = ttk.Scrollbar(centro, orient=tk.VERTICAL, command=self.canvas.yview)
         vbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.canvas.configure(yscrollcommand=vbar.set)
@@ -466,21 +491,27 @@ class Interfaz:
         self.entradas_contenedor.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
 
         # Derecha: El log y la pantalla de resultados
-        derecha = ttk.Frame(paned, width=420)
+        derecha = ttk.Frame(paned)
         paned.add(derecha, weight=0)
-        ttk.Label(derecha, text="Registro (paso a paso):", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
+
+        cuadro_registro = ctk.CTkFrame(derecha, fg_color='#0b5c71')
+        cuadro_registro.pack(fill='both', expand=True)
+
+        ctk.CTkLabel(cuadro_registro, text="Registro (paso a paso):", font=(None,14,'bold'), fg_color='#0b5c71', text_color='#e6e6e6').pack(anchor='w', padx=5, pady=(5,0))
+
         # Log con fuente monoespaciada y fondo blanco para legibilidad
-        self.log_texto = tk.Text(derecha, height=24, state='disabled', bg='#ffffff', font=('Consolas', 10), padx=6, pady=6)
-        self.log_texto.pack(fill=tk.BOTH, expand=True)
-        log_scroll = ttk.Scrollbar(derecha, orient=tk.VERTICAL, command=self.log_texto.yview)
-        log_scroll.place(relx=1.0, rely=0, relheight=1.0, anchor='ne')
+        self.log_texto = ctk.CTkTextbox(cuadro_registro, height=24, state='disabled', fg_color='#ffffff', text_color='black', font=('Consolas', 12), padx=5, pady=5)
+        self.log_texto.pack(side='left', fill='both', expand=True)
+
+        log_scroll = ctk.CTkScrollbar(cuadro_registro, orientation='vertical', command=self.log_texto.yview, fg_color='#ffffff', button_color='#3b8b87', button_hover_color='#0d6462')
+        log_scroll.pack(side='right', fill='y')
         self.log_texto.configure(yscrollcommand=log_scroll.set)
 
-        ttk.Label(derecha, text="Resultado / Soluciones:", font=(None,10,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w', pady=(6,0))
+        ctk.CTkLabel(derecha, text="Resultado / Soluciones:", font=(None,14,'bold'), fg_color='#0b5c71', text_color='#e6e6e6').pack(anchor='w', padx=5, pady=(5,0))
         self.result_var = tk.StringVar(value='-')
+
         # Caja de resultado con fondo blanco y relieve para destacarla
-        result_box = tk.Label(derecha, textvariable=self.result_var, bg='white', relief='sunken', padx=8, pady=6, font=('Segoe UI', 10))
-        result_box.pack(fill=tk.X)
+        ctk.CTkLabel(derecha, textvariable=self.result_var, fg_color='white', text_color='black', corner_radius=8, height=40).pack(fill='x', padx=(5,0), pady=(0,5))
 
         # inicial
         self._on_method_change()
@@ -547,10 +578,8 @@ class Interfaz:
 
             ttk.Label(cuadro_marco, text="N° de ecuaciones:", font=('Helvetica',12,'bold')).grid(row=5,column=0, pady=10, sticky='w')
             ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=5,column=0,padx=5)
-            self.opciones = ttk.Combobox(cuadro_marco, textvariable=self.metodoEscoger, values=('Gauss-Jordan','Gauss','Regla de Cramer'))
+            self.opciones = ctk.CTkComboBox(cuadro_marco, variable=self.metodoEscoger, width=230, values=('Gauss-Jordan','Gauss','Regla de Cramer'), state='readonly')
             self.opciones.grid(row=6,column=0,pady=3, sticky='w')
-            self.opciones.state(["readonly"])
-
 
         elif metodo in ('suma','multiplicacion'):
             ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas de las dos matrices.").pack(anchor='w')
@@ -1037,5 +1066,4 @@ class Interfaz:
             messagebox.showinfo('Guardar log', f'Registro guardado en: {fname}')
 
     def run(self):
-        
         self.menuPrincipal.mainloop()
