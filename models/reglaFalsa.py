@@ -58,6 +58,11 @@ def reglaFalsa(limInf, limSup, funcion, error_conv):
             c = ((s * f_a) - (i * f_b))/(f_a - f_b)
             f_c = funcionArreglada(c)
 
+            if numpy.isnan(f_c):
+
+                messagebox.showerror(title="Error matemático", message="Durante los cálculos, se encontró con un valor no determinado (nan). Intente con otro valor")
+                return resultados, c
+
             if c_anterior is None:
                 Ea = 0
             else:

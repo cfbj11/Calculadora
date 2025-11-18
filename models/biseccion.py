@@ -54,6 +54,11 @@ def metodoBiseccion(limInf, limSup, funcion, error_conv):
             c = (i + s) / 2
             f_c = funcionArreglada(c)
 
+            if numpy.isnan(f_c):
+
+                messagebox.showerror(title="Error matemático", message="Durante los cálculos, se encontró con un valor no determinado (nan). Intente con otro valor")
+                return resultados, c
+            
             # Calcular error relativo
             if c_anterior is None:
                 Ea = 0
