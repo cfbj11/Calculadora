@@ -66,7 +66,7 @@ def reglaFalsa(limInf, limSup, funcion, error_conv):
             # Agregar fila de resultados
             resultados.append((k, float(i), float(s), float(c), float(Ea), float(f_a), float(f_b), float(f_c)))
 
-            if abs(Ea) < error_conv and k != 1:
+            if (abs(Ea) < error_conv and k != 1) or (f_c == 0):
                 
                 messagebox.showinfo("Resultado", f"La raíz aproximada es {c:.10f} \nNúmero de Iteraciones: {k}\nTolerancia: {error_conv}")
                 break
