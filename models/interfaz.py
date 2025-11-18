@@ -23,6 +23,7 @@ from models.determinantes.determinante import detMatriz
 from models.determinantes.cramer import reglaCramer
 from models.biseccion import metodoBiseccion
 from models.reglaFalsa import reglaFalsa
+from models.newtonRaphson import metodoNewton
 
 from models.imprimir_matriz import imprimir_matriz
 
@@ -460,7 +461,26 @@ class Interfaz:
             if metodo_abier == "Método de Newton-Raphson":
                 try:
                     func = self.ecuacion.get().strip()
-                    # ESCRIBIR AQUÍ PARA EL MÉTODO DE NEWTON-RAPHSON
+                    valorInicial = float(self.val_I.get().strip())
+
+                    # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
+                    if self.tol.get().strip() == "":
+                        err = 0.00001
+
+                    else:
+                        err = float(self.tol.get().strip())
+
+                    self.tablaTrv.delete(*self.tablaTrv.get_children())
+
+                    resultados, resp = metodoNewton(valorInicial, func, err)
+
+                    for fila in resultados:
+                        self.tablaTrv.insert("", tk.END, values=fila)
+
+                    for w in self.respuestaNum.winfo_children():
+                        w.destroy()
+
+                    ttk.Label(self.respuestaNum, text=f"Respuesta: {resp} (La respuesta se puede ver en la última iteración, si es que se realizaron)").pack(anchor='center',pady=3)
 
                 except Exception as e:
                     messagebox.showerror("Error", f"Ocurrió un error: {e}")
