@@ -69,8 +69,8 @@ def metodoNewton(valorInicial, funcion, error_conv):
                 xj_anterior = xj
                 k += 1
 
-            messagebox.showwarning("Posible resultado", f"La raíz aproximada es {xj:.10f} \nNúmero de Iteraciones: {k}\nTolerancia: {error_conv}\nDebido a que se utilizaron la cantidad máxima de iteraciones permitidas, es probable que el resultado divergió")
+            messagebox.showwarning("Posible resultado", f"La raíz aproximada es {xj:.10f} \nNúmero de Iteraciones: {k}\nTolerancia: {error_conv}\nDebido a que se utilizaron la cantidad máxima de iteraciones permitidas, es probable que el resultado divergió. Intente con otro valor, y si vuelve a suceder lo mismo, eso es porque la función no tiene raíz")
             return resultados, xj
     except:
 
-        messagebox.showerror(title="Error matemático", message="Durante los cálculos, se encontró con un valor no determinado (nan). Intente con otro valor")
+        messagebox.showerror(title="Error matemático", message="Durante los cálculos, se encontró con un valor no determinado (nan). Intente con otro valor, y si vuelve a suceder lo mismo, eso es porque la función no tiene raíz")

@@ -3,7 +3,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, Toplevel
 from contextlib import redirect_stdout
-from sympy import sympify, symbols, pretty, Symbol, lambdify
+from sympy import sympify, symbols, pretty, Symbol, lambdify, diff, simplify
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy
@@ -315,9 +315,9 @@ class Interfaz:
         self.ecuacion.grid(row=1,column=0,pady=10)
 
         ctk.CTkButton(self.izquierda, text="Graficar función", command=self.graficarFuncion, fg_color='#3b8b87').grid(row=2,column=0,pady=5, padx=5)
-
+        
         ttk.Label(self.izquierda, text="Método para resolver la ecuación", font=(None, 12, 'bold')).grid(row=3,column=0, pady=10)
-
+        
         self.tipo_met()
 
         # Botones para mejorar la escritura de la ecuación
@@ -359,6 +359,37 @@ class Interfaz:
         self.tol.pack(anchor='center', pady=5)
 
         ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
+        ctk.CTkButton(self.valorIni, text="Encontrar derivada", command=lambda: (derivadaFuncion()), fg_color='#3b8b87').pack(anchor='center', pady=4)
+
+        def derivadaFuncion():
+
+            try:
+
+                x = Symbol('x')
+            
+                funcOriginal = self.ecuacion.get().strip()
+
+                funcOriginal = funcOriginal.replace("^", "**")
+                funcOriginal = funcOriginal.replace("log", "log10")
+                funcOriginal = funcOriginal.replace("ln", "log")
+                funcOriginal = funcOriginal.replace("√", "sqrt")
+                funcOriginal = funcOriginal.replace("e", str(numpy.e))
+                funcOriginal = funcOriginal.replace(f"s{str(numpy.e)}c", "sec")
+                funcOriginal = funcOriginal.replace("π", str(numpy.pi))
+
+                funcOriginal = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', funcOriginal)
+
+                funcSimp = sympify(funcOriginal)
+
+                derivadaFunc = diff(funcSimp, x)
+
+                derivadaArreglada = simplify(derivadaFunc)
+
+                ttk.Label(self.valorIni, text="Derivada de la función", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+                ttk.Label(self.valorIni, text=f'{derivadaArreglada}', font=('Cambria Math', 14, 'bold')).pack(anchor='center', pady=5)
+            except:
+
+                messagebox.showerror(title="Error a la hora de encontrar la derivada", message="No se pudo derivar la función. Revise si está escrita correctamente")
 
         ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,12,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
 
