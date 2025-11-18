@@ -54,12 +54,13 @@ def metodoNewton(valorInicial, funcion, error_conv):
 
             if abs(Ea) < error_conv and k != 1:
                 
-                break
+                messagebox.showinfo("Resultado", f"La raíz aproximada es {xj:.10f} \nNúmero de Iteraciones: {k}\nTolerancia: {error_conv}")
+                return resultados, xj
 
             xa = xj
 
             xj_anterior = xj
             k += 1
 
-        messagebox.showinfo("Resultado", f"La raíz aproximada es {xj:.10f} \nNúmero de Iteraciones: {k}\nTolerancia: {error_conv}")
+        messagebox.showwarning("Posible resultado", f"La raíz aproximada es {xj:.10f} \nNúmero de Iteraciones: {k}\nTolerancia: {error_conv}\nDebido a que se utilizaron la cantidad máxima de iteraciones permitidas, es probable que el resultado divergió")
         return resultados, xj
