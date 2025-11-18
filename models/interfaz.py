@@ -363,10 +363,10 @@ class Interfaz:
         ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,12,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
 
         # TABLA TREEVIEW
-        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F(xi + 1)"), show='headings')
+        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
         self.tablaTrv.pack(fill='both', expand=True)
 
-        for col in ("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F(xi + 1)"):
+        for col in ("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"):
             if col == "#":
                 self.tablaTrv.heading("#", text="#")
                 self.tablaTrv.column("#", width=30, anchor='center')
@@ -386,7 +386,7 @@ class Interfaz:
             self.metodosCerrados = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Bisección', 'Método de Falsa Posición'), state='readonly')
             self.metodosCerrados.grid(row=4, column=0, pady=5)
         elif tipo == 'met_abier':
-            self.metodosAbiertos = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Newton-Raphson', '-'), state='readonly')
+            self.metodosAbiertos = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Newton-Raphson', 'Método de la Secante'), state='readonly')
             self.metodosAbiertos.grid(row=4, column=0, pady=5)
     
     def resolverEcuacion(self):
