@@ -194,6 +194,7 @@ class Interfaz:
         self.limInf = tk.StringVar(value="")
         self.limSup = tk.StringVar(value="")
         self.tolerancia = tk.StringVar(value="0.00001")
+        self.derivada = tk.StringVar(value="")
 
         metodos = ttk.Frame(self.ventanaPrincipal_AN)
         metodos.pack(side='top', fill='x')
@@ -360,6 +361,8 @@ class Interfaz:
 
         ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
         ctk.CTkButton(self.valorIni, text="Encontrar derivada", command=lambda: (derivadaFuncion()), fg_color='#3b8b87').pack(anchor='center', pady=4)
+        ttk.Label(self.valorIni, text="Derivada de la función", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+        ttk.Label(self.valorIni, textvariable=self.derivada, font=('Cambria Math', 15, 'bold')).pack(anchor='center', pady=5)
 
         def derivadaFuncion():
 
@@ -385,8 +388,7 @@ class Interfaz:
 
                 derivadaArreglada = simplify(derivadaFunc)
 
-                ttk.Label(self.valorIni, text="Derivada de la función", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
-                ttk.Label(self.valorIni, text=f'{derivadaArreglada}', font=('Cambria Math', 14, 'bold')).pack(anchor='center', pady=5)
+                self.derivada.set(derivadaArreglada)
             except:
 
                 messagebox.showerror(title="Error a la hora de encontrar la derivada", message="No se pudo derivar la función. Revise si está escrita correctamente")
