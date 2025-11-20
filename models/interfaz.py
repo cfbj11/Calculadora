@@ -409,18 +409,53 @@ class Interfaz:
 
     def tipo_met(self):
         tipo = self.tipo_metnum.get()
-
+        
         # Borrar lista si existe
         for w in self.izquierda.grid_slaves(row=4, column=0):
             w.destroy()
             self.metodoNum = tk.StringVar(value="(Elige un método)")
 
         if tipo == 'met_cerr':
-            self.metodosCerrados = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Bisección', 'Método de Falsa Posición'), state='readonly')
+            self.metodosCerrados = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Bisección', 'Método de Falsa Posición'), state='readonly', command=self.tablasMetodosAbiertos)
             self.metodosCerrados.grid(row=4, column=0, pady=5)
         elif tipo == 'met_abier':
-            self.metodosAbiertos = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Newton-Raphson', 'Método de la Secante'), state='readonly')
+            self.metodosAbiertos = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Newton-Raphson', 'Método de la Secante'), state='readonly', command=self.tablasMetodosAbiertos)
             self.metodosAbiertos.grid(row=4, column=0, pady=5)
+    
+    def tablasMetodosAbiertos(self, tipo):
+
+        for p in self.procedimiento.winfo_children():
+
+            p.destroy()
+
+        ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,12,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
+        
+        if tipo == "Método de Newton-Raphson":
+
+            # TABLA TREEVIEW
+            self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
+            self.tablaTrv.pack(fill='both', expand=True)
+
+            for col in ("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"):
+                if col == "#":
+                    self.tablaTrv.heading("#", text="#")
+                    self.tablaTrv.column("#", width=30, anchor='center')
+                else:
+                    self.tablaTrv.heading(col, text=col)
+                    self.tablaTrv.column(col, width=150, anchor='w')
+        elif tipo == "Método de la Secante":
+
+            # TABLA TREEVIEW
+            self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi - 1", "xi", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)", "F(xi + 1)"), show='headings')
+            self.tablaTrv.pack(fill='both', expand=True)
+
+            for col in ("#", "xi - 1", "xi", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)", "F(xi + 1)"):
+                if col == "#":
+                    self.tablaTrv.heading("#", text="#")
+                    self.tablaTrv.column("#", width=30, anchor='center')
+                else:
+                    self.tablaTrv.heading(col, text=col)
+                    self.tablaTrv.column(col, width=150, anchor='w')
     
     def resolverEcuacion(self):
         metodo_num = self.tipo_metnum.get()
@@ -517,7 +552,33 @@ class Interfaz:
 
                 except Exception as e:
                     messagebox.showerror("Error", f"Ocurrió un error: {e}")
+            elif metodo_abier == "Método de la Secante":
 
+                try:
+                    func = self.ecuacion.get().strip()
+                    valorInicial = float(self.val_I.get().strip())
+
+                    # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
+                    if self.tol.get().strip() == "":
+                        err = 0.00001
+
+                    else:
+                        err = float(self.tol.get().strip())
+
+                    self.tablaTrv.delete(*self.tablaTrv.get_children())
+
+                    resultados, resp = metodoNewton(valorInicial, func, err)
+
+                    for fila in resultados:
+                        self.tablaTrv.insert("", tk.END, values=fila)
+
+                    for w in self.respuestaNum.winfo_children():
+                        w.destroy()
+
+                    ttk.Label(self.respuestaNum, text=f"Respuesta: {resp} (La respuesta se puede ver en la última iteración, si es que se realizaron)").pack(anchor='center',pady=3)
+
+                except Exception as e:
+                    messagebox.showerror("Error", f"Ocurrió un error: {e}")
             else:
                 messagebox.showerror(title="Método no definido", message="No se ha definido el método para encontrar la raíz de la ecuación")
 
