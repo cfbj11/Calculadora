@@ -48,7 +48,7 @@ def metodoSecante(valor1, valor2, funcion, error_conv):
                 f_xi = funcionArreglada(xi)
                 f_xj = funcionArreglada(xj)
 
-                xs = xi - ((f_xi)*(xj - xi))/(f_xi - f_xj)
+                xs = xj - ((f_xj)*(xi - xj))/(f_xi - f_xj)
 
                 if numpy.isnan(xs):
 
@@ -58,10 +58,10 @@ def metodoSecante(valor1, valor2, funcion, error_conv):
                 if xs_anterior is None:
                     Ea = 0
                 else:
-                    Ea = abs(xj - xs_anterior)
+                    Ea = abs(xs - xs_anterior)
 
                 # Agregar fila de resultados
-                resultados.append((k, float(xj), float(xs), float(Ea), float(f_xi), float(f_xj)))
+                resultados.append((k, float(xi), float(xj), float(xs), float(Ea), float(f_xi), float(f_xj)))
 
                 if abs(Ea) < error_conv and k != 1:
                 
@@ -72,6 +72,6 @@ def metodoSecante(valor1, valor2, funcion, error_conv):
                 xj = xs
                 xs_anterior = xs
                 k += 1
-    except:
+    except Exception:
 
-        messagebox.showinfo("Error", "Algo salió mal")
+        messagebox.showinfo("Error", "El algoritmo se detuvo, porque se encontró con un error matemático")

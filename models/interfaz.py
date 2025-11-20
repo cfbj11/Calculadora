@@ -24,6 +24,7 @@ from models.determinantes.cramer import reglaCramer
 from models.biseccion import metodoBiseccion
 from models.reglaFalsa import reglaFalsa
 from models.newtonRaphson import metodoNewton
+from models.secante import metodoSecante
 
 from models.imprimir_matriz import imprimir_matriz
 
@@ -434,12 +435,12 @@ class Interfaz:
         elif tipo == "Método de la Secante":
 
             ttk.Label(self.valorIni, text="Valor Inicial #1 (xi - 1)", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
-            self.val_I = ttk.Entry(self.valorIni, width=13)
-            self.val_I.pack(anchor='center', pady=5)
+            self.val_K = ttk.Entry(self.valorIni, width=13)
+            self.val_K.pack(anchor='center', pady=5)
 
             ttk.Label(self.valorIni, text="Valor Inicial #2 (xi)", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
-            self.val_I = ttk.Entry(self.valorIni, width=13)
-            self.val_I.pack(anchor='center', pady=5)
+            self.val_J = ttk.Entry(self.valorIni, width=13)
+            self.val_J.pack(anchor='center', pady=5)
 
             ttk.Label(self.valorIni, text="Tolerancia", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
             self.tol = ttk.Entry(self.valorIni, textvariable=self.tolerancia, width=13)
@@ -448,10 +449,10 @@ class Interfaz:
             ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
             
             # TABLA TREEVIEW
-            self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi - 1", "xi", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)", "F(xi + 1)"), show='headings')
+            self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi - 1", "xi", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)"), show='headings')
             self.tablaTrv.pack(fill='both', expand=True)
 
-            for col in ("#", "xi - 1", "xi", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)", "F(xi + 1)"):
+            for col in ("#", "xi - 1", "xi", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)"):
                 if col == "#":
                     self.tablaTrv.heading("#", text="#")
                     self.tablaTrv.column("#", width=30, anchor='center')
@@ -588,7 +589,8 @@ class Interfaz:
 
                 try:
                     func = self.ecuacion.get().strip()
-                    valorInicial = float(self.val_I.get().strip())
+                    v1 = float(self.val_K.get().strip())
+                    v2 = float(self.val_J.get().strip())
 
                     # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
                     if self.tol.get().strip() == "":
@@ -599,7 +601,7 @@ class Interfaz:
 
                     self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                    resultados, resp = metodoNewton(valorInicial, func, err)
+                    resultados, resp = metodoSecante(v1, v2, func, err)
 
                     for fila in resultados:
                         self.tablaTrv.insert("", tk.END, values=fila)
