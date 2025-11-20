@@ -360,38 +360,9 @@ class Interfaz:
         self.tol.pack(anchor='center', pady=5)
 
         ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
-        ctk.CTkButton(self.valorIni, text="Encontrar derivada", command=lambda: (derivadaFuncion()), fg_color='#3b8b87').pack(anchor='center', pady=4)
+        ctk.CTkButton(self.valorIni, text="Encontrar derivada", command=lambda: (self.derivadaFuncion()), fg_color='#3b8b87').pack(anchor='center', pady=4)
         ttk.Label(self.valorIni, text="Derivada de la función", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
         ttk.Label(self.valorIni, textvariable=self.derivada, font=('Cambria Math', 15, 'bold')).pack(anchor='center', pady=5)
-
-        def derivadaFuncion():
-
-            try:
-
-                x = Symbol('x')
-            
-                funcOriginal = self.ecuacion.get().strip()
-
-                funcOriginal = funcOriginal.replace("^", "**")
-                funcOriginal = funcOriginal.replace("log", "log10")
-                funcOriginal = funcOriginal.replace("ln", "log")
-                funcOriginal = funcOriginal.replace("√", "sqrt")
-                funcOriginal = funcOriginal.replace("e", str(numpy.e))
-                funcOriginal = funcOriginal.replace(f"s{str(numpy.e)}c", "sec")
-                funcOriginal = funcOriginal.replace("π", str(numpy.pi))
-
-                funcOriginal = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', funcOriginal)
-
-                funcSimp = sympify(funcOriginal)
-
-                derivadaFunc = diff(funcSimp, x)
-
-                derivadaArreglada = simplify(derivadaFunc)
-
-                self.derivada.set(derivadaArreglada)
-            except:
-
-                messagebox.showerror(title="Error a la hora de encontrar la derivada", message="No se pudo derivar la función. Revise si está escrita correctamente")
 
         ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,12,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
 
@@ -430,8 +401,25 @@ class Interfaz:
 
         ttk.Label(self.procedimiento, text="RESULTADOS:", font=(None,12,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
         
+        for b in self.valorIni.winfo_children():
+
+            b.destroy()
+        
         if tipo == "Método de Newton-Raphson":
 
+            ttk.Label(self.valorIni, text="Valor Inicial (xi)", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            self.val_I = ttk.Entry(self.valorIni, width=13)
+            self.val_I.pack(anchor='center', pady=5)
+
+            ttk.Label(self.valorIni, text="Tolerancia", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            self.tol = ttk.Entry(self.valorIni, textvariable=self.tolerancia, width=13)
+            self.tol.pack(anchor='center', pady=5)
+
+            ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
+            ctk.CTkButton(self.valorIni, text="Encontrar derivada", command=lambda: (self.derivadaFuncion()), fg_color='#3b8b87').pack(anchor='center', pady=4)
+            ttk.Label(self.valorIni, text="Derivada de la función", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            ttk.Label(self.valorIni, textvariable=self.derivada, font=('Cambria Math', 15, 'bold')).pack(anchor='center', pady=5)
+            
             # TABLA TREEVIEW
             self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
             self.tablaTrv.pack(fill='both', expand=True)
@@ -445,6 +433,20 @@ class Interfaz:
                     self.tablaTrv.column(col, width=150, anchor='w')
         elif tipo == "Método de la Secante":
 
+            ttk.Label(self.valorIni, text="Valor Inicial #1 (xi - 1)", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            self.val_I = ttk.Entry(self.valorIni, width=13)
+            self.val_I.pack(anchor='center', pady=5)
+
+            ttk.Label(self.valorIni, text="Valor Inicial #2 (xi)", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            self.val_I = ttk.Entry(self.valorIni, width=13)
+            self.val_I.pack(anchor='center', pady=5)
+
+            ttk.Label(self.valorIni, text="Tolerancia", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            self.tol = ttk.Entry(self.valorIni, textvariable=self.tolerancia, width=13)
+            self.tol.pack(anchor='center', pady=5)
+
+            ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
+            
             # TABLA TREEVIEW
             self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi - 1", "xi", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)", "F(xi + 1)"), show='headings')
             self.tablaTrv.pack(fill='both', expand=True)
@@ -457,6 +459,36 @@ class Interfaz:
                     self.tablaTrv.heading(col, text=col)
                     self.tablaTrv.column(col, width=150, anchor='w')
     
+    def derivadaFuncion(self):
+
+        try:
+
+            x = Symbol('x')
+            
+            funcOriginal = self.ecuacion.get().strip()
+
+            funcOriginal = funcOriginal.replace("^", "**")
+            funcOriginal = funcOriginal.replace("log", "log10")
+            funcOriginal = funcOriginal.replace("ln", "log")
+            funcOriginal = funcOriginal.replace("√", "sqrt")
+            funcOriginal = funcOriginal.replace("e", str(numpy.e))
+            funcOriginal = funcOriginal.replace(f"s{str(numpy.e)}c", "sec")
+            funcOriginal = funcOriginal.replace("π", str(numpy.pi))
+
+            funcOriginal = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', funcOriginal)
+
+            funcSimp = sympify(funcOriginal)
+
+            derivadaFunc = diff(funcSimp, x)
+
+            derivadaArreglada = simplify(derivadaFunc)
+
+            self.derivada.set(derivadaArreglada)
+        except:
+
+            messagebox.showerror(title="Error a la hora de encontrar la derivada", message="No se pudo derivar la función. Revise si está escrita correctamente")
+
+
     def resolverEcuacion(self):
         metodo_num = self.tipo_metnum.get()
 
