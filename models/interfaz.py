@@ -388,7 +388,7 @@ class Interfaz:
             self.metodoNum = tk.StringVar(value="(Elige un método)")
 
         if tipo == 'met_cerr':
-            self.metodosCerrados = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Bisección', 'Método de Falsa Posición'), state='readonly', command=self.tablasMetodosAbiertos)
+            self.metodosCerrados = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Bisección', 'Método de Falsa Posición'), state='readonly')
             self.metodosCerrados.grid(row=4, column=0, pady=5)
         elif tipo == 'met_abier':
             self.metodosAbiertos = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Newton-Raphson', 'Método de la Secante'), state='readonly', command=self.tablasMetodosAbiertos)
