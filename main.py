@@ -1,5 +1,7 @@
-# Operaciones con matrices
+# Calculadora NumExpert
 # Función 'Main'
+# Para instalar dependencias de la calculadora : pip install -r requirements.txt
+
 from models.interfaz import Interfaz
 
 def main():
