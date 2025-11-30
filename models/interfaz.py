@@ -56,16 +56,7 @@ class Interfaz:
         self.menuPrincipal.title("Calculadora NumExpert")
         self.menuPrincipal.geometry("600x450")
 
-        # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
-        # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
-        try:
-            self.menuPrincipal.state('zoomed')
-        except Exception:
-            try:
-                self.menuPrincipal.attributes('-zoomed', True)
-            except Exception:
-                # No se pudo maximizar automáticamente; se mantiene la geometría por defecto
-                pass
+        self.maximizarVentana(self.menuPrincipal)
 
         # Configuración de estilos (tema y apariencia)
         # Usamos ttk.Style para aplicar una apariencia más moderna y coherente
@@ -81,7 +72,7 @@ class Interfaz:
         label_font = ('Helvetica', 10)
         
         # Configuraciones generales
-        style.configure('TLabel', font=label_font, background='#0b5c71', foreground="#000000")
+        style.configure('TLabel', font=label_font, background='#0b5c71', foreground='#e6e6e6')
         style.configure('TFrame', background='#0b5c71')
         style.configure('TButton', font=default_font, padding=6)
         style.configure('TEntry', font=default_font)
@@ -98,10 +89,10 @@ class Interfaz:
             pass
         
         ctk.CTkLabel(self.menuPrincipal, text="NumExpert", font=('Cambria Math', 72, 'bold'), text_color='#000000').pack(anchor='center')
-        ctk.CTkLabel(self.menuPrincipal, text="Seleccione una opción", font=('Times New Roman', 48), text_color='#000000').pack(anchor='center', pady=30)
+        ctk.CTkLabel(self.menuPrincipal, text="Seleccione una opción", font=('Times New Roman', 48), text_color='#000000').pack(anchor='center')
 
-        ctk.CTkButton(self.menuPrincipal, text="Álgebra Lineal", font=('Georgia', 32, 'bold'),text_color='#000000',command=lambda: [self.menuPrincipal.wm_withdraw(), self.algebraLineal()], fg_color="#20b1aa").pack(anchor='center', pady=20)
-        ctk.CTkButton(self.menuPrincipal, text="Análisis Númerico", font=('Georgia', 32, 'bold'),text_color='#000000', command=lambda: [self.menuPrincipal.wm_withdraw(), self.analisisNumerico()], fg_color="#20b1aa").pack(anchor='center', pady=10)
+        ctk.CTkButton(self.menuPrincipal, text="Álgebra Lineal", font=('Georgia', 32, 'bold'), width=225, height=75, text_color='#000000',command=lambda: [self.menuPrincipal.wm_withdraw(), self.algebraLineal()], fg_color="#20b1aa").pack(anchor='center', pady=20)
+        ctk.CTkButton(self.menuPrincipal, text="Análisis Númerico", font=('Georgia', 32, 'bold'), width=225, height=75, text_color='#000000', command=lambda: [self.menuPrincipal.wm_withdraw(), self.analisisNumerico()], fg_color="#20b1aa").pack(anchor='center', pady=10)
 
         ctk.CTkLabel(self.menuPrincipal, text="© Copyright 2025 - 2025", font=('Times New Roman', 28), text_color='#000000').pack(anchor='s', pady=15)
     
@@ -121,16 +112,8 @@ class Interfaz:
         self.ventanaPrincipal.title("NumExpert (Álgebra Lineal)")
         self.ventanaPrincipal.geometry("1350x720")
         self.ventanaPrincipal.configure(background='#0b5c71')
-        # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
-        # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
-        try:
-            self.ventanaPrincipal.state('zoomed')
-        except Exception:
-            try:
-                self.ventanaPrincipal.attributes('-zoomed', True)
-            except Exception:
-                # No se pudo maximizar automáticamente; se mantiene la geometría por defecto
-                pass
+        
+        self.maximizarVentana(self.ventanaPrincipal)
 
         self.ventanaPrincipal.configure(background='#0b5c71')
 
@@ -187,16 +170,7 @@ class Interfaz:
         self.ventanaPrincipal_AN.geometry("1350x720")
         self.ventanaPrincipal_AN.configure(background='#0b5c71')
 
-        # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
-        # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
-        try:
-            self.ventanaPrincipal_AN.state('zoomed')
-        except Exception:
-            try:
-                self.ventanaPrincipal_AN.attributes('-zoomed', True)
-            except Exception:
-                # No se pudo maximizar automáticamente; se mantiene la geometría por defecto
-                pass
+        self.maximizarVentana(self.ventanaPrincipal_AN)
 
         # Configuración de estilos (tema y apariencia)
         # Usamos ttk.Style para aplicar una apariencia más moderna y coherente
