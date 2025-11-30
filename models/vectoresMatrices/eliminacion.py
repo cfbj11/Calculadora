@@ -161,19 +161,19 @@ def eliminacionGaussJordan(matriz_a_reducir):
             
             for i, var in enumerate(columnas_pivote):
 
-                print(f"x{var} =", end="")
+                ecuacion = f"x{var} ="
                 
                 # Si el término independiente es 0, entonces no se imprime, para que se vea más bonita la solución general
-                print(f" {matriz_a_reducir[i][columnas - 1]:.3f}" if matriz_a_reducir[i][columnas - 1] != 0 else "", end="")
+                ecuacion += f" {matriz_a_reducir[i][columnas - 1]:.3f}" if matriz_a_reducir[i][columnas - 1] != 0 else ""
 
                 for a in variables_libres:
 
                     if matriz_a_reducir[i][a - 1] != 0:
 
                         # Si el coeficiente es 0, entonces no se imprime, para que se vea más bonita la solución general
-                        print(f" {-matriz_a_reducir[i][a - 1]:.3f}x{a}" if matriz_a_reducir[i][a - 1] >= 0 else f" + {-matriz_a_reducir[i][a - 1]:.3f}x{a}", end="")
+                        ecuacion += f" {-matriz_a_reducir[i][a - 1]:.3f}x{a}" if matriz_a_reducir[i][a - 1] >= 0 else f" + {-matriz_a_reducir[i][a - 1]:.3f}x{a}"
                 
-                print("")
+                print(f"x{var} = 0.000" if ecuacion == f"x{var} =" else ecuacion)
             for l in variables_libres:
 
                 print(f"x{l} es libre")
