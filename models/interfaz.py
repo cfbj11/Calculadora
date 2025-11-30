@@ -55,7 +55,6 @@ class Interfaz:
         self.menuPrincipal = tk.Tk()
         self.menuPrincipal.title("Calculadora NumExpert")
         self.menuPrincipal.geometry("600x450")
-        self.menuPrincipal.resizable(width=False, height=False)
 
         # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
         # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
@@ -121,7 +120,6 @@ class Interfaz:
         self.ventanaPrincipal = Toplevel(self.menuPrincipal)
         self.ventanaPrincipal.title("NumExpert (Álgebra Lineal)")
         self.ventanaPrincipal.geometry("1350x720")
-        self.ventanaPrincipal.resizable(width=False, height=False)
         self.ventanaPrincipal.configure(background='#0b5c71')
         # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
         # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
@@ -187,7 +185,6 @@ class Interfaz:
         self.ventanaPrincipal_AN = Toplevel(self.menuPrincipal)
         self.ventanaPrincipal_AN.title("NumExpert (Análisis Numérico)")
         self.ventanaPrincipal_AN.geometry("1350x720")
-        self.ventanaPrincipal_AN.resizable(width=False, height=False)
         self.ventanaPrincipal_AN.configure(background='#0b5c71')
 
         # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
