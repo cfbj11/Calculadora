@@ -54,16 +54,19 @@ class Interfaz:
 
         self.menuPrincipal = tk.Tk()
         self.menuPrincipal.title("Calculadora NumExpert")
-
-        # Tamaño de la ventana
-        ancho_v = 600
-        alto_v = 450
-        # Tamaño de la pantalla
-        ancho_t = self.menuPrincipal.winfo_screenwidth()
-        alto_t = self.menuPrincipal.winfo_screenheight()
-
-        self.menuPrincipal.geometry(f"{ancho_v}x{alto_v}")
+        self.menuPrincipal.geometry("600x450")
         self.menuPrincipal.resizable(width=False, height=False)
+
+        # Abrir la ventana maximizada por defecto. En Windows se usa 'zoomed';
+        # como fallback intentamos el atributo '-zoomed' (algunos entornos X11 lo soportan).
+        try:
+            self.menuPrincipal.state('zoomed')
+        except Exception:
+            try:
+                self.menuPrincipal.attributes('-zoomed', True)
+            except Exception:
+                # No se pudo maximizar automáticamente; se mantiene la geometría por defecto
+                pass
 
         # Configuración de estilos (tema y apariencia)
         # Usamos ttk.Style para aplicar una apariencia más moderna y coherente
@@ -79,7 +82,7 @@ class Interfaz:
         label_font = ('Helvetica', 10)
         
         # Configuraciones generales
-        style.configure('TLabel', font=label_font, background='#0b5c71', foreground='#e6e6e6')
+        style.configure('TLabel', font=label_font, background='#0b5c71', foreground="#000000")
         style.configure('TFrame', background='#0b5c71')
         style.configure('TButton', font=default_font, padding=6)
         style.configure('TEntry', font=default_font)
@@ -91,17 +94,28 @@ class Interfaz:
         
         # Fondo de la ventana
         try:
-            self.menuPrincipal.configure(background='#0b5c71')
+            self.menuPrincipal.configure(background="#a6cfd9")
         except Exception:
             pass
+        
+        ctk.CTkLabel(self.menuPrincipal, text="NumExpert", font=('Cambria Math', 72, 'bold'), text_color='#000000').pack(anchor='center')
+        ctk.CTkLabel(self.menuPrincipal, text="Seleccione una opción", font=('Times New Roman', 48), text_color='#000000').pack(anchor='center', pady=30)
 
-        ctk.CTkLabel(self.menuPrincipal, text="Bienvenido a NumExpert", font=('Cambria Math', 24, 'bold')).grid(row=0, column=0, padx=165)
-        ctk.CTkLabel(self.menuPrincipal, text="Seleccione una opción", font=('Times New Roman', 20)).grid(row=1,column=0)
+        ctk.CTkButton(self.menuPrincipal, text="Álgebra Lineal", font=('Georgia', 32, 'bold'),text_color='#000000',command=lambda: [self.menuPrincipal.wm_withdraw(), self.algebraLineal()], fg_color="#20b1aa").pack(anchor='center', pady=20)
+        ctk.CTkButton(self.menuPrincipal, text="Análisis Númerico", font=('Georgia', 32, 'bold'),text_color='#000000', command=lambda: [self.menuPrincipal.wm_withdraw(), self.analisisNumerico()], fg_color="#20b1aa").pack(anchor='center', pady=10)
 
-        ctk.CTkButton(self.menuPrincipal, text="Álgebra Lineal", font=('Georgia', 14, 'bold'), command=lambda: [self.menuPrincipal.wm_withdraw(), self.algebraLineal()], fg_color='#3b8b87').grid(row=2, column=0, pady=8)
-        ctk.CTkButton(self.menuPrincipal, text="Análisis Númerico", font=('Georgia', 14, 'bold'), command=lambda: [self.menuPrincipal.wm_withdraw(), self.analisisNumerico()], fg_color='#3b8b87').grid(row=3, column=0, pady=8)
+        ctk.CTkLabel(self.menuPrincipal, text="© Copyright 2025 - 2025", font=('Times New Roman', 28), text_color='#000000').pack(anchor='s', pady=15)
+    
+    def maximizarVentana(self, ventana):
 
-        ctk.CTkLabel(self.menuPrincipal, text="© Copyright 2025 - 2025", font=('Times New Roman', 14)).grid(row=5, column=0, pady=7)
+        try:
+            ventana.state('zoomed')
+        except Exception:
+            try:
+                ventana.attributes('-zoomed', True)
+            except Exception:
+                # No se pudo maximizar automáticamente; se mantiene la geometría por defecto
+                pass
     
     def algebraLineal(self):
         self.ventanaPrincipal = Toplevel(self.menuPrincipal)
@@ -211,7 +225,7 @@ class Interfaz:
         # BOTONES DE LA PARTE SUPERIOR
         ctk.CTkButton(metodos, text="Métodos Cerrados", font=('Georgia', 14, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda:(self.tipo_metnum.set('met_cerr'), self.tipo_met(), self.metodoCerrado())).pack(side='left', padx=5, pady=5)
         ctk.CTkButton(metodos, text="Métodos Abiertos", font=('Georgia', 14, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda:(self.tipo_metnum.set('met_abier'), self.tipo_met(), self.metodoAbierto())).pack(side='left', padx=5, pady=5)
-        ctk.CTkButton(metodos, text="Volver al menú", font=('Georgia', 14, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify()]).pack(side='right', padx=5, pady=5)
+        ctk.CTkButton(metodos, text="Volver al menú", font=('Georgia', 14, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify(), self.maximizarVentana(self.menuPrincipal)]).pack(side='right', padx=5, pady=5)
 
         self.izquierda = ctk.CTkFrame(self.ventanaPrincipal_AN, fg_color='#0b5c71')
         self.izquierda.pack(side='left', fill='y', padx=5, pady=5)
@@ -696,7 +710,7 @@ class Interfaz:
         ctk.CTkButton(top, text="Generar entradas", font=('Georgia', 14, 'bold'), height=30, command=self.generar_entradas, fg_color='#e6e6e6', text_color='#3b8b87').pack(side='left', padx=5)
         ctk.CTkButton(top, text="Resolver", font=('Georgia', 14, 'bold'), height=30, command=self.resolver, fg_color='#e6e6e6', text_color='#3b8b87').pack(side='left', padx=5)
         ctk.CTkButton(top, text="Limpiar", font=('Georgia', 14, 'bold'), height=30, command=self.limpiar, fg_color='#e6e6e6', text_color='#3b8b87').pack(side='left', padx=5)
-        ctk.CTkButton(top, text="Volver al menú", font=('Georgia', 14, 'bold'), height=30, command=lambda: [self.ventanaPrincipal.wm_withdraw(), self.menuPrincipal.wm_deiconify()], fg_color='#e6e6e6', text_color='#3b8b87').pack(side='right', padx=5)
+        ctk.CTkButton(top, text="Volver al menú", font=('Georgia', 14, 'bold'), height=30, command=lambda: [self.ventanaPrincipal.wm_withdraw(), self.menuPrincipal.wm_deiconify(), self.maximizarVentana(self.menuPrincipal)], fg_color='#e6e6e6', text_color='#3b8b87').pack(side='right', padx=5)
 
 
         paned = ttk.Panedwindow(self.ventanaPrincipal, orient=tk.HORIZONTAL)
