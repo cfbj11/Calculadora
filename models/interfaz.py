@@ -828,6 +828,13 @@ class Interfaz:
             ttk.Label(self.entradas_contenedor, text="Seleccione un método de operación.", font=('Helvetica',12,'normal')).pack(anchor='w')
 
     def generar_entradas(self):
+        
+        for w in self.entradas_contenedor.winfo_children():
+            
+            # Se actualiza la parte donde se ingresan las entradas
+            w.destroy()
+            self._on_method_change()
+        
         metodo = self.metodo.get()
 
         self.entradas_aug = []
