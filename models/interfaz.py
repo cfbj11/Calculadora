@@ -809,6 +809,11 @@ class Interfaz:
             a_b()
             ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de las matrices.\n3. Digite los valores de cada matriz.", font=('Helvetica',12,'normal')).pack(anchor='w')
             ttk.Label(self.entradas_contenedor, text="(Si no se especifica el escalar para alguna de las\nmatrices, entonces el escalar será 1)", font=('Helvetica',12,'normal')).pack(anchor='w')
+            self.aplicar_At = ctk.CTkCheckBox(self.entradas_contenedor,text="Aplicar transpuesta para A", font=('Helvetica',14,'bold'), hover_color="#5E5E5E", checkmark_color="#00ff40", text_color_disabled="#FF0000")
+            self.aplicar_At.pack(anchor='w', pady=4, padx=2)
+
+            self.aplicar_Bt = ctk.CTkCheckBox(self.entradas_contenedor,text="Aplicar transpuesta para B", font=('Helvetica',14,'bold'), hover_color="#5E5E5E", checkmark_color="#00ff40", text_color_disabled="#FF0000")
+            self.aplicar_Bt.pack(anchor='w', pady=4, padx=2)
 
         elif metodo in ('transpuesta', 'inversa', 'det'):
             ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas\nde la matriz inicial.", font=('Helvetica',12,'normal')).pack(anchor='w')
