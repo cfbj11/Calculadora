@@ -223,9 +223,29 @@ class Interfaz:
 
             w.destroy()
         
+        self.superindices = {"0": "⁰","1": "¹","2": "²","3": "³","4": "⁴","5": "⁵","6": "⁶","7": "⁷","8": "⁸","9": "⁹"}
+
+        def procesar(evento):
+            texto = self.ecuacion.get()
+            if "^" in texto:
+                nuevo = ""
+                i = 0
+                while i < len(texto):
+                    if texto[i] == "^" and i + 1 < len(texto):
+                        sig = texto[i+1]
+                        if sig in self.superindices:
+                            nuevo += self.superindices[sig]
+                            i += 2
+                            continue
+                    nuevo += texto[i]
+                    i += 1
+                self.ecuacion.delete(0, tk.END)
+                self.ecuacion.insert(0, nuevo)
+        
         ttk.Label(self.izquierda, text="Ingrese la ecuación:", font=('Georgia', 14, 'bold')).grid(row=0,column=0,pady=5, padx=5)
         self.ecuacion = ttk.Entry(self.izquierda, width=15, font=('Helvetica', 16, 'normal'))
         self.ecuacion.grid(row=1,column=0,pady=10)
+        self.ecuacion.bind('<KeyRelease>', procesar)
 
         ctk.CTkButton(self.izquierda, text="Graficar función", font=('Georgia', 12, 'bold'), command=self.graficarFuncion, fg_color='#3b8b87').grid(row=2,column=0,pady=5, padx=5)
 
@@ -242,7 +262,7 @@ class Interfaz:
             self.ecuacion.insert(pos, texto)
 
         botones = [
-            ("^", "^()"), ("e","e"), ("π","π"),
+            ("^", "^"), ("e","e"), ("π","π"),
             ("sin(x)", "sin(x)"), ("cos(x)","cos(x)"), ("tan(x)","tan(x)"),
             ("csc(x)", "csc(x)"), ("sec(x)","sec(x)"), ("cot(x)","cot(x)"),
             ("asin(x)", "asin(x)"), ("acos(x)","acos(x)"), ("atan(x)","atan(x)"),
@@ -608,13 +628,18 @@ class Interfaz:
 
     def graficarFuncion(self):
 
+        ecua = self.ecuacion.get().strip()
+        
         for e in self.grafica.winfo_children():
             e.destroy()
+
+        for bruh in self.superindices:
+
+            ecua = ecua.replace(self.superindices[bruh], f"**{bruh}")
 
         try:
             x = Symbol('x')
         
-            ecua = self.ecuacion.get().strip()
             ecua = ecua.replace("^", "**")
             ecua = ecua.replace("log", "log10")
             ecua = ecua.replace("ln", "log")
@@ -659,7 +684,7 @@ class Interfaz:
 
             ax.set_aspect("auto")                   # Mantiene proporción libre
             ax.grid(True, linestyle="--", linewidth=0.6)
-            ax.set_title(rf"Gráfica de y = ${self.ecuacion.get().strip()}$", fontsize=12)
+            ax.set_title(f"Gráfica de y = {self.ecuacion.get().strip()}", fontsize=12)
 
             # Mostrar en Tkinter
             canvas = FigureCanvasTkAgg(fig, master=self.grafica)
