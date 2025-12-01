@@ -192,9 +192,10 @@ class Interfaz:
         metodos.pack(side='top', fill='x')
 
         # BOTONES DE LA PARTE SUPERIOR
-        ctk.CTkButton(metodos, text="Métodos Cerrados", font=('Georgia', 14, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda:(self.tipo_metnum.set('met_cerr'), self.tipo_met(), self.metodoCerrado())).pack(side='left', padx=5, pady=5)
-        ctk.CTkButton(metodos, text="Métodos Abiertos", font=('Georgia', 14, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda:(self.tipo_metnum.set('met_abier'), self.tipo_met(), self.metodoAbierto())).pack(side='left', padx=5, pady=5)
-        ctk.CTkButton(metodos, text="Volver al menú", font=('Georgia', 14, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify(), self.maximizarVentana(self.menuPrincipal)]).pack(side='right', padx=5, pady=5)
+        ctk.CTkButton(metodos, text="Métodos Cerrados", font=('Georgia', 16, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda:(self.tipo_metnum.set('met_cerr'), self.tipo_met(), self.metodoCerrado())).pack(side='left', padx=5, pady=5)
+        ctk.CTkButton(metodos, text="Métodos Abiertos", font=('Georgia', 16, 'bold'), height=30, fg_color='#e6e6e6', text_color='#3b8b87', command=lambda:(self.tipo_metnum.set('met_abier'), self.tipo_met(), self.metodoAbierto())).pack(side='left', padx=5, pady=5)
+
+        ctk.CTkButton(metodos, text="Volver al menú", font=('Georgia', 16, 'bold'), height=30, fg_color='#e6e6e6', text_color="#ff0000", command=lambda: [self.ventanaPrincipal_AN.wm_withdraw(), self.menuPrincipal.wm_deiconify(), self.maximizarVentana(self.menuPrincipal)]).pack(side='right', padx=5, pady=5)
 
         self.izquierda = ctk.CTkFrame(self.ventanaPrincipal_AN, fg_color='#0b5c71')
         self.izquierda.pack(side='left', fill='y', padx=5, pady=5)
@@ -308,7 +309,7 @@ class Interfaz:
         for col in ("#", "Límite Inferior (A)", "Límite Superior (B)", "C", "Error Absoluto", "F(A)", "F(B)", "F(C)"):
             if col == "#":
                 self.tablaTrv.heading("#", text="#")
-                self.tablaTrv.column("#", width=30, anchor='center')
+                self.tablaTrv.column("#", width=40, anchor='center')
             else:
                 self.tablaTrv.heading(col, text=col)
                 self.tablaTrv.column(col, width=150, anchor='w')
@@ -398,13 +399,13 @@ class Interfaz:
         ttk.Label(self.procedimiento, text="RESULTADOS:", font=('Georgia',12,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
 
         # TABLA TREEVIEW
-        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
+        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi (Valor Inicial)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
         self.tablaTrv.pack(fill='both', expand=True)
 
-        for col in ("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"):
+        for col in ("#", "xi (Valor Inicial)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"):
             if col == "#":
                 self.tablaTrv.heading("#", text="#")
-                self.tablaTrv.column("#", width=30, anchor='center')
+                self.tablaTrv.column("#", width=40, anchor='center')
             else:
                 self.tablaTrv.heading(col, text=col)
                 self.tablaTrv.column(col, width=150, anchor='w')
@@ -418,10 +419,10 @@ class Interfaz:
             self.metodoNum = tk.StringVar(value="(Elige un método)")
 
         if tipo == 'met_cerr':
-            self.metodosCerrados = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Bisección', 'Método de Falsa Posición'), state='readonly')
+            self.metodosCerrados = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=250, values=('Método de Bisección', 'Método de Falsa Posición'), state='readonly', font=('Helvetica', 14, 'bold'))
             self.metodosCerrados.grid(row=4, column=0, pady=5)
         elif tipo == 'met_abier':
-            self.metodosAbiertos = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=230, values=('Método de Newton-Raphson', 'Método de la Secante'), state='readonly', command=self.tablasMetodosAbiertos)
+            self.metodosAbiertos = ctk.CTkComboBox(self.izquierda, variable=self.metodoNum, width=250, values=('Método de Newton-Raphson', 'Método de la Secante'), state='readonly', font=('Helvetica', 14, 'bold'), command=self.tablasMetodosAbiertos)
             self.metodosAbiertos.grid(row=4, column=0, pady=5)
     
     def tablasMetodosAbiertos(self, tipo):
@@ -452,10 +453,10 @@ class Interfaz:
             ttk.Label(self.valorIni, textvariable=self.derivada, font=('Cambria Math', 15, 'bold')).pack(anchor='center', pady=5)
             
             # TABLA TREEVIEW
-            self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
+            self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi (Valor Inicial)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
             self.tablaTrv.pack(fill='both', expand=True)
 
-            for col in ("#", "xi", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"):
+            for col in ("#", "xi (Valor Inicial)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"):
                 if col == "#":
                     self.tablaTrv.heading("#", text="#")
                     self.tablaTrv.column("#", width=30, anchor='center')
@@ -730,9 +731,9 @@ class Interfaz:
         top.pack(side='top', fill='x', pady=5)
 
         # Botones de acciones
-        ctk.CTkButton(top, text="Generar entradas", font=('Georgia', 20, 'bold'), height=35, command=self.generar_entradas, fg_color='#e6e6e6', text_color='#3b8b87').pack(side='left', padx=5)
-        ctk.CTkButton(top, text="Resolver", font=('Georgia', 20, 'bold'), height=35, command=self.resolver, fg_color='#e6e6e6', text_color='#3b8b87').pack(side='left', padx=5)
-        ctk.CTkButton(top, text="Limpiar", font=('Georgia', 20, 'bold'), height=35, command=self.limpiar, fg_color='#e6e6e6', text_color='#3b8b87').pack(side='left', padx=5)
+        ctk.CTkButton(top, text="Generar entradas", font=('Georgia', 20, 'bold'), height=35, command=self.generar_entradas, fg_color='#e6e6e6', text_color="#000000").pack(side='left', padx=5)
+        ctk.CTkButton(top, text="Resolver", font=('Georgia', 20, 'bold'), height=35, command=self.resolver, fg_color='#e6e6e6', text_color="#06a900").pack(side='left', padx=5)
+        ctk.CTkButton(top, text="Limpiar", font=('Georgia', 20, 'bold'), height=35, command=self.limpiar, fg_color="#ff9292", text_color="#000000").pack(side='left', padx=5)
         ctk.CTkButton(top, text="Volver al menú", font=('Georgia', 20, 'bold'), height=35, command=lambda: [self.ventanaPrincipal.wm_withdraw(), self.menuPrincipal.wm_deiconify(), self.maximizarVentana(self.menuPrincipal)], fg_color='#e6e6e6', text_color="#ff0000").pack(side='right', padx=5)
 
 
@@ -857,7 +858,7 @@ class Interfaz:
 
             ttk.Label(cuadro_marco, text="N° de ecuaciones:", font=('Helvetica',12,'bold')).grid(row=5,column=0, pady=10, sticky='w')
             ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=5,column=0,padx=5)
-            self.opciones = ctk.CTkComboBox(cuadro_marco, variable=self.metodoEscoger, width=230, values=('Gauss-Jordan','Gauss','Regla de Cramer'), state='readonly')
+            self.opciones = ctk.CTkComboBox(cuadro_marco, variable=self.metodoEscoger, width=230, values=('Gauss-Jordan','Gauss','Regla de Cramer'), state='readonly', font=('Helvetica', 14, 'bold'))
             self.opciones.grid(row=6,column=0,pady=3, sticky='w')
 
         elif metodo in ('suma','multiplicacion'):
