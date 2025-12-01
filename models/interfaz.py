@@ -115,6 +115,9 @@ class Interfaz:
         
         self.maximizarVentana(self.ventanaPrincipal)
 
+        # Al cerrar esta subventana desde el decorador (X), cerrar la app completamente
+        self.ventanaPrincipal.protocol("WM_DELETE_WINDOW", lambda: self._close_from_subwindow(self.ventanaPrincipal))
+
         # Configuración de estilos (tema y apariencia)
         # Usamos ttk.Style para aplicar una apariencia más moderna y coherente
         style = ttk.Style(self.ventanaPrincipal)
@@ -169,6 +172,9 @@ class Interfaz:
         self.ventanaPrincipal_AN.configure(background='#0b5c71')
 
         self.maximizarVentana(self.ventanaPrincipal_AN)
+
+        # Al cerrar esta subventana desde el decorador (X), cerrar la app completamente
+        self.ventanaPrincipal_AN.protocol("WM_DELETE_WINDOW", lambda: self._close_from_subwindow(self.ventanaPrincipal_AN))
 
         # Configuración de estilos (tema y apariencia)
         # Usamos ttk.Style para aplicar una apariencia más moderna y coherente
@@ -1389,3 +1395,31 @@ class Interfaz:
 
     def run(self):
         self.menuPrincipal.mainloop()
+
+    def _close_from_subwindow(self, ventana):
+        """Maneja el cierre cuando se cierra una subventana.
+
+        Destruye la ventana principal (`menuPrincipal`) para asegurarse de
+        que la aplicación termine por completo cuando el usuario cierre
+        una subventana usando el botón de cierre de la ventana.
+        """
+        try:
+            if hasattr(self, 'menuPrincipal') and self.menuPrincipal:
+                try:
+                    self.menuPrincipal.destroy()
+                except Exception:
+                    # Si falla destruir, intentar forzar la destrucción de la subventana
+                    try:
+                        ventana.destroy()
+                    except Exception:
+                        pass
+            else:
+                try:
+                    ventana.destroy()
+                except Exception:
+                    pass
+        except Exception:
+            try:
+                ventana.destroy()
+            except Exception:
+                pass
