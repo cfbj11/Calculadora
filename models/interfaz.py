@@ -222,9 +222,9 @@ class Interfaz:
         for w in self.procedimiento.winfo_children():
 
             w.destroy()
-
+        
         ttk.Label(self.izquierda, text="Ingrese la ecuación:", font=('Georgia', 14, 'bold')).grid(row=0,column=0,pady=5, padx=5)
-        self.ecuacion = ttk.Entry(self.izquierda, width=45)
+        self.ecuacion = ttk.Entry(self.izquierda, width=15, font=('Helvetica', 16, 'normal'))
         self.ecuacion.grid(row=1,column=0,pady=10)
 
         ctk.CTkButton(self.izquierda, text="Graficar función", font=('Georgia', 12, 'bold'), command=self.graficarFuncion, fg_color='#3b8b87').grid(row=2,column=0,pady=5, padx=5)
@@ -242,7 +242,7 @@ class Interfaz:
             self.ecuacion.insert(pos, texto)
 
         botones = [
-            ("^", "^"), ("e","e"), ("π","π"),
+            ("^", "^()"), ("e","e"), ("π","π"),
             ("sin(x)", "sin(x)"), ("cos(x)","cos(x)"), ("tan(x)","tan(x)"),
             ("csc(x)", "csc(x)"), ("sec(x)","sec(x)"), ("cot(x)","cot(x)"),
             ("asin(x)", "asin(x)"), ("acos(x)","acos(x)"), ("atan(x)","atan(x)"),
@@ -302,9 +302,9 @@ class Interfaz:
         for w in self.procedimiento.winfo_children():
 
             w.destroy()
-
+        
         ttk.Label(self.izquierda, text="Ingrese la ecuación:", font=('Georgia', 14, 'bold')).grid(row=0,column=0,pady=5, padx=5)
-        self.ecuacion = ttk.Entry(self.izquierda, width=45)
+        self.ecuacion = ttk.Entry(self.izquierda, width=15, font=('Helvetica', 16, 'normal'))
         self.ecuacion.grid(row=1,column=0,pady=10)
 
         ctk.CTkButton(self.izquierda, text="Graficar función", font=('Georgia', 12, 'bold'), command=self.graficarFuncion, fg_color='#3b8b87').grid(row=2,column=0,pady=5, padx=5)
@@ -322,7 +322,7 @@ class Interfaz:
             self.ecuacion.insert(pos, texto)
 
         botones = [
-            ("^", "^"), ("e","e"), ("π","π"),
+            ("^", "^()"), ("e","e"), ("π","π"),
             ("sin(x)", "sin(x)"), ("cos(x)","cos(x)"), ("tan(x)","tan(x)"),
             ("csc(x)", "csc(x)"), ("sec(x)","sec(x)"), ("cot(x)","cot(x)"),
             ("asin(x)", "asin(x)"), ("acos(x)","acos(x)"), ("atan(x)","atan(x)"),
@@ -331,14 +331,13 @@ class Interfaz:
 
         fila = col = 0
         for txt, val in botones:
-            ctk.CTkButton(botonesEcuacion, text=txt, font=(None, 12, 'bold'), command=lambda v=val:insert(v), width=70, fg_color='#3b8b87').grid(row=fila, column=col, padx=5, pady=5)
+            ctk.CTkButton(botonesEcuacion, text=txt, font=(None, 14, 'bold'), command=lambda v=val:insert(v), width=70, fg_color="#FFFFFF", text_color="#000000").grid(row=fila, column=col, padx=5, pady=5)
 
             col += 1
             # Se reinicia el bucle y pasa a la siguiente fila
             if col == 3:
                 col = 0
                 fila += 1
-
         # ENTRADAS PARA EL VALOR INICIAL
         self.valorIni = ctk.CTkFrame(self.izquierda, fg_color='#0b5c71')
         self.valorIni.grid(row=6,column=0)
@@ -660,7 +659,7 @@ class Interfaz:
 
             ax.set_aspect("auto")                   # Mantiene proporción libre
             ax.grid(True, linestyle="--", linewidth=0.6)
-            ax.set_title(f"Gráfica de y = {self.ecuacion.get().strip()}", fontsize=12)
+            ax.set_title(rf"Gráfica de y = ${self.ecuacion.get().strip()}$", fontsize=12)
 
             # Mostrar en Tkinter
             canvas = FigureCanvasTkAgg(fig, master=self.grafica)
