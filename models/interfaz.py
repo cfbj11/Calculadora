@@ -843,15 +843,17 @@ class Interfaz:
                 ttk.Label(cuadro_marco, text="Escalar para B:", font=('Helvetica',12,'bold')).grid(row=2, column=2, padx=7, pady=2)
                 ttk.Entry(cuadro_marco, textvariable=self.matB_escalar, width=4).grid(row=2, column=3)
 
+        # EN ESTA PARTE SE EXPLICA LOS PROCEDIMIENTOS A SEGUIR
+        
         if metodo == 'sistemas':
             ttk.Label(cuadro_marco, text="1. Seleccione el método para resolver\nel sistema de ecuaciones.", font=('Helvetica',14,'normal')).grid(row=0,column=0,pady=3, sticky='w')
 
-            ttk.Label(cuadro_marco, text="2. Ingrese el número de ecuaciones del sistema", font=('Helvetica',14,'normal')).grid(row=1,column=0,pady=3, sticky='w')
-            ttk.Label(cuadro_marco, text="3. Genere los cuadros de entradas, y en cada uno,\ningrese la ecuación", font=('Helvetica',14,'normal')).grid(row=2,column=0,pady=3, sticky='w')
-            ttk.Label(cuadro_marco, text="4. Una vez ingresadas las ecuaciones, si desea,\nhaga clic en 'Ecuación Matricial'.\nSi no, haga clic en 'Resolver'", font=('Helvetica',14,'normal')).grid(row=3,column=0,pady=3, sticky='w')
+            ttk.Label(cuadro_marco, text="2. Ingrese el número de ecuaciones del\nsistema", font=('Helvetica',14,'normal')).grid(row=1,column=0,pady=3, sticky='w')
+            ttk.Label(cuadro_marco, text="3. Genere los cuadros de entradas, y en \ncada uno, ingrese la ecuación", font=('Helvetica',14,'normal')).grid(row=2,column=0,pady=3, sticky='w')
+            ttk.Label(cuadro_marco, text="4. Una vez ingresadas las ecuaciones, si\ndesea, haga clic en 'Ecuación Matricial'.\nSi no, haga clic en 'Resolver'", font=('Helvetica',14,'normal')).grid(row=3,column=0,pady=3, sticky='w')
 
             # Una pequeña nota al usuario, sobre cómo debe ingresar cada ecuación
-            ttk.Label(cuadro_marco, text="Nota: Para las incógnitas, escribalas como\nx1, x2, x3 y asísucesivamente.", font=('Helvetica',12,'normal')).grid(row=4,column=0,pady=3, sticky='w')
+            ttk.Label(cuadro_marco, text="Nota: Para las incógnitas, escribalas como\nx1, x2, x3 y asísucesivamente.", font=('Helvetica',14,'normal')).grid(row=4,column=0,pady=3, sticky='w')
 
             ttk.Label(cuadro_marco, text="N° de ecuaciones:", font=('Helvetica',12,'bold')).grid(row=5,column=0, pady=10, sticky='w')
             ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=5,column=0,padx=5)
@@ -859,34 +861,34 @@ class Interfaz:
             self.opciones.grid(row=6,column=0,pady=3, sticky='w')
 
         elif metodo in ('suma','multiplicacion'):
-            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas\nde las dos matrices.", font=('Helvetica',12,'normal')).pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas\nde las dos matrices.", font=('Helvetica',14,'normal')).pack(anchor='w')
             a_b()
-            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de las matrices.\n3. Digite los valores de cada matriz.", font=('Helvetica',12,'normal')).pack(anchor='w')
-            ttk.Label(self.entradas_contenedor, text="(Si no se especifica el escalar para alguna de las\nmatrices, entonces el escalar será 1)", font=('Helvetica',12,'normal')).pack(anchor='w')
-            self.aplicar_At = ctk.CTkCheckBox(self.entradas_contenedor,text="Aplicar transpuesta para A", font=('Helvetica',14,'bold'), hover_color="#5E5E5E", checkmark_color="#00ff40")
-            self.aplicar_At.pack(anchor='w', pady=4, padx=2)
+            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de las matrices.\n3. Digite los valores de cada matriz.", font=('Helvetica',14,'normal')).pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="(Si no se especifica el escalar para alguna\nde las matrices, entonces el escalar\nserá 1)", font=('Helvetica',14,'normal')).pack(anchor='w')
+            self.aplicar_At = ctk.CTkCheckBox(self.entradas_contenedor,text="Aplicar transpuesta para A", font=('Helvetica',16,'bold'), hover_color="#5E5E5E", checkmark_color="#00ff40")
+            self.aplicar_At.pack(anchor='w', pady=10, padx=2)
 
-            self.aplicar_Bt = ctk.CTkCheckBox(self.entradas_contenedor,text="Aplicar transpuesta para B", font=('Helvetica',14,'bold'), hover_color="#5E5E5E", checkmark_color="#00ff40")
+            self.aplicar_Bt = ctk.CTkCheckBox(self.entradas_contenedor,text="Aplicar transpuesta para B", font=('Helvetica',16,'bold'), hover_color="#5E5E5E", checkmark_color="#00ff40")
             self.aplicar_Bt.pack(anchor='w', pady=4, padx=2)
 
         elif metodo in ('transpuesta', 'inversa', 'det'):
-            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas\nde la matriz inicial.", font=('Helvetica',12,'normal')).pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de filas y columnas\nde la matriz inicial.", font=('Helvetica',14,'normal')).pack(anchor='w')
             fils_col()
-            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de la matriz.\n3. Digite los valores de la matriz.", font=('Helvetica',12,'normal')).pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de la matriz.\n3. Digite los valores de la matriz.", font=('Helvetica',14,'normal')).pack(anchor='w')
 
         elif metodo == 'independencia':
-            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de vectores (columnas)\ny entradas (filas).", font=('Helvetica',12,'normal')).pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="1. Ingrese el número de vectores (columnas)\ny entradas (filas).", font=('Helvetica',14,'normal')).pack(anchor='w')
             
             # Se generan los cuadros para los vectores
-            ttk.Label(cuadro_marco, text="Entradas por vector (n):", font=('Helvetica',12,'bold')).grid(row=0, column=0, sticky='w')
+            ttk.Label(cuadro_marco, text="Entradas por vector (n):", font=('Helvetica',14,'bold')).grid(row=0, column=0, sticky='w')
             ttk.Entry(cuadro_marco, textvariable=self.num_eq_var, width=6).grid(row=0, column=1, padx=4)
-            ttk.Label(cuadro_marco, text="N° de vectores (m):", font=('Helvetica',12,'bold')).grid(row=1, column=0, sticky='w')
+            ttk.Label(cuadro_marco, text="N° de vectores (m):", font=('Helvetica',14,'bold')).grid(row=1, column=0, sticky='w')
             ttk.Entry(cuadro_marco, textvariable=self.num_var_var, width=6).grid(row=1, column=1, padx=4)
 
-            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de cada vector.\n3. Digite los valores de cada vector.", font=('Helvetica',12,'normal')).pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de cada vector.\n3. Digite los valores de cada vector.", font=('Helvetica',14,'normal')).pack(anchor='w')
 
         else:
-            ttk.Label(self.entradas_contenedor, text="Seleccione un método de operación.", font=('Helvetica',12,'bold')).pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text="Seleccione un método\nde operación.", font=('Helvetica',24,'bold')).pack(anchor='w')
 
     def generar_entradas(self):
         
@@ -921,9 +923,9 @@ class Interfaz:
             for i in range(n):
                 filas_entrada = []
 
-                ttk.Label(grid_e, text=f"Ec {i + 1}:", padding=5).grid(row=i, column=0, pady=2)
+                ttk.Label(grid_e, text=f"Ec {i + 1}:", font=('Helvetica',12,'bold'), padding=5).grid(row=i, column=0, pady=2)
                 
-                e_b = ttk.Entry(grid_e, width=35)
+                e_b = ttk.Entry(grid_e, width=30, font=('Helvetica',12,'normal'))
                 e_b.grid(row=i, column=1, padx=2)
                 
                 filas_entrada.append(e_b)
@@ -944,7 +946,7 @@ class Interfaz:
                 messagebox.showerror('Entrada inválida', 'Filas y columnas deben ser enteros positivos para A y B.')
                 return
 
-            ttk.Label(self.entradas_contenedor, text=f'Matriz A ({r}×{c})').pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text=f'Matriz A ({r}×{c})', font=('Helvetica',12,'bold')).pack(anchor='center')
             frameA = ttk.Frame(self.entradas_contenedor); frameA.pack(pady=4)
             for i in range(r):
                 fila = []
@@ -954,7 +956,7 @@ class Interfaz:
                     fila.append(e)
                 self.entradas_A.append(fila)
 
-            ttk.Label(self.entradas_contenedor, text=f'Matriz B ({r}×{c})').pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text=f'Matriz B ({r}×{c})', font=('Helvetica',12,'bold')).pack(anchor='center')
             frameB = ttk.Frame(self.entradas_contenedor); frameB.pack(pady=4)
             for i in range(r):
                 fila = []
@@ -979,7 +981,7 @@ class Interfaz:
                 messagebox.showerror('Entrada inválida', 'Dimensiones deben ser enteros positivos y compatibles.')
                 return
 
-            ttk.Label(self.entradas_contenedor, text=f'Matriz A ({r}×{k})').pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text=f'Matriz A ({r}×{k})', font=('Helvetica',12,'bold')).pack(anchor='center')
             frameA = ttk.Frame(self.entradas_contenedor); frameA.pack(pady=4)
             for i in range(r):
                 fila = []
@@ -989,7 +991,7 @@ class Interfaz:
                     fila.append(e)
                 self.entradas_A.append(fila)
 
-            ttk.Label(self.entradas_contenedor, text=f'Matriz B ({k}×{c})').pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text=f'Matriz B ({k}×{c})', font=('Helvetica',12,'bold')).pack(anchor='center')
             frameB = ttk.Frame(self.entradas_contenedor); frameB.pack(pady=4)
             for i in range(k):
                 fila = []
@@ -1009,7 +1011,7 @@ class Interfaz:
                 messagebox.showerror('Entrada inválida', 'Filas y columnas deben ser enteros positivos.')
                 return
 
-            ttk.Label(self.entradas_contenedor, text=f'Matriz: {n} filas × {m} columnas').pack(anchor='w')
+            ttk.Label(self.entradas_contenedor, text=f'Matriz: {n} filas × {m} columnas', font=('Helvetica',12,'bold')).pack(anchor='center')
             grid = ttk.Frame(self.entradas_contenedor)
             grid.pack(pady=6)
 
@@ -1037,7 +1039,7 @@ class Interfaz:
             grid.pack(pady=6)
             # encabezados
             for j in range(m):
-                ttk.Label(grid, text=f'v{j+1}', anchor='center', width=10).grid(row=0, column=j)
+                ttk.Label(grid, text=f'v{j+1}', anchor='center', width=10, font=('Helvetica',12,'bold')).grid(row=0, column=j)
             # entradas
             for i in range(n):
                 filas_entrada = []
