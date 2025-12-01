@@ -919,7 +919,7 @@ class Interfaz:
                 if r <= 0 or k <= 0 or k2 <= 0 or c <= 0:
                     raise ValueError
                 if k != k2:
-                    messagebox.showerror('Incompatibilidad', 'Columnas de A deben igualar filas de B para multiplicar.')
+                    messagebox.showerror('Incompatibilidad', 'La cantidad de columnas de A, debe ser igual a la cantidad de filas de B')
                     return
             except Exception:
                 messagebox.showerror('Entrada inválida', 'Dimensiones deben ser enteros positivos y compatibles.')

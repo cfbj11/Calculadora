@@ -30,9 +30,9 @@ def suma_matrices(A, B, escalarA, escalarB):
         print(f"\nFila {i+1}:")
         for j in range(cols):
             if escalarB >= 0:
-                proc = f"({escalarA if escalarA != 1 else ""})A[{i+1},{j+1}] + ({escalarB if escalarB != 1 else ""})B[{i+1},{j+1}] = {A[i][j]} + {B[i][j]} = {A[i][j] + B[i][j]}"
+                proc = f"{"-" if escalarA == -1 else ""}{escalarA if escalarA != 1 and escalarA != -1 else ""}A[{i+1},{j+1}] + {escalarB if escalarB != 1 else ""}B[{i+1},{j+1}] = {A[i][j]} + {B[i][j]} = {A[i][j] + B[i][j]}"
             else:
-                proc = f"({escalarA if escalarA != 1 else ""})A[{i+1},{j+1}] ({escalarB if escalarB != -1 else "-"})B[{i+1},{j+1}] = {A[i][j]} + {B[i][j]} = {A[i][j] + B[i][j]}"
+                proc = f"{escalarA if escalarA != 1 else ""}A[{i+1},{j+1}] {escalarB if escalarB != -1 else "-"}B[{i+1},{j+1}] = {A[i][j]} + {B[i][j]} = {A[i][j] + B[i][j]}"
             print(proc)
             R[i][j] = A[i][j] + B[i][j]
 
@@ -46,7 +46,7 @@ def multiplicar_matrices(A, B, escalarA, escalarB):
     Multiplicación A x B mostrando procedimientos.
     """
     if len(A[0]) != len(B):
-        raise ValueError("Error: las dimensiones no son compatibles para la multiplicación (cols A != filas B).")
+        raise ValueError("Error: Para poder multiplicar matrices. La cantidad de columnas de A, debe coincidir con la cantidad de filas de B")
 
     filas_A = len(A)
     cols_B = len(B[0])
