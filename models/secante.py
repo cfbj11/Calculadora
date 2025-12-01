@@ -8,16 +8,6 @@ def metodoSecante(valor1, valor2, funcion, error_conv):
     x = symbols('x')
     xi = valor1
     xj = valor2
-    
-    # Reemplazar operadores y corregir formato
-    funcion = funcion.replace("^", "**")
-    funcion = funcion.replace("√", "sqrt")
-    funcion = funcion.replace("log", "log10")
-    funcion = funcion.replace("ln", "log")
-    funcion = funcion.replace("e", str(numpy.e))
-    funcion = funcion.replace(f"s{str(numpy.e)}c", "sec")
-    funcion = funcion.replace("π", str(numpy.pi))
-    funcion = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', funcion)
 
     # Funciones
     func = sympify(funcion)

@@ -322,10 +322,30 @@ class Interfaz:
         for w in self.procedimiento.winfo_children():
 
             w.destroy()
+
+            self.superindices = {"0": "⁰","1": "¹","2": "²","3": "³","4": "⁴","5": "⁵","6": "⁶","7": "⁷","8": "⁸","9": "⁹"}
+
+        def procesar(evento):
+            texto = self.ecuacion.get()
+            if "^" in texto:
+                nuevo = ""
+                i = 0
+                while i < len(texto):
+                    if texto[i] == "^" and i + 1 < len(texto):
+                        sig = texto[i+1]
+                        if sig in self.superindices:
+                            nuevo += self.superindices[sig]
+                            i += 2
+                            continue
+                    nuevo += texto[i]
+                    i += 1
+                self.ecuacion.delete(0, tk.END)
+                self.ecuacion.insert(0, nuevo)
         
         ttk.Label(self.izquierda, text="Ingrese la ecuación:", font=('Georgia', 14, 'bold')).grid(row=0,column=0,pady=5, padx=5)
         self.ecuacion = ttk.Entry(self.izquierda, width=15, font=('Helvetica', 16, 'normal'))
         self.ecuacion.grid(row=1,column=0,pady=10)
+        self.ecuacion.bind('<KeyRelease>', procesar)
 
         ctk.CTkButton(self.izquierda, text="Graficar función", font=('Georgia', 12, 'bold'), command=self.graficarFuncion, fg_color='#3b8b87').grid(row=2,column=0,pady=5, padx=5)
         
@@ -342,7 +362,7 @@ class Interfaz:
             self.ecuacion.insert(pos, texto)
 
         botones = [
-            ("^", "^()"), ("e","e"), ("π","π"),
+            ("^", "^"), ("e","e"), ("π","π"),
             ("sin(x)", "sin(x)"), ("cos(x)","cos(x)"), ("tan(x)","tan(x)"),
             ("csc(x)", "csc(x)"), ("sec(x)","sec(x)"), ("cot(x)","cot(x)"),
             ("asin(x)", "asin(x)"), ("acos(x)","acos(x)"), ("atan(x)","atan(x)"),
@@ -502,7 +522,21 @@ class Interfaz:
 
     def resolverEcuacion(self):
         metodo_num = self.tipo_metnum.get()
+        
+        funcion = self.ecuacion.get().strip()
 
+        for num in self.superindices:
+
+            funcion = funcion.replace(self.superindices[num], f"**{num}")
+
+        funcion = funcion.replace("^", "**")
+        funcion = funcion.replace("√", "sqrt")
+        funcion = funcion.replace("log", "log10")
+        funcion = funcion.replace("ln", "log")
+        funcion = funcion.replace("e", str(numpy.e))
+        funcion = funcion.replace(f"s{str(numpy.e)}c", "sec")
+        funcion = funcion.replace("π", str(numpy.pi))
+        funcion = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', funcion)
         # MÉTODOS CERRADOS
 
         if metodo_num == 'met_cerr':
@@ -511,7 +545,6 @@ class Interfaz:
                 try:
                     lim_inferior = float(self.limI.get().strip())
                     lim_superior = float(self.limS.get().strip())
-                    func = self.ecuacion.get().strip()
 
                     # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
                     if self.tol.get().strip() == "":
@@ -522,7 +555,7 @@ class Interfaz:
 
                     self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                    resultados, resp = metodoBiseccion(lim_inferior, lim_superior, func, err)
+                    resultados, resp = metodoBiseccion(lim_inferior, lim_superior, funcion, err)
                     for fila in resultados:
                         self.tablaTrv.insert("", tk.END, values=fila)
 
@@ -538,7 +571,6 @@ class Interfaz:
                 try:
                     lim_inferior = float(self.limI.get().strip())
                     lim_superior = float(self.limS.get().strip())
-                    func = self.ecuacion.get().strip()
 
                     # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
                     if self.tol.get().strip() == "":
@@ -549,7 +581,7 @@ class Interfaz:
 
                     self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                    resultados, resp = reglaFalsa(lim_inferior, lim_superior, func, err)
+                    resultados, resp = reglaFalsa(lim_inferior, lim_superior, funcion, err)
                     for fila in resultados:
                         self.tablaTrv.insert("", tk.END, values=fila)
 
@@ -571,7 +603,6 @@ class Interfaz:
 
             if metodo_abier == "Método de Newton-Raphson":
                 try:
-                    func = self.ecuacion.get().strip()
                     valorInicial = float(self.val_I.get().strip())
 
                     # Si no se especifica la tolerancia, entonces el valor por defecto va a ser 0.00001
@@ -583,7 +614,7 @@ class Interfaz:
 
                     self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                    resultados, resp = metodoNewton(valorInicial, func, err)
+                    resultados, resp = metodoNewton(valorInicial, funcion, err)
 
                     for fila in resultados:
                         self.tablaTrv.insert("", tk.END, values=fila)
@@ -598,7 +629,6 @@ class Interfaz:
             elif metodo_abier == "Método de la Secante":
 
                 try:
-                    func = self.ecuacion.get().strip()
                     v1 = float(self.val_K.get().strip())
                     v2 = float(self.val_J.get().strip())
 
@@ -611,7 +641,7 @@ class Interfaz:
 
                     self.tablaTrv.delete(*self.tablaTrv.get_children())
 
-                    resultados, resp = metodoSecante(v1, v2, func, err)
+                    resultados, resp = metodoSecante(v1, v2, funcion, err)
 
                     for fila in resultados:
                         self.tablaTrv.insert("", tk.END, values=fila)
@@ -633,9 +663,9 @@ class Interfaz:
         for e in self.grafica.winfo_children():
             e.destroy()
 
-        for bruh in self.superindices:
+        for num in self.superindices:
 
-            ecua = ecua.replace(self.superindices[bruh], f"**{bruh}")
+            ecua = ecua.replace(self.superindices[num], f"**{num}")
 
         try:
             x = Symbol('x')
