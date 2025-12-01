@@ -851,7 +851,7 @@ class Interfaz:
 
             ttk.Label(cuadro_marco, text="2. Ingrese el número de ecuaciones del\nsistema", font=('Helvetica',14,'normal')).grid(row=1,column=0,pady=3, sticky='w')
             ttk.Label(cuadro_marco, text="3. Genere los cuadros de entradas, y en \ncada uno, ingrese la ecuación", font=('Helvetica',14,'normal')).grid(row=2,column=0,pady=3, sticky='w')
-            ttk.Label(cuadro_marco, text="4. Una vez ingresadas las ecuaciones, si\ndesea, haga clic en 'Ecuación Matricial'.\nSi no, haga clic en 'Resolver'", font=('Helvetica',14,'normal')).grid(row=3,column=0,pady=3, sticky='w')
+            ttk.Label(cuadro_marco, text="4. Una vez ingresadas las ecuaciones, si\ndesea, haga clic en 'Forma Matricial'.\nSi no, haga clic en 'Resolver'", font=('Helvetica',14,'normal')).grid(row=3,column=0,pady=3, sticky='w')
 
             # Una pequeña nota al usuario, sobre cómo debe ingresar cada ecuación
             ttk.Label(cuadro_marco, text="Nota: Para las incógnitas, escribalas como\nx1, x2, x3 y asísucesivamente.", font=('Helvetica',14,'normal')).grid(row=4,column=0,pady=3, sticky='w')
