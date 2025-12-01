@@ -22,3 +22,6 @@ def transpuestamatriz(matriz):
 
         print("\nAdemás, la matriz es simétrica")
         print("O sea, su transpuesta es igual a ella misma")
+
+    # Retorna el resultado (utilizado en la suma y en la multiplicación como opciones)
+    return transpuesta

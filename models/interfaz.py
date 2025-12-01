@@ -809,10 +809,10 @@ class Interfaz:
             a_b()
             ttk.Label(self.entradas_contenedor, text="2. Genere las entradas de las matrices.\n3. Digite los valores de cada matriz.", font=('Helvetica',12,'normal')).pack(anchor='w')
             ttk.Label(self.entradas_contenedor, text="(Si no se especifica el escalar para alguna de las\nmatrices, entonces el escalar será 1)", font=('Helvetica',12,'normal')).pack(anchor='w')
-            self.aplicar_At = ctk.CTkCheckBox(self.entradas_contenedor,text="Aplicar transpuesta para A", font=('Helvetica',14,'bold'), hover_color="#5E5E5E", checkmark_color="#00ff40", text_color_disabled="#FF0000")
+            self.aplicar_At = ctk.CTkCheckBox(self.entradas_contenedor,text="Aplicar transpuesta para A", font=('Helvetica',14,'bold'), hover_color="#5E5E5E", checkmark_color="#00ff40")
             self.aplicar_At.pack(anchor='w', pady=4, padx=2)
 
-            self.aplicar_Bt = ctk.CTkCheckBox(self.entradas_contenedor,text="Aplicar transpuesta para B", font=('Helvetica',14,'bold'), hover_color="#5E5E5E", checkmark_color="#00ff40", text_color_disabled="#FF0000")
+            self.aplicar_Bt = ctk.CTkCheckBox(self.entradas_contenedor,text="Aplicar transpuesta para B", font=('Helvetica',14,'bold'), hover_color="#5E5E5E", checkmark_color="#00ff40")
             self.aplicar_Bt.pack(anchor='w', pady=4, padx=2)
 
         elif metodo in ('transpuesta', 'inversa', 'det'):
@@ -1185,6 +1185,18 @@ class Interfaz:
 
                             print("En la matriz B, ingresó una escalar no válida")
 
+                    # Se verifica si las opciones 'Aplicar transpuesta para...' fueran marcadas o no
+                    if self.aplicar_At._check_state == True:
+
+                        print("Para la transpuesta de la matriz A", end="")
+                        A = transpuestamatriz(A)
+                    
+                    if self.aplicar_Bt._check_state == True:
+
+                        print("Para la transpuesta de la matriz B", end="")
+                        B = transpuestamatriz(B)
+                    
+                    print("\nSUMA DE MATRICES")
                     suma_matrices(A, B, escalarA, escalarB)
                     self.result_var.set("Suma realizada — ver registro")
 
@@ -1219,8 +1231,20 @@ class Interfaz:
 
                             print("En la matriz B, ingresó una escalar no válida")
 
-                    
                     B = self._leer_matriz(self.entradas_B)
+
+                    # Se verifica si las opciones 'Aplicar transpuesta para...' fueran marcadas o no
+                    if self.aplicar_At._check_state == True:
+
+                        print("Para la transpuesta de la matriz A", end="")
+                        A = transpuestamatriz(A)
+                    
+                    if self.aplicar_Bt._check_state == True:
+
+                        print("Para la transpuesta de la matriz B", end="")
+                        B = transpuestamatriz(B)
+
+                    print("\nMULTIPLICACIÓN DE MATRICES")
                     multiplicar_matrices(A, B, escalarA, escalarB)
                     self.result_var.set("Multiplicación realizada — ver registro")
                 elif metodo == 'transpuesta':
