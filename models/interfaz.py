@@ -186,7 +186,6 @@ class Interfaz:
         self.limInf = tk.StringVar(value="")
         self.limSup = tk.StringVar(value="")
         self.tolerancia = tk.StringVar(value="0.00001")
-        self.derivada = tk.StringVar(value="")
 
         metodos = ttk.Frame(self.ventanaPrincipal_AN)
         metodos.pack(side='top', fill='x')
@@ -392,9 +391,6 @@ class Interfaz:
         self.tol.pack(anchor='center', pady=5)
 
         ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", font=('Georgia', 12, 'bold'), command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
-        ctk.CTkButton(self.valorIni, text="Encontrar derivada", font=('Georgia', 12, 'bold'), command=lambda: (self.derivadaFuncion()), fg_color='#3b8b87').pack(anchor='center', pady=4)
-        ttk.Label(self.valorIni, text="Derivada de la función", font=('Georgia', 11, 'bold')).pack(anchor='center', pady=4)
-        ttk.Label(self.valorIni, textvariable=self.derivada, font=('Cambria Math', 15, 'bold')).pack(anchor='center', pady=5)
 
         ttk.Label(self.procedimiento, text="RESULTADOS:", font=('Georgia',12,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
 
@@ -448,9 +444,6 @@ class Interfaz:
             self.tol.pack(anchor='center', pady=5)
 
             ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
-            ctk.CTkButton(self.valorIni, text="Encontrar derivada", command=lambda: (self.derivadaFuncion()), fg_color='#3b8b87').pack(anchor='center', pady=4)
-            ttk.Label(self.valorIni, text="Derivada de la función", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
-            ttk.Label(self.valorIni, textvariable=self.derivada, font=('Cambria Math', 15, 'bold')).pack(anchor='center', pady=5)
             
             # TABLA TREEVIEW
             self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi (Valor Inicial)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
@@ -490,36 +483,6 @@ class Interfaz:
                 else:
                     self.tablaTrv.heading(col, text=col)
                     self.tablaTrv.column(col, width=150, anchor='w')
-    
-    def derivadaFuncion(self):
-
-        try:
-
-            x = Symbol('x')
-            
-            funcOriginal = self.ecuacion.get().strip()
-
-            funcOriginal = funcOriginal.replace("^", "**")
-            funcOriginal = funcOriginal.replace("log", "log10")
-            funcOriginal = funcOriginal.replace("ln", "log")
-            funcOriginal = funcOriginal.replace("√", "sqrt")
-            funcOriginal = funcOriginal.replace("e", str(numpy.e))
-            funcOriginal = funcOriginal.replace(f"s{str(numpy.e)}c", "sec")
-            funcOriginal = funcOriginal.replace("π", str(numpy.pi))
-
-            funcOriginal = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', funcOriginal)
-
-            funcSimp = sympify(funcOriginal)
-
-            derivadaFunc = diff(funcSimp, x)
-
-            derivadaArreglada = simplify(derivadaFunc)
-
-            self.derivada.set(derivadaArreglada)
-        except:
-
-            messagebox.showerror(title="Error a la hora de encontrar la derivada", message="No se pudo derivar la función. Revise si está escrita correctamente")
-
 
     def resolverEcuacion(self):
         metodo_num = self.tipo_metnum.get()
