@@ -438,23 +438,23 @@ class Interfaz:
         self.valorIni = ctk.CTkFrame(self.izquierda, fg_color='#0b5c71')
         self.valorIni.grid(row=6,column=0)
 
-        ttk.Label(self.valorIni, text="Valor Inicial", font=('Georgia', 12, 'bold')).pack(anchor='center', pady=4)
+        ttk.Label(self.valorIni, text="Valor Inicial (xi)", font=('Georgia', 15, 'bold')).pack(anchor='center', pady=4)
         self.val_I = ttk.Entry(self.valorIni, width=13)
         self.val_I.pack(anchor='center', pady=5)
 
-        ttk.Label(self.valorIni, text="Tolerancia", font=('Georgia', 12, 'bold')).pack(anchor='center', pady=4)
+        ttk.Label(self.valorIni, text="Tolerancia", font=('Georgia', 15, 'bold')).pack(anchor='center', pady=4)
         self.tol = ttk.Entry(self.valorIni, textvariable=self.tolerancia, width=13)
         self.tol.pack(anchor='center', pady=5)
 
-        ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", font=('Georgia', 12, 'bold'), command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
+        ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", font=('Georgia', 15, 'bold'), command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
 
         ttk.Label(self.procedimiento, text="RESULTADOS:", font=('Georgia',12,'bold'), background='#0b5c71', foreground='#e6e6e6').pack(anchor='w')
 
         # TABLA TREEVIEW
-        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi (Valor Inicial)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
+        self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Valor inicial (xi)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
         self.tablaTrv.pack(fill='both', expand=True)
 
-        for col in ("#", "xi (Valor Inicial)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"):
+        for col in ("#", "Valor inicial (xi)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"):
             if col == "#":
                 self.tablaTrv.heading("#", text="#")
                 self.tablaTrv.column("#", width=40, anchor='center')
@@ -491,21 +491,21 @@ class Interfaz:
         
         if tipo == "Método de Newton-Raphson":
 
-            ttk.Label(self.valorIni, text="Valor Inicial (xi)", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            ttk.Label(self.valorIni, text="Valor Inicial (xi)", font=('Georgia', 15, 'bold')).pack(anchor='center', pady=4)
             self.val_I = ttk.Entry(self.valorIni, width=13)
             self.val_I.pack(anchor='center', pady=5)
 
-            ttk.Label(self.valorIni, text="Tolerancia", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            ttk.Label(self.valorIni, text="Tolerancia", font=('Georgia', 15, 'bold')).pack(anchor='center', pady=4)
             self.tol = ttk.Entry(self.valorIni, textvariable=self.tolerancia, width=13)
             self.tol.pack(anchor='center', pady=5)
 
-            ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
+            ctk.CTkButton(self.valorIni, text="Encontrar Respuesta",font=('Georgia', 15, 'bold'), command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
             
             # TABLA TREEVIEW
-            self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi (Valor Inicial)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
+            self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Valor inicial (xi)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"), show='headings')
             self.tablaTrv.pack(fill='both', expand=True)
 
-            for col in ("#", "xi (Valor Inicial)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"):
+            for col in ("#", "Valor inicial (xi)", "xi + 1", "Error Absoluto", "F(xi)", "F'(xi)"):
                 if col == "#":
                     self.tablaTrv.heading("#", text="#")
                     self.tablaTrv.column("#", width=30, anchor='center')
@@ -514,25 +514,25 @@ class Interfaz:
                     self.tablaTrv.column(col, width=150, anchor='w')
         elif tipo == "Método de la Secante":
 
-            ttk.Label(self.valorIni, text="Valor Inicial #1 (xi - 1)", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            ttk.Label(self.valorIni, text="Valor Inicial #1 (xi - 1)", font=('Georgia', 15, 'bold')).pack(anchor='center', pady=4)
             self.val_K = ttk.Entry(self.valorIni, width=13)
             self.val_K.pack(anchor='center', pady=5)
 
-            ttk.Label(self.valorIni, text="Valor Inicial #2 (xi)", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            ttk.Label(self.valorIni, text="Valor Inicial #2 (xi)", font=('Georgia', 15, 'bold')).pack(anchor='center', pady=4)
             self.val_J = ttk.Entry(self.valorIni, width=13)
             self.val_J.pack(anchor='center', pady=5)
 
-            ttk.Label(self.valorIni, text="Tolerancia", font=(None, 11, 'bold')).pack(anchor='center', pady=4)
+            ttk.Label(self.valorIni, text="Tolerancia", font=('Georgia', 15, 'bold')).pack(anchor='center', pady=4)
             self.tol = ttk.Entry(self.valorIni, textvariable=self.tolerancia, width=13)
             self.tol.pack(anchor='center', pady=5)
 
-            ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87').pack(anchor='center', pady=10)
+            ctk.CTkButton(self.valorIni, text="Encontrar Respuesta", command=self.resolverEcuacion, fg_color='#3b8b87',font=('Georgia', 15, 'bold')).pack(anchor='center', pady=10)
             
             # TABLA TREEVIEW
-            self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "xi - 1", "xi", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)"), show='headings')
+            self.tablaTrv = ttk.Treeview(self.procedimiento, columns=("#", "Valor Inicial #1 (xi - 1)", "Valor Inicial #2 (xi)", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)"), show='headings')
             self.tablaTrv.pack(fill='both', expand=True)
 
-            for col in ("#", "xi - 1", "xi", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)"):
+            for col in ("#", "Valor Inicial #1 (xi - 1)", "Valor Inicial #2 (xi)", "xi + 1", "Error Absoluto", "F(xi - 1)", "F(xi)"):
                 if col == "#":
                     self.tablaTrv.heading("#", text="#")
                     self.tablaTrv.column("#", width=30, anchor='center')
