@@ -142,7 +142,10 @@ class Interfaz:
         ctk.CTkLabel(autores, text="Carlos Acuña", font=('Georgia', 20, 'bold'), bg_color="#388fa5", text_color="#000000").grid(row=4,column=3)
         ctk.CTkLabel(autores, text="(Diseñador del logo)", font=('Georgia', 16, 'bold'), bg_color="#388fa5", text_color="#000000").grid(row=5,column=3)
 
-        ctk.CTkLabel(self.autoresVentana, text="NumExpert explica de forma más clara varios conceptos de\nálgebra lineal y de análisis numérico", font=('Georgia', 16, 'bold'), bg_color="#388fa5", text_color="#000000")
+        desc = ctk.CTkFrame(self.autoresVentana, fg_color="#388fa5")
+        desc.pack(side='top', fill='both')
+        
+        ctk.CTkLabel(desc, text="NumExpert se dedica a explicar de forma más clara varios conceptos de\nálgebra lineal y de análisis numérico", font=('Georgia', 18, 'bold'), bg_color="#388fa5", text_color="#000000").pack(anchor='center',side='bottom',pady=20)
     def maximizarVentana(self, ventana):
 
         try:
