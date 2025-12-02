@@ -8,6 +8,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy
 import customtkinter as ctk
+from PIL import Image
 
 # Acrónimo de 'Regular Expressions'. Utilizada para que sea más fácil ingresar ecuaciones
 import re
@@ -84,18 +85,64 @@ class Interfaz:
         
         # Fondo de la ventana
         try:
-            self.menuPrincipal.configure(background="#a6cfd9")
+            self.menuPrincipal.configure(background="#ffffff")
         except Exception:
             pass
         
-        ctk.CTkLabel(self.menuPrincipal, text="NumExpert", font=('Bahnschrift SemiBold', 72, 'bold'), text_color='#000000').pack(anchor='center', pady=100)
-        ctk.CTkLabel(self.menuPrincipal, text="Seleccione una opción", font=('Times New Roman', 48), text_color='#000000').pack(anchor='center', pady=40)
+        logo = ctk.CTkImage(light_image=Image.open("models/logoNumExpert.jpeg"),dark_image=Image.open("models/logoNumExpert.jpeg"), size=(550, 380))
+        ctk.CTkLabel(self.menuPrincipal, text="", image=logo).pack(anchor='n', pady=5)
+        ctk.CTkLabel(self.menuPrincipal, text="Seleccione una opción", font=('Times New Roman', 36), text_color='#000000').pack(anchor='center', pady=18)
 
-        ctk.CTkButton(self.menuPrincipal, text="Álgebra Lineal", font=('Georgia', 32, 'bold'), width=225, height=75, text_color='#000000',command=lambda: [self.menuPrincipal.wm_withdraw(), self.algebraLineal()], fg_color="#20b1aa").pack(anchor='center', pady=20)
-        ctk.CTkButton(self.menuPrincipal, text="Análisis Númerico", font=('Georgia', 32, 'bold'), width=225, height=75, text_color='#000000', command=lambda: [self.menuPrincipal.wm_withdraw(), self.analisisNumerico()], fg_color="#20b1aa").pack(anchor='center', pady=10)
+        ctk.CTkButton(self.menuPrincipal, text="Álgebra Lineal", font=('Georgia', 24, 'bold'), width=225, height=60, text_color='#000000',command=lambda: [self.menuPrincipal.wm_withdraw(), self.algebraLineal()], fg_color="#20b1aa").pack(anchor='center', pady=10)
+        ctk.CTkButton(self.menuPrincipal, text="Análisis Númerico", font=('Georgia', 24, 'bold'), width=225, height=60, text_color='#000000', command=lambda: [self.menuPrincipal.wm_withdraw(), self.analisisNumerico()], fg_color="#20b1aa").pack(anchor='center', pady=10)
+        ctk.CTkButton(self.menuPrincipal, text="Acerca de los autores", font=('Georgia', 24, 'bold'), width=225, height=60, text_color='#000000', command=lambda: [self.autoresNumExpert()], fg_color="#20b1aa").pack(anchor='center', pady=10)
 
-        ctk.CTkLabel(self.menuPrincipal, text="© Copyright 2025 - 2025", font=('Times New Roman', 28), text_color='#000000').pack(anchor='s', pady=15)
+        ctk.CTkLabel(self.menuPrincipal, text="© Copyright 2025 - 2025", font=('Times New Roman', 28, 'bold'), text_color='#000000').pack(anchor='s', pady=15)
     
+    def autoresNumExpert(self):
+        self.autoresVentana = Toplevel(self.menuPrincipal)
+        self.autoresVentana.title("Autores")
+        self.autoresVentana.geometry("800x500")
+        self.autoresVentana.configure(background="#388fa5")
+        self.autoresVentana.resizable(width=False, height=False)
+
+        stalin = ctk.CTkImage(light_image=Image.open("models/stalinCordoba.png"),dark_image=Image.open("models/stalinCordoba.png"), size=(100, 100))
+        camilo = ctk.CTkImage(light_image=Image.open("models/camiloGaleano.png"),dark_image=Image.open("models/camiloGaleano.png"), size=(100, 100))
+        carlosA = ctk.CTkImage(light_image=Image.open("models/carlosAcuna.jpeg"),dark_image=Image.open("models/carlosAcuna.jpeg"), size=(100, 100))
+        carlosB = ctk.CTkImage(light_image=Image.open("models/carlosBriones.png"),dark_image=Image.open("models/carlosBriones.png"), size=(100, 100))
+
+        titulo = ctk.CTkFrame(self.autoresVentana, fg_color="#388fa5")
+        titulo.pack(side='top', fill='x', pady=5)
+
+        ctk.CTkLabel(titulo, text="NumExpert es una calculadora creado por:", font=('Georgia', 24, 'bold'), bg_color="#388fa5", text_color="#000000").pack(anchor='center', side='top')
+
+        autores = ctk.CTkFrame(self.autoresVentana, fg_color="#388fa5")
+        autores.pack(side='top', fill='both')
+        
+        for col in range(4):
+
+            autores.grid_columnconfigure(col, weight=1)
+        for fi in range(6):
+
+            autores.grid_columnconfigure(fi, weight=1)
+
+        ctk.CTkLabel(autores, text="", image=stalin).grid(row=0,column=2, pady=10)
+        ctk.CTkLabel(autores, text="Stalin Cordoba", font=('Georgia', 20, 'bold'), bg_color="#388fa5", text_color="#000000").grid(row=1,column=2)
+        ctk.CTkLabel(autores, text="(Desarrollador principal)", font=('Georgia', 16, 'bold'), bg_color="#388fa5", text_color="#000000").grid(row=2,column=2)
+
+        ctk.CTkLabel(autores, text="", image=carlosB).grid(row=0,column=3)
+        ctk.CTkLabel(autores, text="Carlos Briones", font=('Georgia', 20, 'bold'), bg_color="#388fa5", text_color="#000000").grid(row=1,column=3)
+        ctk.CTkLabel(autores, text="(Desarrollador)", font=('Georgia', 16, 'bold'), bg_color="#388fa5", text_color="#000000").grid(row=2,column=3)
+
+        ctk.CTkLabel(autores, text="", image=camilo).grid(row=3,column=2, pady=10)
+        ctk.CTkLabel(autores, text="Camilo Galeano", font=('Georgia', 20, 'bold'), bg_color="#388fa5", text_color="#000000").grid(row=4,column=2)
+        ctk.CTkLabel(autores, text="(Desarrollador)", font=('Georgia', 16, 'bold'), bg_color="#388fa5", text_color="#000000").grid(row=5,column=2)
+
+        ctk.CTkLabel(autores, text="", image=carlosA).grid(row=3,column=3)
+        ctk.CTkLabel(autores, text="Carlos Acuña", font=('Georgia', 20, 'bold'), bg_color="#388fa5", text_color="#000000").grid(row=4,column=3)
+        ctk.CTkLabel(autores, text="(Diseñador del logo)", font=('Georgia', 16, 'bold'), bg_color="#388fa5", text_color="#000000").grid(row=5,column=3)
+
+        ctk.CTkLabel(self.autoresVentana, text="NumExpert explica de forma más clara varios conceptos de\nálgebra lineal y de análisis numérico", font=('Georgia', 16, 'bold'), bg_color="#388fa5", text_color="#000000")
     def maximizarVentana(self, ventana):
 
         try:
