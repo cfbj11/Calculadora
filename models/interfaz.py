@@ -994,9 +994,6 @@ class Interfaz:
                 c = int(self.matB_columnas.get())
                 if r <= 0 or k <= 0 or k2 <= 0 or c <= 0:
                     raise ValueError
-                if k != k2:
-                    messagebox.showerror('Incompatibilidad', 'La cantidad de columnas de A, debe ser igual a la cantidad de filas de B')
-                    return
             except Exception:
                 messagebox.showerror('Entrada inválida', 'Dimensiones deben ser enteros positivos y compatibles.')
                 return
@@ -1011,9 +1008,9 @@ class Interfaz:
                     fila.append(e)
                 self.entradas_A.append(fila)
 
-            ttk.Label(self.entradas_contenedor, text=f'Matriz B ({k}×{c})', font=('Helvetica',12,'bold')).pack(anchor='center')
+            ttk.Label(self.entradas_contenedor, text=f'Matriz B ({k2}×{c})', font=('Helvetica',12,'bold')).pack(anchor='center')
             frameB = ttk.Frame(self.entradas_contenedor); frameB.pack(pady=4)
-            for i in range(k):
+            for i in range(k2):
                 fila = []
                 for j in range(c):
                     e = ttk.Entry(frameB, width=10)
@@ -1321,6 +1318,8 @@ class Interfaz:
                         B = transpuestamatriz(B)
 
                     print("\nMULTIPLICACIÓN DE MATRICES")
+                    print(f"Dimensiones para A: {len(A)}x{len(A[0])}")
+                    print(f"Dimensiones para B: {len(B)}x{len(B[0])}\n")
                     multiplicar_matrices(A, B, escalarA, escalarB)
                     self.result_var.set("Multiplicación realizada — ver registro")
                 elif metodo == 'transpuesta':
